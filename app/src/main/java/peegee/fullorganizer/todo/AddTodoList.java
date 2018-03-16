@@ -63,11 +63,14 @@ public class AddTodoList extends AppCompatActivity {
         Intent intent = getIntent();
         listId = intent.getIntExtra("LIST_ID", -1);
 
+        Log.d("ADD_TODO_LIST", "onCreate: " + listId);
+
         if (listId != -1) {
             // Database
             list = MainActivity.db.todoListDAO().getListById(listId);
             todoDBList = MainActivity.db.todoDAO().loadByListId(listId);
             update = true;
+            etListName.setText(list.getTodoListTitle());
         } else {
             list = new TodoListDB("");
             // Database
@@ -87,7 +90,6 @@ public class AddTodoList extends AppCompatActivity {
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(AddTodoList.this);
 
-                // Inflate using dialog themed context.
                 final Context context = builder.getContext();
                 final LayoutInflater inflater = LayoutInflater.from(context);
                 final View dialogView = inflater.inflate(R.layout.add_todo_fragment, null, false);
@@ -140,8 +142,10 @@ public class AddTodoList extends AppCompatActivity {
     }
 
     private void canceList() {
-        // TODO If not update ONLY
-        MainActivity.db.todoListDAO().delete(list);
+        if(!update) {
+            list = MainActivity.db.todoListDAO().getListById(listId);
+            MainActivity.db.todoListDAO().delete(list);
+        }
     }
 
     private void saveList() {

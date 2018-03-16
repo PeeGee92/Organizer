@@ -1,17 +1,20 @@
 package peegee.fullorganizer.service;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
 
+import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.todo.TodoListDB;
 import peegee.fullorganizer.todo.AddTodoList;
@@ -36,11 +39,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             // Load this item data in the next activity
             int tempId = item.getTodoListId();
 
-            Log.d("ON_CLICK_LIST", "id: " + tempId);
+            Log.d("TODO_LIST_GET_ID", "onClick: " + tempId);
 
-//            Intent intent = new Intent(view.getContext(), AddTodoList.class);
-//            intent.putExtra("NOTE_ID", tempId);
-//            view.getContext().startActivity(intent);
+            Intent intent = new Intent(view.getContext(), AddTodoList.class);
+            intent.putExtra("LIST_ID", tempId);
+            view.getContext().startActivity(intent);
         }
     };
 
@@ -64,7 +67,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         TodoListDB temp = todoListDBList.get(position);
 
         Log.d("ON_BIND_LIST", "title: " + temp.getTodoListTitle());
@@ -72,6 +75,30 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         holder.tvTitle.setText(temp.getTodoListTitle());
         // TODO Get done and not done
         // TODO Set progress
+
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Delete Todo List")
+                        .setMessage("Are you sure you want to delete this todo list permanently?")
+                        .setIcon(android.R.drawable.ic_menu_delete)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                TodoListDB item = todoListDBList.get(position);
+
+                                MainActivity.db.todoListDAO().delete(item);
+
+                                // Update RecyclerView
+                                todoListDBList.remove(position);
+                                recyclerView.removeViewAt(position);
+                                adapter.notifyItemRemoved(position);
+                                adapter.notifyItemRangeChanged(position, todoListDBList.size());
+                                adapter.notifyDataSetChanged();
+                            }})
+                        .setNegativeButton("Cancel", null).show();
+            }
+        });
     }
 
     @Override
@@ -83,6 +110,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
 
         TextView tvTitle, tvDone, tvNotDone;
         ProgressBar progressBar;
+        ImageButton btnDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -91,6 +119,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             tvDone = itemView.findViewById(R.id.tvDone);
             tvNotDone = itemView.findViewById(R.id.tvNotDone);
             progressBar = itemView.findViewById(R.id.progress);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
 
         }
     }
