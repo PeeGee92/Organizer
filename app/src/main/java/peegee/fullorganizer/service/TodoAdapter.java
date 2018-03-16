@@ -36,6 +36,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        Log.d("TODO_ITEMS", "Count: " + todoDBList.size());
         return todoDBList.size();
     }
 

@@ -1,12 +1,18 @@
 package peegee.fullorganizer.todo;
 
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,6 +49,9 @@ public class AddTodoList extends AppCompatActivity {
     private int listId;
     TodoListDB list;
 
+    TextInputEditText etAddTodo;
+    AlertDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +72,7 @@ public class AddTodoList extends AppCompatActivity {
             list = new TodoListDB("");
             // Database
             listId = (int) MainActivity.db.todoListDAO().insert(list);
+            Log.d("TODO_LIST_CREATED", "listId: " + listId);
         }
 
         // RecyclerView setup
@@ -73,14 +83,43 @@ public class AddTodoList extends AppCompatActivity {
         FloatingActionButton fbAddTodoList = findViewById(R.id.fbAddTodoTask);
         fbAddTodoList.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                AddTodoItemFragment addTodoItemFragment = new AddTodoItemFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("LIST_ID", listId);
-                addTodoItemFragment.setArguments(bundle);
-                addTodoItemFragment.show(getFragmentManager(), "ADD_TASK");
+            public void onClick(final View view) {
 
-                // TODO Refresh list without reloading activity
+                final AlertDialog.Builder builder = new AlertDialog.Builder(AddTodoList.this);
+
+                // Inflate using dialog themed context.
+                final Context context = builder.getContext();
+                final LayoutInflater inflater = LayoutInflater.from(context);
+                final View dialogView = inflater.inflate(R.layout.add_todo_fragment, null, false);
+
+                builder.setView(dialogView);
+                builder.setTitle("Add new task");
+                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        etAddTodo = dialogView.findViewById(R.id.etAddTodo);
+                        String tempDesc = etAddTodo.getText().toString();
+                        // TODO Check boolean input for done
+                        TodoDB todoDB = new TodoDB(tempDesc, false, listId);
+
+                        //Database
+                        MainActivity.db.todoDAO().insertAll(todoDB);
+
+                        todoDBList = MainActivity.db.todoDAO().loadByListId(listId);
+                        adapter = new TodoAdapter(todoDBList);
+                        rvTasks.setAdapter(adapter);
+
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog = builder.create();
+                dialog.show();
             }
         });
 
