@@ -4,10 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -44,9 +46,19 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         viewHolder.tvTodoDescription.setText(todoDBList.get(i).getTodoDescription());
         viewHolder.cbTodoDone.setChecked(todoDBList.get(i).isTodoDone());
+        viewHolder.cbTodoDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                boolean checked = viewHolder.cbTodoDone.isChecked();
+                Log.d("CHECKED_CHANGED", "checked: " + checked);
+                TodoDB item = todoDBList.get(i);
+                item.setTodoDone(checked);
+                MainActivity.db.todoDAO().update(item);
+            }
+        });
 
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override

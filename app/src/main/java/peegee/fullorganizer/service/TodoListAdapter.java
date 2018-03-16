@@ -11,17 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import java.util.List;
 
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.room_db.todo.TodoDB;
 import peegee.fullorganizer.room_db.todo.TodoListDB;
 import peegee.fullorganizer.todo.AddTodoList;
 
-/**
- * TODO Query to get list with done, and list with not done
- */
 public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
 
     List<TodoListDB> todoListDBList;
@@ -29,6 +26,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
+    int id;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -69,8 +67,12 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         TodoListDB temp = todoListDBList.get(position);
 
         holder.tvTitle.setText(temp.getTodoListTitle());
-        // TODO Get done and not done
-        // TODO Set progress
+        done = getByDoneCount(position, true);
+        notDone = getByDoneCount(position, false);
+        holder.tvDone.setText("Tasks done: " + done);
+        holder.tvNotDone.setText("Tasks not done: " + notDone);
+        float totalTasks = done + notDone;
+        setProgress(holder, totalTasks);
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +97,38 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
                         .setNegativeButton("Cancel", null).show();
             }
         });
+    }
+
+    private void setProgress(ViewHolder viewHolder, float totalTasks) {
+        float progress;
+
+        if (totalTasks == 0) // List is empty
+        {
+            progress = 100;
+        }
+        else // List is not empty
+        {
+            if (notDone == 0) // All tasks are done
+            {
+                progress = 100;
+            }
+            else // Not all tasks are done
+            {
+                progress = ( done / totalTasks) * 100;
+            }
+        }
+
+        viewHolder.progressBar.setProgress((int) progress);
+    }
+
+    private int getByDoneCount(int itemPosition, boolean done) {
+        List<TodoDB> doneItems;
+        TodoListDB item = todoListDBList.get(itemPosition);
+        id = item.getTodoListId();
+
+        doneItems = MainActivity.db.todoDAO().findByDone(id, done);
+
+        return doneItems.size();
     }
 
     @Override

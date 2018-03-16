@@ -14,8 +14,8 @@ public interface TodoDAO {
     @Query("SELECT * FROM TodoDB WHERE listId = :id")
     List<TodoDB> loadByListId(int id);
 
-    @Query("SELECT * FROM TodoDB WHERE todo_done LIKE :done")
-    TodoDB findByDone(boolean done);
+    @Query("SELECT * FROM TodoDB WHERE listId = :id AND todo_done LIKE :done")
+    List<TodoDB> findByDone(int id, boolean done);
 
     @Insert
     void insertAll(List<TodoDB> todoDBs);

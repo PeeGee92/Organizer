@@ -71,8 +71,6 @@ public class AddTodoList extends AppCompatActivity {
             todoDBList = MainActivity.db.todoDAO().loadByListId(listId);
             update = true;
             etListName.setText(list.getTodoListTitle());
-        } else {
-            // New List
         }
 
         // RecyclerView setup
@@ -98,7 +96,6 @@ public class AddTodoList extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         etAddTodo = dialogView.findViewById(R.id.etAddTodo);
                         String tempDesc = etAddTodo.getText().toString();
-                        // TODO Check boolean input for done
                         TodoDB todoDB = new TodoDB(tempDesc, false);
                         addedItemsList.add(todoDB);
 
@@ -130,25 +127,25 @@ public class AddTodoList extends AppCompatActivity {
                 startActivity(new Intent(AddTodoList.this, TodoActivity.class));
                 break;
             case R.id.btnCancelList:
-                cancelList();
                 startActivity(new Intent(AddTodoList.this, TodoActivity.class));
                 break;
         }
     }
 
-    private void cancelList() {
-        if(!update) {
-            // New List
-        }
-    }
-
     private void saveList() {
         // TODO Implement if list doesn't have a title
-        listId = (int) MainActivity.db.todoListDAO().insert(new TodoListDB(etListName.getText().toString()));
-        for (TodoDB item:addedItemsList) {
+        if (!update) {
+            listId = (int) MainActivity.db.todoListDAO().insert(new TodoListDB(etListName.getText().toString()));
+        }
+        else {
+            TodoListDB item = MainActivity.db.todoListDAO().getListById(listId);
+            item.setTodoListTitle(etListName.getText().toString());
+            MainActivity.db.todoListDAO().update(item);
+        }
+
+        for (TodoDB item : addedItemsList) {
             item.setListId(listId);
         }
         MainActivity.db.todoDAO().insertAll(addedItemsList);
-        // TODO Set items done and not done
     }
 }

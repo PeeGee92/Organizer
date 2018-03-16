@@ -17,12 +17,6 @@ public class TodoListDB {
     @ColumnInfo(name = "todo_list_title")
     private String todoListTitle;
 
-    @ColumnInfo(name = "list_items_done")
-    private int listItemsDone;
-
-    @ColumnInfo(name = "list_items_not_done")
-    private int listItemsNotDone;
-
     public int getTodoListId() {
         return todoListId;
     }
@@ -37,21 +31,5 @@ public class TodoListDB {
 
     public void setTodoListTitle(String todoListTitle) {
         this.todoListTitle = todoListTitle;
-    }
-
-    public int getListItemsDone() {
-        return listItemsDone;
-    }
-
-    public void setListItemsDone(int listItemsDone) {
-        this.listItemsDone = listItemsDone;
-    }
-
-    public int getListItemsNotDone() {
-        return listItemsNotDone;
-    }
-
-    public void setListItemsNotDone(int listItemsNotDone) {
-        this.listItemsNotDone = listItemsNotDone;
     }
 }
