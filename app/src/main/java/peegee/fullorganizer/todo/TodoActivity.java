@@ -16,14 +16,12 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.todo.TodoDB;
 import peegee.fullorganizer.room_db.todo.TodoListDB;
-import peegee.fullorganizer.room_db.todo.TodoListWithItems;
 import peegee.fullorganizer.service.TodoListAdapter;
 
 public class TodoActivity extends AppCompatActivity {
 
-    List<TodoListWithItems> todoListDBList = new ArrayList<>();
+    List<TodoListDB> todoListDBList = new ArrayList<>();
 
     @InjectView(R.id.rvTodo)
     RecyclerView rvTodo;
@@ -37,7 +35,7 @@ public class TodoActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         // Database
-        todoListDBList = MainActivity.db.todoListDAO().loadListWithItems();
+        todoListDBList = MainActivity.db.todoListDAO().getAll();
 
         // RecyclerView setup
         rvTodo.setLayoutManager(new LinearLayoutManager(this));
@@ -49,8 +47,6 @@ public class TodoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(TodoActivity.this, AddTodoList.class);
-                // New list
-                intent.putExtra("LIST_ID", "new_list");
                 startActivity(intent);
             }
         });

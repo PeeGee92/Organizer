@@ -14,11 +14,6 @@ import java.util.List;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.todo.TodoDB;
 
-/**
- * BUG: Loads only first item or just shows 1 item
- * Count is correct
- */
-
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     List<TodoDB> todoDBList;

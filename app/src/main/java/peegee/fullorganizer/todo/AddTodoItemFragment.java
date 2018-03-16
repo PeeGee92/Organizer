@@ -33,6 +33,8 @@ public class AddTodoItemFragment extends DialogFragment {
 
     public TextInputEditText etAddTodo;
 
+    private int listId;
+
     public static AddTodoItemFragment getInstance(String idTask) {
         Bundle bundle = new Bundle();
         bundle.putString("ID_TASK", idTask);
@@ -41,13 +43,18 @@ public class AddTodoItemFragment extends DialogFragment {
         return fragment;
     }
 
+    // TODO Use dismiss instead of loading intent
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
 
         intent = new Intent(getContext(), AddTodoList.class);
         etAddTodo = new TextInputEditText(this.getContext());
 
-        // TODO put extra list id
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            listId = bundle.getInt("LIST_ID", -1);
+            Log.d("FRAGMENT", "listId: " + listId);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(R.layout.add_todo_fragment);
@@ -58,23 +65,17 @@ public class AddTodoItemFragment extends DialogFragment {
                 etAddTodo = getDialog().findViewById(R.id.etAddTodo);
                 String tempDesc = etAddTodo.getText().toString();
                 // TODO Check boolean input for done
-                todoDB = new TodoDB(tempDesc, false);
-
-                //Database Synchronized
-//                synchronized (MainActivity.db) {
-//                    Log.d("AddTodoItem:", "Synchronized");
-//                    MainActivity.db.todoDAO().insertAll(todoDB);
-//                }
+                todoDB = new TodoDB(tempDesc, false, listId);
 
                 //Database
                 MainActivity.db.todoDAO().insertAll(todoDB);
 
-                startActivity(intent);
+                startActivity(new Intent(getContext(), AddTodoList.class));
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                startActivity(intent);
+                startActivity(new Intent(getContext(), AddTodoList.class));
             }
         });
 

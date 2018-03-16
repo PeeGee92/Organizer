@@ -4,10 +4,6 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-/**
- * Created by GhalysOnly on 10/03/2018.
- */
-
 @Entity
 public class TodoListDB {
 

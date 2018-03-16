@@ -2,18 +2,21 @@ package peegee.fullorganizer.room_db.todo;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-/**
- * Created by GhalysOnly on 09/03/2018.
- */
+import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity
+// TODO Add index for foreign key
+@Entity (foreignKeys = @ForeignKey(entity = TodoListDB.class,
+        parentColumns = "todoListId", childColumns = "listId",
+        onDelete = CASCADE, onUpdate = CASCADE))
 public class TodoDB {
 
-    public TodoDB(String todoDescription, boolean todoDone) {
+    public TodoDB(String todoDescription, boolean todoDone, int listId) {
         this.todoDescription = todoDescription;
         this.todoDone = todoDone;
+        this.listId = listId;
     }
 
     @PrimaryKey (autoGenerate = true)

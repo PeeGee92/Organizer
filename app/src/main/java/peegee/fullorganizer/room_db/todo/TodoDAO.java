@@ -8,21 +8,11 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-/**
- * Created by GhalysOnly on 09/03/2018.
- */
-
 @Dao
 public interface TodoDAO {
 
-    @Query("SELECT * FROM TodoDB")
-    List<TodoDB> getAll();
-
     @Query("SELECT * FROM TodoDB WHERE listId = :id")
-    TodoDB loadByListId(int id);
-
-    @Query("SELECT * FROM TodoDB WHERE todo_description LIKE :description")
-    TodoDB findByDescription(String description);
+    List<TodoDB> loadByListId(int id);
 
     @Query("SELECT * FROM TodoDB WHERE todo_done LIKE :done")
     TodoDB findByDone(boolean done);
