@@ -1,6 +1,5 @@
 package peegee.fullorganizer.todo;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,7 +31,8 @@ import peegee.fullorganizer.service.TodoAdapter;
 public class AddTodoList extends AppCompatActivity {
 
     List<TodoDB> todoDBList = new ArrayList<>();
-
+    List<TodoDB> addedItemsList = new ArrayList<>();
+    
     @InjectView(R.id.rvTasks)
     RecyclerView rvTasks;
 
@@ -72,10 +72,7 @@ public class AddTodoList extends AppCompatActivity {
             update = true;
             etListName.setText(list.getTodoListTitle());
         } else {
-            list = new TodoListDB("");
-            // Database
-            listId = (int) MainActivity.db.todoListDAO().insert(list);
-            Log.d("TODO_LIST_CREATED", "listId: " + listId);
+            // New List
         }
 
         // RecyclerView setup
@@ -102,12 +99,10 @@ public class AddTodoList extends AppCompatActivity {
                         etAddTodo = dialogView.findViewById(R.id.etAddTodo);
                         String tempDesc = etAddTodo.getText().toString();
                         // TODO Check boolean input for done
-                        TodoDB todoDB = new TodoDB(tempDesc, false, listId);
+                        TodoDB todoDB = new TodoDB(tempDesc, false);
+                        addedItemsList.add(todoDB);
 
-                        //Database
-                        MainActivity.db.todoDAO().insertAll(todoDB);
-
-                        todoDBList = MainActivity.db.todoDAO().loadByListId(listId);
+                        todoDBList.add(todoDB);
                         adapter = new TodoAdapter(todoDBList);
                         rvTasks.setAdapter(adapter);
 
@@ -135,24 +130,25 @@ public class AddTodoList extends AppCompatActivity {
                 startActivity(new Intent(AddTodoList.this, TodoActivity.class));
                 break;
             case R.id.btnCancelList:
-                canceList();
+                cancelList();
                 startActivity(new Intent(AddTodoList.this, TodoActivity.class));
                 break;
         }
     }
 
-    private void canceList() {
+    private void cancelList() {
         if(!update) {
-            list = MainActivity.db.todoListDAO().getListById(listId);
-            MainActivity.db.todoListDAO().delete(list);
+            // New List
         }
     }
 
     private void saveList() {
-        list = MainActivity.db.todoListDAO().getListById(listId);
         // TODO Implement if list doesn't have a title
-        list.setTodoListTitle(etListName.getText().toString());
+        listId = (int) MainActivity.db.todoListDAO().insert(new TodoListDB(etListName.getText().toString()));
+        for (TodoDB item:addedItemsList) {
+            item.setListId(listId);
+        }
+        MainActivity.db.todoDAO().insertAll(addedItemsList);
         // TODO Set items done and not done
-        MainActivity.db.todoListDAO().update(list);
     }
 }

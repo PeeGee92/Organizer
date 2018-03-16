@@ -12,7 +12,7 @@ import peegee.fullorganizer.room_db.todo.TodoDB;
 import peegee.fullorganizer.room_db.todo.TodoListDAO;
 import peegee.fullorganizer.room_db.todo.TodoListDB;
 
-@Database(entities = {TodoDB.class, NotesDB.class, TodoListDB.class, AlarmDB.class}, version = 1)
+@Database(entities = {TodoDB.class, NotesDB.class, TodoListDB.class, AlarmDB.class}, version = 11)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TodoDAO todoDAO();
     public abstract TodoListDAO todoListDAO();

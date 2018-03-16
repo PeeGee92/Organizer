@@ -3,6 +3,7 @@ package peegee.fullorganizer.room_db.todo;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
@@ -13,10 +14,16 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         onDelete = CASCADE, onUpdate = CASCADE))
 public class TodoDB {
 
+    @Ignore
     public TodoDB(String todoDescription, boolean todoDone, int listId) {
         this.todoDescription = todoDescription;
         this.todoDone = todoDone;
         this.listId = listId;
+    }
+
+    public TodoDB(String todoDescription, boolean todoDone) {
+        this.todoDescription = todoDescription;
+        this.todoDone = todoDone;
     }
 
     @PrimaryKey (autoGenerate = true)

@@ -18,7 +18,7 @@ public interface TodoDAO {
     TodoDB findByDone(boolean done);
 
     @Insert
-    void insertAll(TodoDB... todoDBs);
+    void insertAll(List<TodoDB> todoDBs);
 
     @Delete
     void delete(TodoDB todoDB);
