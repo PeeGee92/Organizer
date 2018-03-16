@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:padding="@dimen/small_btn_padding"
-        android:src="@drawable/delete"
+        android:src="@drawable/small_delete"
         android:layout_alignParentRight="true"/>
 
 </RelativeLayout>

@@ -14,7 +14,7 @@
     <EditText
         android:id="@+id/etNote"
         android:layout_width="match_parent"
-        android:layout_height="463dp"
+        android:layout_height="match_parent"
         android:gravity="top|left"
         android:inputType="textMultiLine"
         android:scrollbars="vertical" />
