@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
+    android:gravity="center"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="@dimen/layout_padding">
 
     <CheckBox
         android:id="@+id/cbTodoDone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
-        android:id="@+id/TodoDescription"
+        android:id="@+id/tvTodoDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
-</LinearLayout>
+        android:padding="@dimen/tv_padding"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:layout_toRightOf="@id/cbTodoDone"/>
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="@dimen/small_btn_padding"
+        android:src="@drawable/delete"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

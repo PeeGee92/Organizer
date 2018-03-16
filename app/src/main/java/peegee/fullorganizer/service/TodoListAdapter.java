@@ -39,8 +39,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             // Load this item data in the next activity
             int tempId = item.getTodoListId();
 
-            Log.d("TODO_LIST_GET_ID", "onClick: " + tempId);
-
             Intent intent = new Intent(view.getContext(), AddTodoList.class);
             intent.putExtra("LIST_ID", tempId);
             view.getContext().startActivity(intent);
@@ -69,8 +67,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         TodoListDB temp = todoListDBList.get(position);
-
-        Log.d("ON_BIND_LIST", "title: " + temp.getTodoListTitle());
 
         holder.tvTitle.setText(temp.getTodoListTitle());
         // TODO Get done and not done
