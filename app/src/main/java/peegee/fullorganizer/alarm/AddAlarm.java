@@ -107,7 +107,8 @@ public class AddAlarm extends AppCompatActivity {
         calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
         calendar.set(Calendar.MINUTE, timePicker.getMinute());
 
-        Intent intent = new Intent(this, AlarmReceiver.class).putExtra("alarm on", true);
+        Intent intent = new Intent(AddAlarm.this, AlarmReceiver.class)
+                .putExtra("ALARM_ON", true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);

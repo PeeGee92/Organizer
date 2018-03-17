@@ -46,41 +46,6 @@ public class RingtonePlayingService extends Service {
 
             this.isRunning = true;
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            Intent notificationIntent = new Intent (this.getApplicationContext(), AlarmActivity.class);
-            PendingIntent pendingNotificationIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, 0);
-
-            Intent snoozeIntent = new Intent(this.getApplicationContext(), AlarmReceiver.class);
-            //snoozeIntent.setAction();
-            //snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
-            PendingIntent pendingSnoozeIntent = PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
-
-            /*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setSmallIcon(R.drawable.alarm)
-                    .setContentTitle("Alarm")
-                    .setContentText("Click here to ...")
-                    .setAutoCancel(true);
-
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(AlarmActivity.class);
-            stackBuilder.addNextIntent(notificationIntent);
-            PendingIntent pendingStackIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pendingStackIntent);
-
-            notificationManager.notify(0, builder.build());*/
-
-            /*Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle("Alarm")
-                    .setContentText("Click here to ...")
-                    .setSmallIcon(R.drawable.alarm)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingNotificationIntent)
-                    //.addAction(0, "Snooze", pendingSnoozeIntent)
-                    .build();
-
-            notificationManager.notify(0, notification);*/
-
         }
         else if (!alarmOn && isRunning) {
 
@@ -90,24 +55,11 @@ public class RingtonePlayingService extends Service {
 
         }
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "OnDestroy Called", Toast.LENGTH_SHORT).show();
-    }
-
-    // Notification Channel
-    // CHECK
-    private void createNotificationChanel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "NotificationChannel";
-            int importance = NotificationManagerCompat.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("0", name, importance);
-            // Register the channel with the system
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            //notificationManager.createNotificationChannel(channel);
-        }
+        // TODO
     }
 }
