@@ -8,10 +8,6 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-/**
- * Created by GhalysOnly on 09/03/2018.
- */
-
 @Dao
 public interface NotesDAO {
 

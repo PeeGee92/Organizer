@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/layout_padding"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:padding="@dimen/tv_padding"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:hint="Test"/>
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginStart="@dimen/tv_left_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tvTitle"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:hint="Test"/>
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginStart="@dimen/tv_left_margin"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tvDate"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:hint="Test"/>
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/delete"
+        android:layout_alignParentRight="true"
+        android:padding="@dimen/small_btn_padding"
+        android:background="@android:color/white"/>
+
+</RelativeLayout>

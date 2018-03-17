@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
+    android:padding="@dimen/layout_padding"
     android:gravity="center_vertical" >
 
     <TextView
@@ -13,7 +12,7 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:ellipsize="end"
-        android:padding="8dp"
+        android:padding="@dimen/tv_padding"
         android:layout_alignParentLeft="true"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
@@ -23,7 +22,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/delete"
         android:layout_alignParentRight="true"
-        android:padding="6dp"
+        android:padding="@dimen/small_btn_padding"
         android:background="@android:color/white"/>
 
 </RelativeLayout>

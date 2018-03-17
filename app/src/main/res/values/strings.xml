@@ -2,4 +2,5 @@
     <string name="app_name">Full Organizer</string>
     <string name="title_activity_alarm">Alarm</string>
     <string name="title_activity_notes">NotesActivity</string>
+    <string name="title_activity_reminder">ReminderActivity</string>
 </resources>

@@ -3,4 +3,5 @@
     <dimen name="small_btn_padding">6dp</dimen>
     <dimen name="layout_padding">8dp</dimen>
     <dimen name="tv_padding">6dp</dimen>
+    <dimen name="tv_left_margin">6dp</dimen>
 </resources>
