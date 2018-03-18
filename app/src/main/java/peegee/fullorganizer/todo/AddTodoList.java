@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -124,7 +125,6 @@ public class AddTodoList extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.btnSaveList:
                 saveList();
-                startActivity(new Intent(AddTodoList.this, TodoActivity.class));
                 break;
             case R.id.btnCancelList:
                 startActivity(new Intent(AddTodoList.this, TodoActivity.class));
@@ -133,7 +133,11 @@ public class AddTodoList extends AppCompatActivity {
     }
 
     private void saveList() {
-        // TODO Implement if list doesn't have a title
+        if (etListName.getText().toString().trim().isEmpty()) {
+            etListName.setHint("Please choose a title for you todo list");
+            etListName.setHintTextColor(Color.RED);
+            return;
+        }
         if (!update) {
             listId = (int) MainActivity.db.todoListDAO().insert(new TodoListDB(etListName.getText().toString()));
         }
@@ -147,5 +151,7 @@ public class AddTodoList extends AppCompatActivity {
             item.setListId(listId);
         }
         MainActivity.db.todoDAO().insertAll(addedItemsList);
+
+        startActivity(new Intent(AddTodoList.this, TodoActivity.class));
     }
 }

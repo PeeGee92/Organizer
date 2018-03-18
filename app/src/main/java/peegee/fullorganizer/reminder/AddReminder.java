@@ -30,7 +30,6 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.reminder.RemindersDB;
 
-// TODO Convert alarm Date to values and vice versa (implement a method)
 public class AddReminder extends AppCompatActivity {
 
     RemindersDB reminderDB;
@@ -96,7 +95,6 @@ public class AddReminder extends AppCompatActivity {
             tvDate.setText(dateFormat.format(reminderDate));
             tvTime.setText(timeFormat.format(reminderDate));
             cbAlarm.setChecked(reminderDB.isReminderAlarm());
-            // TODO Set alarm time and values
             if (cbAlarm.isChecked()) {
                 String type = reminderDB.getReminderAlarmType();
                 int position = spinnerAdapter.getPosition(type);
