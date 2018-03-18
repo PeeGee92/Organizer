@@ -191,6 +191,7 @@ public class AddReminder extends AppCompatActivity {
                 tvDate.setText(dateFormat.format(date));
             }
         });
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
