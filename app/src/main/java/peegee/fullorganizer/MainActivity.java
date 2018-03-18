@@ -20,6 +20,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.alarm.AlarmActivity;
 import peegee.fullorganizer.notes.NotesActivity;
+import peegee.fullorganizer.reminder.ReminderActivity;
 import peegee.fullorganizer.room_db.AppDatabase;
 import peegee.fullorganizer.todo.TodoActivity;
 
@@ -67,18 +68,16 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         switch (view.getId()) {
             case R.id.btnAlarm:
-                intent = new Intent(this, AlarmActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, AlarmActivity.class));
                 break;
             case R.id.btnNotes:
-                intent = new Intent(this, NotesActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, NotesActivity.class));
                 break;
             case R.id.btnToDo:
-                intent = new Intent(this, TodoActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, TodoActivity.class));
                 break;
             case R.id.btnReminders:
+                startActivity(new Intent(this, ReminderActivity.class));
                 break;
             case R.id.btnClasses:
                 break;

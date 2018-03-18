@@ -1,5 +1,6 @@
 package peegee.fullorganizer.reminder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,7 @@ public class ReminderActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(ReminderActivity.this, AddReminder.class));
             }
         });
     }

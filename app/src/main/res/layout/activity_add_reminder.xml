@@ -1,8 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="peegee.fullorganizer.reminder.AddReminder">
+    tools:context="peegee.fullorganizer.reminder.AddReminder"
+    android:padding="@dimen/layout_padding">
 
-</android.support.constraint.ConstraintLayout>
+    <EditText
+        android:id="@+id/etTitle"
+        android:hint="Enter reminder title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/tv_padding"/>
+
+    <EditText
+        android:id="@+id/etLocation"
+        android:hint="Enter location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etTitle"
+        android:padding="@dimen/tv_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <Button
+        android:id="@+id/btnSetDate"
+        android:text="Set Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etLocation"
+        android:padding="@dimen/small_btn_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnSetDate"
+        android:layout_alignBottom="@+id/btnSetDate"
+        android:layout_alignEnd="@+id/tvTime"
+        android:hint="Test Date"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:padding="@dimen/tv_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <Button
+        android:id="@+id/btnSetTime"
+        android:text="Set Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSetDate"
+        android:padding="@dimen/small_btn_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnSetTime"
+        android:layout_alignBottom="@+id/btnSetTime"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/btnSetDate"
+        android:hint="Test Time"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:padding="@dimen/tv_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <CheckBox
+        android:id="@+id/cbAlarm"
+        android:text="Set alarm for the reminder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSetTime"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <TextView
+        android:id="@+id/tvAlarm"
+        android:text="Set alarm for reminder"
+        android:layout_toEndOf="@id/cbAlarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:padding="@dimen/tv_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <TextView
+        android:id="@+id/tvSpinner"
+        android:text="Alarm time: "
+        android:layout_below="@id/cbAlarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:padding="@dimen/tv_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
+    <EditText
+        android:id="@+id/etAlarmTime"
+        android:layout_width="@dimen/et_number_input_size"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvSpinner"
+        android:layout_toEndOf="@+id/tvSpinner"
+        android:foregroundTint="@android:color/black"
+        android:inputType="number"
+        android:text="0"
+        android:padding="@dimen/tv_padding"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+
+    <Spinner
+        android:id="@+id/spAlarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/etAlarmTime"
+        android:layout_toEndOf="@+id/etAlarmTime"
+        android:padding="@dimen/small_btn_padding">
+
+    </Spinner>
+
+</RelativeLayout>

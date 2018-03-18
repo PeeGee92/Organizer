@@ -3,7 +3,6 @@ package peegee.fullorganizer.room_db.alarm;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.widget.TimePicker;
 
 @Entity
 public class AlarmDB {
@@ -11,6 +10,21 @@ public class AlarmDB {
     public AlarmDB(int alarmHour, int alarmMin, int alarmSnooze, boolean alarmRepeated, boolean alarmOn) {
         this.alarmRepeated = alarmRepeated;
         this.alarmSnooze = alarmSnooze;
+        this.alarmHour = alarmHour;
+        this.alarmMin = alarmMin;
+        this.alarmOn = alarmOn;
+    }
+
+    public AlarmDB(int alarmDay, int alarmMonth, int alarmYear,
+                   int alarmHour, int alarmMin,
+                   int alarmSnooze,
+                   boolean alarmRepeated,
+                   boolean alarmOn) {
+        this.alarmRepeated = alarmRepeated;
+        this.alarmSnooze = alarmSnooze;
+        this.alarmDay = alarmDay;
+        this.alarmMonth = alarmMonth;
+        this.alarmYear = alarmYear;
         this.alarmHour = alarmHour;
         this.alarmMin = alarmMin;
         this.alarmOn = alarmOn;
@@ -24,6 +38,15 @@ public class AlarmDB {
 
     @ColumnInfo(name = "alarm_snooze")
     private int alarmSnooze;
+
+    @ColumnInfo(name = "alarm_day")
+    private int alarmDay;
+
+    @ColumnInfo(name = "alarm_month")
+    private int alarmMonth;
+
+    @ColumnInfo(name = "alarm_year")
+    private int alarmYear;
 
     @ColumnInfo(name = "alarm_hour")
     private int alarmHour;
@@ -80,5 +103,29 @@ public class AlarmDB {
 
     public void setAlarmOn(boolean alarmOn) {
         this.alarmOn = alarmOn;
+    }
+
+    public int getAlarmDay() {
+        return alarmDay;
+    }
+
+    public void setAlarmDay(int alarmDay) {
+        this.alarmDay = alarmDay;
+    }
+
+    public int getAlarmMonth() {
+        return alarmMonth;
+    }
+
+    public void setAlarmMonth(int alarmMonth) {
+        this.alarmMonth = alarmMonth;
+    }
+
+    public int getAlarmYear() {
+        return alarmYear;
+    }
+
+    public void setAlarmYear(int alarmYear) {
+        this.alarmYear = alarmYear;
     }
 }

@@ -64,9 +64,8 @@
 
         <EditText
             android:id="@+id/etSnooze"
-            android:layout_width="39dp"
+            android:layout_width="@dimen/et_number_input_size"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:inputType="number"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:text="0"
