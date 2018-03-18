@@ -16,7 +16,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -25,6 +27,8 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.reminder.RemindersDB;
 
+// TODO Test null values
+// TODO Check for date and time older than current
 public class AddReminder extends AppCompatActivity {
 
     RemindersDB reminderDB;
@@ -49,12 +53,19 @@ public class AddReminder extends AppCompatActivity {
     Spinner spAlarm;
     @InjectView(R.id.etAlarmTime)
     EditText etAlarmTime;
+    @InjectView(R.id.etDescription)
+    EditText etDescription;
+
+    SimpleDateFormat timeFormat, dateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
         ButterKnife.inject(this);
+
+        timeFormat = new SimpleDateFormat("dd-mm-yy");
+        dateFormat = new SimpleDateFormat("hh:mm a");
 
         // Get Intent extra to know which reminder to load
         // or to start a new reminder
@@ -64,11 +75,21 @@ public class AddReminder extends AppCompatActivity {
         if (id != -1) {
             // Database
             RemindersDB remindersDB = MainActivity.db.remindersDAO().getById(id);
-            // TODO update data in layout
-//            etTitle.setText(notesDB.getNoteTitle());
-//            etNote.setText(notesDB.getNoteText());
+            // TODO Check for null values
+            etTitle.setText(remindersDB.getReminderTitle());
+            etLocation.setText(remindersDB.getReminderLocation());
+            etDescription.setText(remindersDB.getReminderDescription());
+            String date;
+            date = remindersDB
+            tvDate.setText();
+            String time;
+            cbAlarm.setChecked(remindersDB.isReminderAlarm());
+
             update = true; // It's an opened reminder so save should just update
         }
+
+        tvDate.setText(dateFormat.format(Calendar.getInstance().getTime()));
+        tvTime.setText(timeFormat.format(Calendar.getInstance().getTime()));
 
         // Spinner setup
         final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(AddReminder.this,
@@ -119,7 +140,7 @@ public class AddReminder extends AppCompatActivity {
                 }
             }
         };
-        TimePickerDialog timePickerDialog = new TimePickerDialog(getApplicationContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, hour, minute, false);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(AddReminder.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, hour, minute, false);
         timePickerDialog.setTitle("Pick Time");
         timePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         timePickerDialog.show();
@@ -141,7 +162,7 @@ public class AddReminder extends AppCompatActivity {
                 }
             }
         };
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getApplicationContext(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myDateListener, year, month, day);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(AddReminder.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myDateListener, year, month, day);
         datePickerDialog.setTitle("Pick Date");
         datePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         datePickerDialog.show();

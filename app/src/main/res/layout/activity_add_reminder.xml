@@ -23,12 +23,21 @@
         android:padding="@dimen/tv_padding"
         android:layout_marginTop="@dimen/reminder_margin_top"/>
 
+    <EditText
+        android:id="@+id/etDescription"
+        android:hint="Enter reminder description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etLocation"
+        android:padding="@dimen/tv_padding"
+        android:layout_marginTop="@dimen/reminder_margin_top"/>
+
     <Button
         android:id="@+id/btnSetDate"
         android:text="Set Date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/etLocation"
+        android:layout_below="@id/etDescription"
         android:padding="@dimen/small_btn_padding"
         android:layout_marginTop="@dimen/reminder_margin_top"/>
 

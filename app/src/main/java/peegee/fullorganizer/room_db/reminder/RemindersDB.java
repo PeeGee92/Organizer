@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class RemindersDB {
 
-    public RemindersDB(String reminderTitle, String reminderLocation,
+    public RemindersDB(String reminderTitle, String reminderLocation, String reminderDescription,
                        int reminderDay, int reminderMonth, int reminderYear,
                        int reminderHour, int reminderMin,
                        boolean reminderAlarm,
@@ -15,6 +15,7 @@ public class RemindersDB {
                        int reminderAlarmDay, int reminderAlarmMonth, int reminderAlarmYear) {
         this.reminderTitle = reminderTitle;
         this.reminderLocation = reminderLocation;
+        this.reminderDescription = reminderDescription;
         this.reminderHour = reminderHour;
         this.reminderMin = reminderMin;
         this.reminderDay = reminderDay;
@@ -36,6 +37,9 @@ public class RemindersDB {
 
     @ColumnInfo(name = "reminder_location")
     private String reminderLocation;
+
+    @ColumnInfo(name = "reminder_description")
+    private String reminderDescription;
 
     @ColumnInfo(name = "reminder_hour")
     private int reminderHour;
@@ -92,6 +96,14 @@ public class RemindersDB {
 
     public void setReminderLocation(String reminderLocation) {
         this.reminderLocation = reminderLocation;
+    }
+
+    public String getReminderDescription() {
+        return reminderDescription;
+    }
+
+    public void setReminderDescription(String reminderDescription) {
+        this.reminderDescription = reminderDescription;
     }
 
     public int getReminderHour() {
