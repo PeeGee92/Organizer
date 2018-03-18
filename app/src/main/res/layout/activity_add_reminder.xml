@@ -8,7 +8,7 @@
 
     <EditText
         android:id="@+id/etTitle"
-        android:hint="Enter reminder title"
+        android:hint="@string/hint_reminder_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,7 +16,7 @@
 
     <EditText
         android:id="@+id/etLocation"
-        android:hint="Enter location"
+        android:hint="@string/hint_reminder_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/etTitle"
@@ -25,7 +25,7 @@
 
     <EditText
         android:id="@+id/etDescription"
-        android:hint="Enter reminder description"
+        android:hint="@string/hint_reminder_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/etLocation"
@@ -34,7 +34,7 @@
 
     <Button
         android:id="@+id/btnSetDate"
-        android:text="Set Date"
+        android:text="@string/btn_reminder_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/etDescription"
@@ -48,14 +48,13 @@
         android:layout_alignBaseline="@+id/btnSetDate"
         android:layout_alignBottom="@+id/btnSetDate"
         android:layout_alignEnd="@+id/tvTime"
-        android:hint="Test Date"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:padding="@dimen/tv_padding"
         android:layout_marginTop="@dimen/reminder_margin_top"/>
 
     <Button
         android:id="@+id/btnSetTime"
-        android:text="Set Time"
+        android:text="@string/btn_reminder_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnSetDate"
@@ -70,32 +69,21 @@
         android:layout_alignBottom="@+id/btnSetTime"
         android:layout_marginStart="15dp"
         android:layout_toEndOf="@+id/btnSetDate"
-        android:hint="Test Time"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:padding="@dimen/tv_padding"
         android:layout_marginTop="@dimen/reminder_margin_top"/>
 
     <CheckBox
         android:id="@+id/cbAlarm"
-        android:text="Set alarm for the reminder"
+        android:text="@string/cb_reminder_set_alarm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnSetTime"
         android:layout_marginTop="@dimen/reminder_margin_top"/>
 
     <TextView
-        android:id="@+id/tvAlarm"
-        android:text="Set alarm for reminder"
-        android:layout_toEndOf="@id/cbAlarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:padding="@dimen/tv_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
-
-    <TextView
         android:id="@+id/tvSpinner"
-        android:text="Alarm time: "
+        android:text="@string/tv_reminder_alarm_time"
         android:layout_below="@id/cbAlarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -111,7 +99,7 @@
         android:layout_toEndOf="@+id/tvSpinner"
         android:foregroundTint="@android:color/black"
         android:inputType="number"
-        android:text="0"
+        android:text="@string/et_input_number_default"
         android:padding="@dimen/tv_padding"
         android:textAppearance="@android:style/TextAppearance.Medium" />
 
@@ -136,7 +124,7 @@
             android:id="@+id/btnSaveReminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="@string/btn_save"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:background="@android:color/black"
             android:textColor="@android:color/white"
@@ -147,7 +135,7 @@
             android:id="@+id/btnCancelReminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/btn_cancel"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:background="@android:color/black"
             android:textColor="@android:color/white"

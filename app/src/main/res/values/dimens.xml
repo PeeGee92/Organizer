@@ -6,4 +6,5 @@
     <dimen name="tv_left_margin">6dp</dimen>
     <dimen name="reminder_margin_top">20dp</dimen>
     <dimen name="et_number_input_size">40dp</dimen>
+    <dimen name="add_alarm_padding">20dp</dimen>
 </resources>

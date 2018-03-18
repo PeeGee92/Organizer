@@ -52,7 +52,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
-        viewHolder.tvTodoDescription.setText(todoDBList.get(i).getTodoDescription());
+        viewHolder.cbTodoDone.setText(todoDBList.get(i).getTodoDescription());
         onBind = true;
         viewHolder.cbTodoDone.setChecked(todoDBList.get(i).isTodoDone());
         onBind = false;
@@ -111,13 +111,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         CheckBox cbTodoDone;
-        TextView tvTodoDescription;
         ImageButton btnDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
             cbTodoDone = itemView.findViewById(R.id.cbTodoDone);
-            tvTodoDescription = itemView.findViewById(R.id.tvTodoDescription);
             btnDelete = itemView.findViewById(R.id.btnDelete);
 
             cbTodoDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

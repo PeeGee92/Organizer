@@ -11,7 +11,7 @@
         android:id="@+id/etListName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter the list title" />
+        android:hint="@string/hint_list_name" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvTasks"
@@ -37,7 +37,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@android:color/black"
-            android:text="Save"
+            android:text="@string/btn_save"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:textColor="@android:color/white" />
 
@@ -48,7 +48,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@android:color/black"
-            android:text="Cancel"
+            android:text="@string/btn_cancel"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:textColor="@android:color/white" />
 

@@ -16,7 +16,6 @@
             android:id="@+id/btnAlarm"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Button"
             android:src="@drawable/alarm"
             android:layout_weight="1"
             android:background="@android:color/white"/>
@@ -27,7 +26,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/notebook"
-            android:text="Button"
             android:background="@android:color/white"/>
 
     </LinearLayout>
@@ -42,7 +40,6 @@
             android:id="@+id/btnToDo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Button"
             android:src="@drawable/format_list_checks"
             android:layout_weight="1"
             android:background="@android:color/white"/>
@@ -50,7 +47,6 @@
             android:id="@+id/btnReminders"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Button"
             android:src="@drawable/bell_ring"
             android:layout_weight="1"
             android:background="@android:color/white"/>
@@ -69,14 +65,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/timetable"
-            android:text="Button"
             android:background="@android:color/white"/>
 
         <ImageButton
             android:id="@+id/btnCalender"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Button"
             android:src="@drawable/calendar_range"
             android:layout_weight="1"
             android:background="@android:color/white"/>

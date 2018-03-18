@@ -11,15 +11,13 @@
     <Switch
         android:id="@+id/swOnOff"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"/>
-
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="8dp"
+        android:padding="@dimen/tv_padding"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
     <ImageButton
@@ -27,8 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/delete"
-        android:layout_alignParentRight="true"
-        android:padding="6dp"
+        android:padding="@dimen/small_btn_padding"
         android:background="@android:color/white"/>
 
 </LinearLayout>
