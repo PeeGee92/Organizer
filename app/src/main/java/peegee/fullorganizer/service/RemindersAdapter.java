@@ -63,7 +63,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         RemindersDB remindersDB = remindersDBList.get(position);
 
         holder.tvTitle.setText(remindersDB.getReminderTitle());
-        holder.tvDate.setText(new SimpleDateFormat("dd-MM-yy").format(remindersDB.getReminderDate()));
+        holder.tvDate.setText(new SimpleDateFormat("dd-MMM-yyyy").format(remindersDB.getReminderDate()));
         holder.tvTime.setText(new SimpleDateFormat("hh:mm a").format(remindersDB.getReminderDate()));
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {

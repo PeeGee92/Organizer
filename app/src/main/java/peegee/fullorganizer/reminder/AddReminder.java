@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -71,8 +72,8 @@ public class AddReminder extends AppCompatActivity {
         setContentView(R.layout.activity_add_reminder);
         ButterKnife.inject(this);
 
-        timeFormat = new SimpleDateFormat("dd-MM-yy");
-        dateFormat = new SimpleDateFormat("hh:mm a");
+        dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        timeFormat = new SimpleDateFormat("hh:mm a");
 
         // Get Intent extra to know which reminder to load
         // or to start a new reminder
@@ -134,84 +135,56 @@ public class AddReminder extends AppCompatActivity {
 
     }
 
-    // TODO positive and negative listener
     private void showTimePicker() {
         final Calendar myCalender = Calendar.getInstance();
-        int hour = myCalender.get(Calendar.HOUR_OF_DAY);
-        int minute = myCalender.get(Calendar.MINUTE);
-        final TimePicker[] timePicker = new TimePicker[1];
+        int hour = time.getHours();
+        int minute = time.getMinutes();
 
 
         final TimePickerDialog.OnTimeSetListener myTimeListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                if (view.isShown()) {
-                    timePicker[0] = view;
-                    myCalender.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    myCalender.set(Calendar.MINUTE, minute);
-
-                }
+                myCalender.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                myCalender.set(Calendar.MINUTE, minute);
+                time = myCalender.getTime();
             }
         };
         final TimePickerDialog timePickerDialog = new TimePickerDialog(AddReminder.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, hour, minute, false);
         timePickerDialog.setTitle("Pick Time");
-        timePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        timePickerDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int hour = timePicker[0].getHour();
-                int min = timePicker[0].getMinute();
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR, hour);
-                calendar.set(Calendar.MINUTE, min);
-
-                time = calendar.getTime();
-            }
-        });
         timePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 tvTime.setText(timeFormat.format(time));
             }
         });
+        timePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         timePickerDialog.show();
     }
 
-    // TODO positive and negative listener
     private void showDatePicker() {
         final Calendar myCalender = Calendar.getInstance();
-        int day = myCalender.get(Calendar.DAY_OF_MONTH);
-        int month = myCalender.get(Calendar.MONTH);
+        Log.d("DATE", "date: " + date);
+        Log.d("DATE", "dateFormat: " + dateFormat.format(date));
+        myCalender.setTime(date);
         int year = myCalender.get(Calendar.YEAR);
+        int month = myCalender.get(Calendar.MONTH);
+        int day = myCalender.get(Calendar.DAY_OF_MONTH);
+        Log.d("DATE", "year: " + year + " month: " + month + " day: " + day);
 
 
         DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                if (datePicker.isShown()) {
-                    myCalender.set(Calendar.DAY_OF_MONTH, day);
-                    myCalender.set(Calendar.MONTH, month);
-                }
+                myCalender.set(Calendar.DAY_OF_MONTH, day);
+                myCalender.set(Calendar.MONTH, month);
+                myCalender.set(Calendar.YEAR, year);
+
+                date = myCalender.getTime();
             }
         };
         final DatePickerDialog datePickerDialog = new DatePickerDialog(AddReminder.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myDateListener, year, month, day);
         datePickerDialog.setTitle("Pick Date");
         datePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        datePickerDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                int day = datePickerDialog.getDatePicker().getDayOfMonth();
-                int month = datePickerDialog.getDatePicker().getMonth();
-                int year =  datePickerDialog.getDatePicker().getYear();
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, day);
-
-                date = calendar.getTime();
-            }
-        });
         datePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
