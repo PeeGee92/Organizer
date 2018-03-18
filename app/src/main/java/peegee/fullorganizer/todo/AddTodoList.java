@@ -88,7 +88,7 @@ public class AddTodoList extends AppCompatActivity {
 
                 final Context context = builder.getContext();
                 final LayoutInflater inflater = LayoutInflater.from(context);
-                final View dialogView = inflater.inflate(R.layout.add_todo_fragment, null, false);
+                final View dialogView = inflater.inflate(R.layout.add_todo_dialog, null, false);
 
                 builder.setView(dialogView);
                 builder.setTitle("Add new task");

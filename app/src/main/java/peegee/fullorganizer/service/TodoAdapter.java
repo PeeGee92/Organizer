@@ -13,6 +13,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import peegee.fullorganizer.MainActivity;
@@ -26,6 +28,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
+    boolean onBind;
 
 
     @Override
@@ -37,6 +40,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     public TodoAdapter(List<TodoDB> todoDBList){
         this.todoDBList = todoDBList;
+        sort();
     }
 
     @Override
@@ -49,17 +53,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         viewHolder.tvTodoDescription.setText(todoDBList.get(i).getTodoDescription());
+        onBind = true;
         viewHolder.cbTodoDone.setChecked(todoDBList.get(i).isTodoDone());
-        viewHolder.cbTodoDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                boolean checked = viewHolder.cbTodoDone.isChecked();
-                Log.d("CHECKED_CHANGED", "checked: " + checked);
-                TodoDB item = todoDBList.get(i);
-                item.setTodoDone(checked);
-                MainActivity.db.todoDAO().update(item);
-            }
-        });
+        onBind = false;
 
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +88,26 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         return todoDBList.size();
     }
 
+    // Sort list by checked items
+    private void sortAndNotify() {
+        Collections.sort(todoDBList, listComparator);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void sort() {
+        Collections.sort(todoDBList, listComparator);
+    }
+
+    private Comparator<TodoDB> listComparator = new Comparator<TodoDB>() {
+        @Override
+        public int compare(TodoDB t1, TodoDB t2) {
+            if(t1.isTodoDone() == t2.isTodoDone()){
+                return 0;
+            }
+            return t1.isTodoDone() ? -1 : 1;
+        }
+    };
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         CheckBox cbTodoDone;
@@ -103,6 +119,20 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             cbTodoDone = itemView.findViewById(R.id.cbTodoDone);
             tvTodoDescription = itemView.findViewById(R.id.tvTodoDescription);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+
+            cbTodoDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (!onBind) {
+                        boolean checked = cbTodoDone.isChecked();
+                        TodoDB item = todoDBList.get(getAdapterPosition());
+                        item.setTodoDone(checked);
+                        MainActivity.db.todoDAO().update(item);
+
+                        sortAndNotify();
+                    }
+                }
+            });
         }
     }
 }
