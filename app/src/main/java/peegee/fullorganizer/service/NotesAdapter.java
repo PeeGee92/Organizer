@@ -74,6 +74,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 NotesDB item = notesDBList.get(position);
 
+                                // Database
                                 MainActivity.db.notesDAO().delete(item);
 
                                 // Update RecyclerView
