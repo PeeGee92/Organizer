@@ -10,15 +10,17 @@ import java.util.Date;
 public class RemindersDB {
 
     public RemindersDB(String reminderTitle, String reminderLocation, String reminderDescription,
-                       Date reminderDate, Date reminderTime,
-                       boolean reminderAlarm, Date reminderAlarmDate) {
+                       Date reminderDate,
+                       boolean reminderAlarm, Date reminderAlarmDate,
+                       int reminderAlarmValue, String reminderAlarmType) {
         this.reminderTitle = reminderTitle;
         this.reminderLocation = reminderLocation;
         this.reminderDescription = reminderDescription;
         this.reminderDate = reminderDate;
-        this.reminderTime = reminderTime;
         this.reminderAlarm = reminderAlarm;
         this.reminderAlarmDate = reminderAlarmDate;
+        this.reminderAlarmValue = reminderAlarmValue;
+        this.reminderAlarmType = reminderAlarmType;
     }
 
     @PrimaryKey (autoGenerate = true)
@@ -36,14 +38,17 @@ public class RemindersDB {
     @ColumnInfo(name = "reminder_date")
     private Date reminderDate;
 
-    @ColumnInfo(name = "reminder_time")
-    private Date reminderTime;
-
     @ColumnInfo(name = "reminder_alarm")
     private boolean reminderAlarm;
 
     @ColumnInfo(name = "reminder_alarm_date")
     private Date reminderAlarmDate;
+
+    @ColumnInfo(name = "reminder_alarm_value")
+    private int reminderAlarmValue;
+
+    @ColumnInfo(name = "reminder_alarm_type")
+    private String reminderAlarmType;
 
     public int getReminderId() {
         return reminderId;
@@ -85,14 +90,6 @@ public class RemindersDB {
         this.reminderDate = reminderDate;
     }
 
-    public Date getReminderTime() {
-        return reminderTime;
-    }
-
-    public void setReminderTime(Date reminderTime) {
-        this.reminderTime = reminderTime;
-    }
-
     public boolean isReminderAlarm() {
         return reminderAlarm;
     }
@@ -107,5 +104,21 @@ public class RemindersDB {
 
     public void setReminderAlarmDate(Date reminderAlarmDate) {
         this.reminderAlarmDate = reminderAlarmDate;
+    }
+
+    public int getReminderAlarmValue() {
+        return reminderAlarmValue;
+    }
+
+    public void setReminderAlarmValue(int reminderAlarmValue) {
+        this.reminderAlarmValue = reminderAlarmValue;
+    }
+
+    public String getReminderAlarmType() {
+        return reminderAlarmType;
+    }
+
+    public void setReminderAlarmType(String reminderAlarmType) {
+        this.reminderAlarmType = reminderAlarmType;
     }
 }
