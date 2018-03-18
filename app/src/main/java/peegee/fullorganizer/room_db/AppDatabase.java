@@ -2,6 +2,7 @@ package peegee.fullorganizer.room_db;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 
 import peegee.fullorganizer.room_db.alarm.AlarmDAO;
 import peegee.fullorganizer.room_db.alarm.AlarmDB;
@@ -14,7 +15,8 @@ import peegee.fullorganizer.room_db.todo.TodoDB;
 import peegee.fullorganizer.room_db.todo.TodoListDAO;
 import peegee.fullorganizer.room_db.todo.TodoListDB;
 
-@Database(entities = {TodoDB.class, NotesDB.class, TodoListDB.class, AlarmDB.class, RemindersDB.class}, version = 2)
+@Database(entities = {TodoDB.class, NotesDB.class, TodoListDB.class, AlarmDB.class, RemindersDB.class}, version = 30)
+@TypeConverters({Convertors.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TodoDAO todoDAO();
     public abstract TodoListDAO todoListDAO();

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import peegee.fullorganizer.MainActivity;
@@ -59,7 +60,11 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
     @Override
     public void onBindViewHolder(RemindersAdapter.ViewHolder holder, final int position) {
 
-        // TODO Save data to text views
+        RemindersDB remindersDB = remindersDBList.get(position);
+
+        holder.tvTitle.setText(remindersDB.getReminderTitle());
+        holder.tvDate.setText(new SimpleDateFormat("dd-MM-yy").format(remindersDB.getReminderDate()));
+        holder.tvTime.setText(new SimpleDateFormat("hh:mm a").format(remindersDB.getReminderDate()));
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
