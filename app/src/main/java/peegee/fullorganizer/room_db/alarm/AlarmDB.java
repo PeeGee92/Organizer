@@ -4,27 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+// TODO Check if date also needs to be saved in DB, if not remove date fields
 @Entity
 public class AlarmDB {
 
     public AlarmDB(int alarmHour, int alarmMin, int alarmSnooze, boolean alarmRepeated, boolean alarmOn) {
         this.alarmRepeated = alarmRepeated;
         this.alarmSnooze = alarmSnooze;
-        this.alarmHour = alarmHour;
-        this.alarmMin = alarmMin;
-        this.alarmOn = alarmOn;
-    }
-
-    public AlarmDB(int alarmDay, int alarmMonth, int alarmYear,
-                   int alarmHour, int alarmMin,
-                   int alarmSnooze,
-                   boolean alarmRepeated,
-                   boolean alarmOn) {
-        this.alarmRepeated = alarmRepeated;
-        this.alarmSnooze = alarmSnooze;
-        this.alarmDay = alarmDay;
-        this.alarmMonth = alarmMonth;
-        this.alarmYear = alarmYear;
         this.alarmHour = alarmHour;
         this.alarmMin = alarmMin;
         this.alarmOn = alarmOn;
