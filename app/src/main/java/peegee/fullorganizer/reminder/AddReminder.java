@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,8 +30,6 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.reminder.RemindersDB;
 
-// TODO Test null values
-// TODO Check for date and time older than current
 // TODO Convert alarm Date to values and vice versa (implement a method)
 public class AddReminder extends AppCompatActivity {
 
@@ -213,9 +212,15 @@ public class AddReminder extends AppCompatActivity {
         }
     }
 
-    // TODO Check for null values
-    // TODO Check for old time and date
     private void saveReminder() {
+
+        // Check for null values
+        if (etTitle.getText().toString().trim().isEmpty()) {
+            etTitle.setHint("Please choose a title for you reminder");
+            etTitle.setHintTextColor(Color.RED);
+            return;
+        }
+
         if (update) {
             reminderDB.setReminderTitle(etTitle.getText().toString());
             reminderDB.setReminderLocation(etLocation.getText().toString());
