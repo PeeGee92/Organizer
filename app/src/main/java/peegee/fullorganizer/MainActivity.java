@@ -3,7 +3,7 @@
  * Owner: Pierre Ghaly
  * Professor: Constandinos Mavromoustakis
  * Student ID: U153N0003
- * Description: A full organizer which includes: alarm, notes, to do list, reminders, tasks/classes and calendar
+ * Description: A full organizer which includes: alarm, notes, to do list and reminders
  */
 
 package peegee.fullorganizer;
@@ -29,8 +29,6 @@ import peegee.fullorganizer.todo.TodoActivity;
 /**
  * Main Activity
  * Loads the main UI
- *
- * TODO Colors, Strings, Dimens
  */
 public class MainActivity extends AppCompatActivity {
 
