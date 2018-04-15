@@ -1,11 +1,13 @@
 package peegee.fullorganizer.todo;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ public class TodoActivity extends AppCompatActivity {
 
     @InjectView(R.id.rvTodo)
     RecyclerView rvTodo;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     RecyclerView.Adapter adapter;
 
@@ -32,6 +36,16 @@ public class TodoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TodoActivity.this, MainActivity.class));
+            }
+        });
 
         // Database
         todoListDBList = MainActivity.db.todoListDAO().getAll();

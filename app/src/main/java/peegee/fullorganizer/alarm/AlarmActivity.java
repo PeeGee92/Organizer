@@ -53,7 +53,6 @@ public class AlarmActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
-        toolbar.setTitle(R.string.toolbar_title_alarm);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

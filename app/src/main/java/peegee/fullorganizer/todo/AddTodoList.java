@@ -11,6 +11,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,8 @@ public class AddTodoList extends AppCompatActivity {
     
     @InjectView(R.id.rvTasks)
     RecyclerView rvTasks;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     RecyclerView.Adapter adapter;
     @InjectView(R.id.btnSaveList)
@@ -58,6 +61,16 @@ public class AddTodoList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_todo_list);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AddTodoList.this, TodoActivity.class));
+            }
+        });
 
         // Get Intent extra to know which note to load
         // or to start a new note

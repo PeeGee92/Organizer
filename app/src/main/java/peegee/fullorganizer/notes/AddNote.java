@@ -1,8 +1,11 @@
 package peegee.fullorganizer.notes;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +27,8 @@ public class AddNote extends AppCompatActivity {
     Button btnAddNote;
     @InjectView(R.id.btnCancelNote)
     Button btnCancelNote;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     NotesDB notesDB;
 
@@ -35,6 +40,16 @@ public class AddNote extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AddNote.this, NotesActivity.class));
+            }
+        });
 
         // Get Intent extra to know which note to load
         // or to start a new note

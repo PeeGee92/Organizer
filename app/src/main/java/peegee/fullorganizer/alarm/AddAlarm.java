@@ -59,7 +59,6 @@ public class AddAlarm extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
-        toolbar.setTitle(R.string.toolbar_title_add_alarm);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

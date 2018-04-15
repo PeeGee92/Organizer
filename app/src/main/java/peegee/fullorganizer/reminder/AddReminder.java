@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -60,6 +61,8 @@ public class AddReminder extends AppCompatActivity {
     Button btnSaveReminder;
     @InjectView(R.id.btnCancelReminder)
     Button btnCancelReminder;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     SimpleDateFormat timeFormat, dateFormat;
     Date reminderDate, alarmDate;
@@ -69,6 +72,16 @@ public class AddReminder extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AddReminder.this, ReminderActivity.class));
+            }
+        });
 
         dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         timeFormat = new SimpleDateFormat("hh:mm a");
