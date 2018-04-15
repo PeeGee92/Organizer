@@ -20,9 +20,12 @@
         </activity>
         <activity
             android:name=".alarm.AlarmActivity"
-            android:label="@string/title_activity_alarm"
+            android:label="@string/toolbar_title_alarm"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".alarm.AddAlarm" />
+        <activity
+            android:name=".alarm.AddAlarm"
+            android:label="@string/toolbar_title_add_alarm"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <receiver android:name=".alarm.AlarmReceiver" />
 
@@ -30,18 +33,35 @@
             android:name=".alarm.RingtonePlayingService"
             android:enabled="true" />
 
-        <activity android:name=".todo.TodoActivity" />
-        <activity android:name=".todo.AddTodoList" />
+        <activity
+            android:name=".todo.TodoActivity"
+            android:label="@string/toolbar_title_todo"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".todo.AddTodoList"
+            android:label="@string/toolbar_title_add_todo"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
             android:name=".notes.NotesActivity"
-            android:label="@string/title_activity_notes"
+            android:label="@string/toolbar_title_notes"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".notes.AddNote" />
+
+        <activity
+            android:name=".notes.AddNote"
+            android:label="@string/toolbar_title_add_note"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
             android:name=".reminder.ReminderActivity"
-            android:label="@string/title_activity_reminder"
+            android:label="@string/toolbar_title_reminder"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".reminder.AddReminder"></activity>
+
+        <activity
+            android:name=".reminder.AddReminder"
+            android:label="@string/toolbar_title_add_reminder"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

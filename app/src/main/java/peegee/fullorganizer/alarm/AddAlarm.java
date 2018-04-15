@@ -4,10 +4,12 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +42,8 @@ public class AddAlarm extends AppCompatActivity {
     Button btnAddAlarm;
     @InjectView(R.id.btnCancelAlarm)
     Button btnCancel;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     AlarmManager alarmManager;
     Calendar calendar;
@@ -52,6 +56,17 @@ public class AddAlarm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_alarm);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setTitle(R.string.toolbar_title_add_alarm);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
+            }
+        });
 
         // Get Intent extra to know which note to load
         // or to start a new note

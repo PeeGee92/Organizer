@@ -17,6 +17,13 @@
     <string name="rbRepeat">Repeat</string>
     <string name="rbOnce">Once</string>
     <string name="toolbar_title_alarm">Alarm</string>
+    <string name="toolbar_title_add_alarm">Add Alarm</string>
+    <string name="toolbar_title_todo">Todo</string>
+    <string name="toolbar_title_add_todo">Add Todo</string>
+    <string name="toolbar_title_notes">Notes</string>
+    <string name="toolbar_title_add_note">Add Note</string>
+    <string name="toolbar_title_reminder">Reminder</string>
+    <string name="toolbar_title_add_reminder">Add Reminder</string>
 
     // Spinner for reminders
     <string-array name="reminder_spinner">

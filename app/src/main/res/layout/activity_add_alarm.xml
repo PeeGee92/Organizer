@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:title="@string/toolbar_title_add_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+    </android.support.v7.widget.Toolbar>
 
     <TimePicker
         android:id="@+id/timePicker"
@@ -14,7 +24,7 @@
         android:amPmTextColor="@android:color/black"
         android:numbersSelectorColor="@android:color/black"
         android:timePickerMode="spinner"
-        android:layout_alignParentTop="true"/>
+        android:layout_below="@id/toolbar"/>
 
     <LinearLayout
         android:id="@+id/llRepeat"
