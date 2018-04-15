@@ -10,8 +10,10 @@ package peegee.fullorganizer;
 
 import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnToDo;
     @InjectView(R.id.btnReminders)
     ImageButton btnReminders;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     public static AppDatabase db;
 
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
 
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "organizer_database")
                 .allowMainThreadQueries()
