@@ -14,6 +14,9 @@
     <string name="tv_reminder_alarm_time">Alarm time:</string>
     <string name="et_input_number_default">0</string>
     <string name="hint_list_name">Enter the list title</string>
+    <string name="rbRepeat">Repeat</string>
+    <string name="rbOnce">Once</string>
+    <string name="toolbar_title_alarm">Alarm</string>
 
     // Spinner for reminders
     <string-array name="reminder_spinner">

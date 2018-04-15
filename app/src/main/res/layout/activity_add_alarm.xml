@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
 
@@ -12,13 +13,15 @@
         android:amPmBackgroundColor="@android:color/black"
         android:amPmTextColor="@android:color/black"
         android:numbersSelectorColor="@android:color/black"
-        android:timePickerMode="spinner" />
+        android:timePickerMode="spinner"
+        android:layout_alignParentTop="true"/>
 
     <LinearLayout
+        android:id="@+id/llRepeat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/add_alarm_padding"
-        android:gravity="center">
+        android:layout_below="@id/timePicker">
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -30,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Repeat"
+                android:text="@string/rbRepeat"
                 android:checked="true"
                 android:buttonTint="@android:color/black"
                 android:textAppearance="@android:style/TextAppearance.Medium"/>
@@ -40,8 +43,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Once"
-                android:layout_marginLeft="50dp"
+                android:text="@string/rbOnce"
+                android:layout_marginLeft="@dimen/tv_left_margin"
                 android:buttonTint="@android:color/black"
                 android:textAppearance="@android:style/TextAppearance.Medium"/>
 
@@ -50,9 +53,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llSnooze"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_below="@id/llRepeat"
+        android:padding="@dimen/layout_padding">
 
         <TextView
             android:id="@+id/tvSnooze"
@@ -82,28 +87,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_alignParentBottom="true">
 
         <Button
             android:id="@+id/btnAddAlarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Alarm"
+            android:text="@string/btn_save"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:background="@android:color/black"
             android:textColor="@android:color/white"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:layout_weight="1"/>
 
         <Button
-            android:id="@+id/btnCancel"
+            android:id="@+id/btnCancelAlarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/btn_cancel"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:background="@android:color/black"
             android:textColor="@android:color/white"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

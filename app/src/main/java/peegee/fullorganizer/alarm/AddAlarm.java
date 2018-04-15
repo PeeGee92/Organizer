@@ -38,7 +38,7 @@ public class AddAlarm extends AppCompatActivity {
     EditText etSnooze;
     @InjectView(R.id.btnAddAlarm)
     Button btnAddAlarm;
-    @InjectView(R.id.btnCancel)
+    @InjectView(R.id.btnCancelAlarm)
     Button btnCancel;
 
     AlarmManager alarmManager;
@@ -75,14 +75,14 @@ public class AddAlarm extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.btnAddAlarm, R.id.btnCancel})
+    @OnClick({R.id.btnAddAlarm, R.id.btnCancelAlarm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btnAddAlarm:
                 addAlarm();
                 startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
                 break;
-            case R.id.btnCancel:
+            case R.id.btnCancelAlarm:
                 startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
                 break;
         }

@@ -53,28 +53,4 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <ImageButton
-            android:id="@+id/btnClasses"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/timetable"
-            android:background="@android:color/white"/>
-
-        <ImageButton
-            android:id="@+id/btnCalender"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/calendar_range"
-            android:layout_weight="1"
-            android:background="@android:color/white"/>
-
-    </LinearLayout>
-
 </LinearLayout>

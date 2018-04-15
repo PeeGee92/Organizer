@@ -1,11 +1,14 @@
 package peegee.fullorganizer.alarm;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ public class AlarmActivity extends AppCompatActivity {
 
     @InjectView(R.id.rvAlarm)
     RecyclerView rvAlarm;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     RecyclerView.Adapter adapter;
 
@@ -45,6 +50,18 @@ public class AlarmActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
         ButterKnife.inject(this);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.back);
+        toolbar.setTitle(R.string.toolbar_title_alarm);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AlarmActivity.this, MainActivity.class));
+            }
+        });
+
 
         // Database
         alarmDBList = MainActivity.db.alarmDAO().getAll();

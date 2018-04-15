@@ -40,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnToDo;
     @InjectView(R.id.btnReminders)
     ImageButton btnReminders;
-    @InjectView(R.id.btnClasses)
-    ImageButton btnClasses;
-    @InjectView(R.id.btnCalender)
-    ImageButton btnCalender;
 
     public static AppDatabase db;
 
@@ -63,9 +59,8 @@ public class MainActivity extends AppCompatActivity {
      * onClick method for the buttons
      * @param view the UI view
      */
-    @OnClick({R.id.btnAlarm, R.id.btnNotes, R.id.btnToDo, R.id.btnReminders, R.id.btnClasses, R.id.btnCalender})
+    @OnClick({R.id.btnAlarm, R.id.btnNotes, R.id.btnToDo, R.id.btnReminders})
     public void onViewClicked(View view) {
-        Intent intent;
         switch (view.getId()) {
             case R.id.btnAlarm:
                 startActivity(new Intent(this, AlarmActivity.class));
@@ -78,10 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btnReminders:
                 startActivity(new Intent(this, ReminderActivity.class));
-                break;
-            case R.id.btnClasses:
-                break;
-            case R.id.btnCalender:
                 break;
         }
     }
