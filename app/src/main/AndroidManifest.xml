@@ -18,10 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".alarm.AlarmActivity"
             android:label="@string/toolbar_title_alarm"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".alarm.AddAlarm"
             android:label="@string/toolbar_title_add_alarm"

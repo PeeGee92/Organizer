@@ -31,13 +31,15 @@ public class AlarmReceiver extends BroadcastReceiver{
 
         boolean alarmOn = intent.getExtras().getBoolean("ALARM_ON");
 
+        Log.d("AlarmReceiver on Receive:", "alarmOn: " + alarmOn);
+
         // For test purposes
-        //Toast.makeText(context, "Alarm triggered", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Alarm triggered", Toast.LENGTH_LONG).show();
 
         Intent serviceIntent = new Intent(context, RingtonePlayingService.class).putExtra("ALARM_ON", alarmOn);
         context.startService(serviceIntent);
 
-        showNotification(context);
+//        showNotification(context);
     }
 
     private void showNotification(Context context) {

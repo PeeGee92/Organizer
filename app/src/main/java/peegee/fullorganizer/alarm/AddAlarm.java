@@ -116,11 +116,14 @@ public class AddAlarm extends AppCompatActivity {
         }
 
         // TODO check
+        Log.d("Add Alarm", "addAlarm: IN");
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         calendar = Calendar.getInstance();
 
         calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
         calendar.set(Calendar.MINUTE, timePicker.getMinute());
+
+        Log.d("Add Alarm", "calender: " + calendar.toString());
 
         Intent intent = new Intent(AddAlarm.this, AlarmReceiver.class)
                 .putExtra("ALARM_ON", true);

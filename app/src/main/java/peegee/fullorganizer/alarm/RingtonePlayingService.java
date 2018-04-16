@@ -35,9 +35,14 @@ public class RingtonePlayingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d("RingTone onStartCommand:", "In!");
+//        isRunning = player.isPlaying();
 
-        boolean alarmOn = intent.getExtras().getBoolean("alarm on");
+        Log.d("Alarm RingTone onStartCommand:", "In!");
+
+        boolean alarmOn = intent.getExtras().getBoolean("ALARM_ON");
+
+        Log.d("Alarm RingTone onStartCommand:", "alarm on: " + alarmOn);
+        Log.d("Alarm RingTone onStartCommand:", "isRunning: " + isRunning);
 
         if (alarmOn && !isRunning) {
 

@@ -11,7 +11,8 @@
     <Switch
         android:id="@+id/swOnOff"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:theme="@style/SwitchTheme"/>
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
