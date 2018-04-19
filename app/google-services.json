@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "348803895279",
+    "firebase_url": "https://full-organizer.firebaseio.com",
+    "project_id": "full-organizer",
+    "storage_bucket": "full-organizer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348803895279:android:a79f4b0d50786f5e",
+        "android_client_info": {
+          "package_name": "peegee.fullorganizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "348803895279-1t2jhc8u9mgadmhtgjbqmf6l1taeno3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "peegee.fullorganizer",
+            "certificate_hash": "e10eb16f353fb70b3977f536e4679fe83a6b02a1"
+          }
+        },
+        {
+          "client_id": "348803895279-0e3t8rqcfe7679lg2rkmq6frrvs6hjh3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOTQ66Atpcot6cfsr5SQolNs9733pXZDY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "348803895279-0e3t8rqcfe7679lg2rkmq6frrvs6hjh3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

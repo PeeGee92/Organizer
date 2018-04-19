@@ -39,7 +39,7 @@ public class AlarmReceiver extends BroadcastReceiver{
         Intent serviceIntent = new Intent(context, RingtonePlayingService.class).putExtra("ALARM_ON", alarmOn);
         context.startService(serviceIntent);
 
-//        showNotification(context);
+        showNotification(context);
     }
 
     private void showNotification(Context context) {

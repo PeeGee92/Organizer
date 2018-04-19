@@ -24,6 +24,7 @@
     <string name="toolbar_title_add_note">Add Note</string>
     <string name="toolbar_title_reminder">Reminder</string>
     <string name="toolbar_title_add_reminder">Add Reminder</string>
+    <string name="toolbar_title_main">Full Organizer</string>
 
     // Spinner for reminders
     <string-array name="reminder_spinner">
