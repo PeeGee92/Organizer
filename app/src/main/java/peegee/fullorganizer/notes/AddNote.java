@@ -96,7 +96,7 @@ public class AddNote extends AppCompatActivity {
                 String tempNote = etNote.getText().toString();
                 notesDB = new NotesDB(tempTitle, tempNote);
 
-                MainActivity.db.notesDAO().insertAll(notesDB);
+                MainActivity.db.notesDAO().insert(notesDB);
             }
         }
 

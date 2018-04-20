@@ -18,7 +18,7 @@ public interface NotesDAO {
     NotesDB getById(int id);
 
     @Insert
-    void insertAll(NotesDB... notesDBs);
+    void insert(NotesDB notesDB);
 
     @Update
     void update(NotesDB noteDB);

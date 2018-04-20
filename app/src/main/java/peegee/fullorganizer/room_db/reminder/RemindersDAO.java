@@ -18,7 +18,7 @@ public interface RemindersDAO {
     RemindersDB getById(int id);
 
     @Insert
-    void insertAll(RemindersDB... remindersDBs);
+    void insert(RemindersDB remindersDB);
 
     @Update
     void update(RemindersDB remindersDB);

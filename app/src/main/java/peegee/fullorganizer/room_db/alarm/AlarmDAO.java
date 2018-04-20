@@ -18,7 +18,7 @@ public interface AlarmDAO {
     AlarmDB getById(int id);
 
     @Insert
-    void insertAll(AlarmDB... alarmDBs);
+    void insert(AlarmDB alarmDB);
 
     @Update
     void update(AlarmDB alarmDB);

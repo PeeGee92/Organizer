@@ -267,7 +267,7 @@ public class AddReminder extends AppCompatActivity {
                         cbAlarm.isChecked(), alarmDate,
                         Integer.parseInt(etAlarmTime.getText().toString()), spAlarm.getSelectedItem().toString());
 
-                MainActivity.db.remindersDAO().insertAll(reminderDB);
+                MainActivity.db.remindersDAO().insert(reminderDB);
             }
         }
 

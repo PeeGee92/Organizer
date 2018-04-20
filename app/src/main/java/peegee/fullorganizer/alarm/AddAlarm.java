@@ -113,7 +113,7 @@ public class AddAlarm extends AppCompatActivity {
             } else {
                 AlarmDB alarmDB = new AlarmDB(timePicker.getHour(), timePicker.getMinute(),
                         Integer.parseInt(etSnooze.getText().toString()), rbRepeat.isChecked(), true);
-                MainActivity.db.alarmDAO().insertAll(alarmDB);
+                MainActivity.db.alarmDAO().insert(alarmDB);
             }
         }
 
