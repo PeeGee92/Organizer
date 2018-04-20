@@ -48,7 +48,9 @@ public class TodoActivity extends AppCompatActivity {
         });
 
         // Database
-        todoListDBList = MainActivity.db.todoListDAO().getAll();
+        synchronized (MainActivity.DBLOCK) {
+            todoListDBList = MainActivity.db.todoListDAO().getAll();
+        }
 
         // RecyclerView setup
         rvTodo.setLayoutManager(new LinearLayoutManager(this));

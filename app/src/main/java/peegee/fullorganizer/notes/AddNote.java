@@ -59,9 +59,11 @@ public class AddNote extends AppCompatActivity {
         if(id != -1)
         {
             // Database
-            NotesDB notesDB = MainActivity.db.notesDAO().getById(id);
-            etTitle.setText(notesDB.getNoteTitle());
-            etNote.setText(notesDB.getNoteText());
+            synchronized (MainActivity.DBLOCK) {
+                NotesDB notesDB = MainActivity.db.notesDAO().getById(id);
+                etTitle.setText(notesDB.getNoteTitle());
+                etNote.setText(notesDB.getNoteText());
+            }
             update = true; // It's an opened note so save should just update
         }
     }
@@ -79,21 +81,23 @@ public class AddNote extends AppCompatActivity {
         }
     }
 
-    private void saveToDB() {
+    // Database
+    synchronized private void saveToDB() {
 
-        if (update) {
-            notesDB = MainActivity.db.notesDAO().getById(id);
-            notesDB.setNoteTitle(etTitle.getText().toString());
-            notesDB.setNoteText(etNote.getText().toString());
+        synchronized (MainActivity.DBLOCK) {
+            if (update) {
+                notesDB = MainActivity.db.notesDAO().getById(id);
+                notesDB.setNoteTitle(etTitle.getText().toString());
+                notesDB.setNoteText(etNote.getText().toString());
 
-            MainActivity.db.notesDAO().update(notesDB);
-        }
-        else {
-            String tempTitle = etTitle.getText().toString();
-            String tempNote = etNote.getText().toString();
-            notesDB = new NotesDB(tempTitle, tempNote);
+                MainActivity.db.notesDAO().update(notesDB);
+            } else {
+                String tempTitle = etTitle.getText().toString();
+                String tempNote = etNote.getText().toString();
+                notesDB = new NotesDB(tempTitle, tempNote);
 
-            MainActivity.db.notesDAO().insertAll(notesDB);
+                MainActivity.db.notesDAO().insertAll(notesDB);
+            }
         }
 
     }

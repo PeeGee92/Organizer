@@ -63,7 +63,9 @@ public class AlarmActivity extends AppCompatActivity {
 
 
         // Database
-        alarmDBList = MainActivity.db.alarmDAO().getAll();
+        synchronized (MainActivity.DBLOCK) {
+            alarmDBList = MainActivity.db.alarmDAO().getAll();
+        }
 
         // RecyclerView setup
         rvAlarm.setLayoutManager(new LinearLayoutManager(this));

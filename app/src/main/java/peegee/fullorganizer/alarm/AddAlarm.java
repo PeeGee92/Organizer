@@ -75,16 +75,17 @@ public class AddAlarm extends AppCompatActivity {
         if(id != -1)
         {
             // Database
-            AlarmDB alarmDB = MainActivity.db.alarmDAO().getById(id);
-            timePicker.setHour(alarmDB.getAlarmHour());
-            timePicker.setMinute(alarmDB.getAlarmMin());
-            if (alarmDB.isAlarmRepeated()) {
-                rbRepeat.setChecked(true);
+            synchronized (MainActivity.DBLOCK) {
+                AlarmDB alarmDB = MainActivity.db.alarmDAO().getById(id);
+                timePicker.setHour(alarmDB.getAlarmHour());
+                timePicker.setMinute(alarmDB.getAlarmMin());
+                if (alarmDB.isAlarmRepeated()) {
+                    rbRepeat.setChecked(true);
+                } else {
+                    rbOnce.setChecked(true);
+                }
+                etSnooze.setText(alarmDB.getAlarmSnooze());
             }
-            else {
-                rbOnce.setChecked(true);
-            }
-            etSnooze.setText(alarmDB.getAlarmSnooze());
             update = true; // It's an already saved alarm so save should just update
         }
     }
@@ -104,15 +105,16 @@ public class AddAlarm extends AppCompatActivity {
 
     private void addAlarm() {
 
-        //Add to Database
-        if (update) {
-            AlarmDB alarmDB = MainActivity.db.alarmDAO().getById(id);
-            MainActivity.db.alarmDAO().update(alarmDB);
-        }
-        else {
-            AlarmDB alarmDB = new AlarmDB(timePicker.getHour(), timePicker.getMinute(),
-                    Integer.parseInt(etSnooze.getText().toString()), rbRepeat.isChecked(), true);
-            MainActivity.db.alarmDAO().insertAll(alarmDB);
+        // Database
+        synchronized (MainActivity.DBLOCK) {
+            if (update) {
+                AlarmDB alarmDB = MainActivity.db.alarmDAO().getById(id);
+                MainActivity.db.alarmDAO().update(alarmDB);
+            } else {
+                AlarmDB alarmDB = new AlarmDB(timePicker.getHour(), timePicker.getMinute(),
+                        Integer.parseInt(etSnooze.getText().toString()), rbRepeat.isChecked(), true);
+                MainActivity.db.alarmDAO().insertAll(alarmDB);
+            }
         }
 
         // TODO check

@@ -81,8 +81,10 @@ public class AddTodoList extends AppCompatActivity {
 
         if (listId != -1) {
             // Database
-            list = MainActivity.db.todoListDAO().getListById(listId);
-            todoDBList = MainActivity.db.todoDAO().loadByListId(listId);
+            synchronized (MainActivity.DBLOCK) {
+                list = MainActivity.db.todoListDAO().getListById(listId);
+                todoDBList = MainActivity.db.todoDAO().loadByListId(listId);
+            }
             update = true;
             etListName.setText(list.getTodoListTitle());
         }
@@ -151,19 +153,24 @@ public class AddTodoList extends AppCompatActivity {
             etListName.setHintTextColor(Color.RED);
             return;
         }
-        if (!update) {
-            listId = (int) MainActivity.db.todoListDAO().insert(new TodoListDB(etListName.getText().toString()));
-        }
-        else {
-            TodoListDB item = MainActivity.db.todoListDAO().getListById(listId);
-            item.setTodoListTitle(etListName.getText().toString());
-            MainActivity.db.todoListDAO().update(item);
-        }
 
-        for (TodoDB item : addedItemsList) {
-            item.setListId(listId);
+        // Database
+        synchronized (MainActivity.DBLOCK) {
+            if (!update) {
+                listId = (int) MainActivity.db.todoListDAO().insert(new TodoListDB(etListName.getText().toString()));
+            }
+            else {
+                TodoListDB item = MainActivity.db.todoListDAO().getListById(listId);
+                item.setTodoListTitle(etListName.getText().toString());
+                MainActivity.db.todoListDAO().update(item);
+            }
+
+            for (TodoDB item : addedItemsList) {
+                item.setListId(listId);
+            }
+
+            MainActivity.db.todoDAO().insertAll(addedItemsList);
         }
-        MainActivity.db.todoDAO().insertAll(addedItemsList);
 
         startActivity(new Intent(AddTodoList.this, TodoActivity.class));
     }

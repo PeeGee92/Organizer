@@ -47,7 +47,9 @@ public class NotesActivity extends AppCompatActivity {
         });
 
         // Database
-        notesDBList = MainActivity.db.notesDAO().getAll();
+        synchronized (MainActivity.DBLOCK) {
+            notesDBList = MainActivity.db.notesDAO().getAll();
+        }
 
         // RecyclerView setup
         rvNotes.setLayoutManager(new LinearLayoutManager(this));

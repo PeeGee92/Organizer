@@ -24,17 +24,13 @@ public class AlarmReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         Log.d("AlarmReceiver on Receive:", "In!");
 
+        // TODO
 //        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 //            // Reset Alarms after reboot
 //        }
 
 
         boolean alarmOn = intent.getExtras().getBoolean("ALARM_ON");
-
-        Log.d("AlarmReceiver on Receive:", "alarmOn: " + alarmOn);
-
-        // For test purposes
-        Toast.makeText(context, "Alarm triggered", Toast.LENGTH_LONG).show();
 
         Intent serviceIntent = new Intent(context, RingtonePlayingService.class).putExtra("ALARM_ON", alarmOn);
         context.startService(serviceIntent);

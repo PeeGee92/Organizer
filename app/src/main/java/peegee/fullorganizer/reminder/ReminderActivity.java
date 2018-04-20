@@ -48,7 +48,9 @@ public class ReminderActivity extends AppCompatActivity {
         });
 
         // Database
-        remindersDBList = MainActivity.db.remindersDAO().getAll();
+        synchronized (MainActivity.DBLOCK) {
+            remindersDBList = MainActivity.db.remindersDAO().getAll();
+        }
 
         // RecyclerView setup
         rvReminders.setLayoutManager(new LinearLayoutManager(this));

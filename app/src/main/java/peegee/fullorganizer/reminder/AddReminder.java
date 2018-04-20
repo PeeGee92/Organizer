@@ -100,21 +100,22 @@ public class AddReminder extends AppCompatActivity {
 
         if (id != -1) {
             // Database
-            reminderDB = MainActivity.db.remindersDAO().getById(id);
-            etTitle.setText(reminderDB.getReminderTitle());
-            etLocation.setText(reminderDB.getReminderLocation());
-            etDescription.setText(reminderDB.getReminderDescription());
-            reminderDate = reminderDB.getReminderDate();
-            tvDate.setText(dateFormat.format(reminderDate));
-            tvTime.setText(timeFormat.format(reminderDate));
-            cbAlarm.setChecked(reminderDB.isReminderAlarm());
-            if (cbAlarm.isChecked()) {
-                String type = reminderDB.getReminderAlarmType();
-                int position = spinnerAdapter.getPosition(type);
-                spAlarm.setSelection(position);
-                etAlarmTime.setText(Integer.toString(reminderDB.getReminderAlarmValue()));
+            synchronized (MainActivity.DBLOCK) {
+                reminderDB = MainActivity.db.remindersDAO().getById(id);
+                etTitle.setText(reminderDB.getReminderTitle());
+                etLocation.setText(reminderDB.getReminderLocation());
+                etDescription.setText(reminderDB.getReminderDescription());
+                reminderDate = reminderDB.getReminderDate();
+                tvDate.setText(dateFormat.format(reminderDate));
+                tvTime.setText(timeFormat.format(reminderDate));
+                cbAlarm.setChecked(reminderDB.isReminderAlarm());
+                if (cbAlarm.isChecked()) {
+                    String type = reminderDB.getReminderAlarmType();
+                    int position = spinnerAdapter.getPosition(type);
+                    spAlarm.setSelection(position);
+                    etAlarmTime.setText(Integer.toString(reminderDB.getReminderAlarmValue()));
+                }
             }
-
             update = true; // It's an opened reminder so save should just update
         }
 
@@ -236,37 +237,40 @@ public class AddReminder extends AppCompatActivity {
             return;
         }
 
-        if (update) {
-            reminderDB.setReminderTitle(etTitle.getText().toString());
-            reminderDB.setReminderLocation(etLocation.getText().toString());
-            reminderDB.setReminderDescription(etDescription.getText().toString());
-            reminderDB.setReminderDate(reminderDate);
-            reminderDB.setReminderAlarm(cbAlarm.isChecked());
-            if (cbAlarm.isChecked()) {
-                if (etAlarmTime.getText().toString().trim().isEmpty()) {
+        // Database
+        synchronized (MainActivity.DBLOCK) {
+            if (update) {
+                reminderDB.setReminderTitle(etTitle.getText().toString());
+                reminderDB.setReminderLocation(etLocation.getText().toString());
+                reminderDB.setReminderDescription(etDescription.getText().toString());
+                reminderDB.setReminderDate(reminderDate);
+                reminderDB.setReminderAlarm(cbAlarm.isChecked());
+                if (cbAlarm.isChecked()) {
+                    if (etAlarmTime.getText().toString().trim().isEmpty()) {
+                        etAlarmTime.setText("0");
+                    }
+                    switchTimeToDate(spAlarm.getSelectedItem().toString(), Integer.parseInt(etAlarmTime.getText().toString()));
+
+                    reminderDB.setReminderAlarmDate(alarmDate);
+                }
+                MainActivity.db.remindersDAO().update(reminderDB);
+            } else {
+                if (etAlarmTime.getText().toString().trim().isEmpty() && cbAlarm.isChecked()) {
                     etAlarmTime.setText("0");
                 }
                 switchTimeToDate(spAlarm.getSelectedItem().toString(), Integer.parseInt(etAlarmTime.getText().toString()));
+                Log.d("SWITCH", "cbChecked: " + cbAlarm.isChecked());
+                reminderDB = new RemindersDB(etTitle.getText().toString(),
+                        etLocation.getText().toString(),
+                        etDescription.getText().toString(),
+                        reminderDate,
+                        cbAlarm.isChecked(), alarmDate,
+                        Integer.parseInt(etAlarmTime.getText().toString()), spAlarm.getSelectedItem().toString());
 
-                reminderDB.setReminderAlarmDate(alarmDate);
+                MainActivity.db.remindersDAO().insertAll(reminderDB);
             }
-            MainActivity.db.remindersDAO().update(reminderDB);
         }
-        else {
-            if (etAlarmTime.getText().toString().trim().isEmpty() && cbAlarm.isChecked()) {
-                etAlarmTime.setText("0");
-            }
-            switchTimeToDate(spAlarm.getSelectedItem().toString(), Integer.parseInt(etAlarmTime.getText().toString()));
-            Log.d("SWITCH", "cbChecked: " + cbAlarm.isChecked());
-            reminderDB = new RemindersDB(etTitle.getText().toString(),
-                    etLocation.getText().toString(),
-                    etDescription.getText().toString(),
-                    reminderDate,
-                    cbAlarm.isChecked(), alarmDate,
-                    Integer.parseInt(etAlarmTime.getText().toString()), spAlarm.getSelectedItem().toString());
 
-            MainActivity.db.remindersDAO().insertAll(reminderDB);
-        }
         startActivity(new Intent(AddReminder.this, ReminderActivity.class));
     }
 
