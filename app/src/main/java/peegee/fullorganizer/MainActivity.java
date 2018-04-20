@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     public static AppDatabase db;
-    public static FirebaseDatabase firebaseDatabase;
     public static final Object DBLOCK = new Object(); // Database Lock
     public static final Object FBLOCK = new Object(); // Firebase Lock
     private static FirebaseAuth firebaseAuth;
@@ -195,5 +194,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ReminderActivity.class));
                 break;
         }
+    }
+
+    private static class MyFireBase {
+
+        // Entity references
+        static DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        static DatabaseReference notesReference = databaseReference.child("Notes");
+        static DatabaseReference todoReference = databaseReference.child("Todo");
+        static DatabaseReference alarmReference = databaseReference.child("Alarm");
+        static DatabaseReference ReminderReference = databaseReference.child("Reminder");
+
+        // TODO add value event listener
     }
 }
