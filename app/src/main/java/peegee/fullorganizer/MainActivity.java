@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
     public static FirebaseDatabase firebaseDatabase;
     public static final Object DBLOCK = new Object(); // Database Lock
     public static final Object FBLOCK = new Object(); // Firebase Lock
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
+    private static FirebaseAuth firebaseAuth;
+    private static FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +103,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Authentication
-        firebaseAuth = FirebaseAuth.getInstance();
-        authenticate();
+        if (firebaseUser == null) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            authenticate();
+        }
     }
 
     private void authenticate() {
@@ -147,29 +149,28 @@ public class MainActivity extends AppCompatActivity {
         synchronized (DBLOCK) {
             db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "organizer_database")
                     .allowMainThreadQueries()
-                    .fallbackToDestructiveMigration()
                     .build();
-            // Firebase
-            synchronized (FBLOCK) {
-                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference databaseReference = firebaseDatabase.getReference();
-
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // TODO
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // TODO
-                    }
-                });
-
-                databaseReference.setValue(db);
-
-            }
+//            // Firebase
+//            synchronized (FBLOCK) {
+//                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+//                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+//                DatabaseReference databaseReference = firebaseDatabase.getReference();
+//
+//                databaseReference.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        // TODO
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        // TODO
+//                    }
+//                });
+//
+//                databaseReference.setValue(db);
+//
+//            }
         }
 
     }
