@@ -3,7 +3,10 @@ package peegee.fullorganizer.alarm;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.service.JobSchedulerService;
 
 /**
  * AlarmReceiver extending BroadcastReceiver
@@ -22,7 +26,6 @@ public class AlarmReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("AlarmReceiver on Receive:", "In!");
 
         // TODO
 //        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
@@ -32,38 +35,17 @@ public class AlarmReceiver extends BroadcastReceiver{
 
         boolean alarmOn = intent.getExtras().getBoolean("ALARM_ON");
 
-        Intent serviceIntent = new Intent(context, RingtonePlayingService.class).putExtra("ALARM_ON", alarmOn);
-        context.startService(serviceIntent);
+        if (alarmOn) {
+            // To avoid java.lang.IllegalStateException: Not allowed to start service Intent
+            ComponentName alarmRingtoneService = new ComponentName(context, JobSchedulerService.class);
+            JobInfo jobInfo = new JobInfo.Builder(1, alarmRingtoneService)
+                    .setPersisted(true)
+                    .setOverrideDeadline(1 * 3000)
+                    .build();
 
-        showNotification(context);
-    }
+            JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
 
-    private void showNotification(Context context) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
-                .setSmallIcon(R.drawable.alarm)
-                .setContentTitle("Alarm On")
-                .setContentText("Click here to stop it!")
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-        getNotificationChannel();
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, builder.build());
-    }
-
-    private void getNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "NOTIFICATION_CHANNEL";
-            String description = "ALARM_NOTIFICATION";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("ALARM_CHANNEL", name, importance);
-            channel.setDescription(description);
-
-            // Register the channel with the system
-//            NotificationManager notificationManager = NotificationManagerCompat.from();
-//            notificationManager.createNotificationChannel(channel);
+            jobScheduler.schedule(jobInfo);
         }
     }
 }

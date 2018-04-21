@@ -39,6 +39,11 @@
             android:name=".alarm.RingtonePlayingService"
             android:enabled="true" />
 
+        <service
+            android:name=".service.JobSchedulerService"
+        android:permission="android.permission.BIND_JOB_SERVICE"
+        android:exported="true"/>
+
         <activity
             android:name=".todo.TodoActivity"
             android:label="@string/toolbar_title_todo"

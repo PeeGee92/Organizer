@@ -8,6 +8,7 @@
 
 package peegee.fullorganizer;
 
+import android.app.job.JobScheduler;
 import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -153,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 synchronized (DBLOCK) {
                     db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "organizer_database")
                             .allowMainThreadQueries()
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
                 userReference = rootRef.child(DB_PRIMARY_KEY);
