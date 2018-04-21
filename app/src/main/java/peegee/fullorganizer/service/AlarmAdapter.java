@@ -99,13 +99,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             @Override
             public void onClick(final View view) {
                 new AlertDialog.Builder(view.getContext())
-                        .setTitle("Delete note")
-                        .setMessage("Are you sure you want to delete this note permanently?")
+                        .setTitle("Delete Alarm")
+                        .setMessage("Are you sure you want to delete this Alarm permanently?")
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
-                                MainActivity.db.alarmDAO().delete(temp);
+                                // Database
+                                synchronized (MainActivity.DBLOCK) {
+                                    MainActivity.db.alarmDAO().delete(temp);
+                                }
 
                                 // Update RecyclerView
                                 alarmDBList.remove(position);

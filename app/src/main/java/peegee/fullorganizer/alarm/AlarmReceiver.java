@@ -35,17 +35,33 @@ public class AlarmReceiver extends BroadcastReceiver{
 
         boolean alarmOn = intent.getExtras().getBoolean("ALARM_ON");
 
+        /*
+        Job myJob = dispatcher.newJobBuilder()
+    .setService(StatisticsService.class) // the JobService that will be called
+    .setTag(TAG)        // uniquely identifies the job
+    .setRecurring(true)
+    .setReplaceCurrent(true)
+    .setTrigger(Trigger.executionWindow(time * 60,(time * 60) + 10))
+    .setLifetime(Lifetime.FOREVER)
+    .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+    .setConstraints(Constraint.ON_ANY_NETWORK)
+    .build();
+         */
+
         if (alarmOn) {
             // To avoid java.lang.IllegalStateException: Not allowed to start service Intent
             ComponentName alarmRingtoneService = new ComponentName(context, JobSchedulerService.class);
             JobInfo jobInfo = new JobInfo.Builder(1, alarmRingtoneService)
-                    .setPersisted(true)
                     .setOverrideDeadline(1 * 3000)
+                    .setPersisted(true)
                     .build();
 
             JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
 
-            jobScheduler.schedule(jobInfo);
+            int result;
+            do {
+                result = jobScheduler.schedule(jobInfo);
+            } while (result != JobScheduler.RESULT_SUCCESS);
         }
     }
 }
