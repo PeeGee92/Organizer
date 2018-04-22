@@ -3,7 +3,6 @@ package peegee.fullorganizer.alarm;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +18,7 @@ import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.alarm.AlarmDB;
-import peegee.fullorganizer.service.AlarmAdapter;
+import peegee.fullorganizer.service.adapters.AlarmAdapter;
 
 
 /**

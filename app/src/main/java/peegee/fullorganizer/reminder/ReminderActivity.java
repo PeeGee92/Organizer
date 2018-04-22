@@ -18,7 +18,7 @@ import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.reminder.RemindersDB;
-import peegee.fullorganizer.service.RemindersAdapter;
+import peegee.fullorganizer.service.adapters.RemindersAdapter;
 
 public class ReminderActivity extends AppCompatActivity {
 

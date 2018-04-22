@@ -105,6 +105,20 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                             }})
+                        .setNeutralButton("Delete User", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                firebaseUser.delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    authenticate();
+                                                }
+                                            }
+                                        });
+                            }
+                        })
                         .setNegativeButton("Cancel", null).show();
             }
         });

@@ -18,7 +18,7 @@ import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.notes.NotesDB;
-import peegee.fullorganizer.service.NotesAdapter;
+import peegee.fullorganizer.service.adapters.NotesAdapter;
 
 public class NotesActivity extends AppCompatActivity {
 

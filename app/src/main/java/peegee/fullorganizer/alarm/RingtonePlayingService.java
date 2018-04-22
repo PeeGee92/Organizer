@@ -43,6 +43,13 @@ public class RingtonePlayingService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        initNotification();
+        startForeground(1, notificationBuilder.build());
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         // TODO Check for actions
@@ -71,7 +78,6 @@ public class RingtonePlayingService extends Service {
             this.isRunning = true;
 
             showNotification();
-
         }
         else if (isRunning) {
 
@@ -89,7 +95,7 @@ public class RingtonePlayingService extends Service {
         // TODO
     }
 
-    private void showNotification() {
+    private void initNotification() {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         setNotificationChannel();
@@ -125,6 +131,9 @@ public class RingtonePlayingService extends Service {
                 .setAutoCancel(true)
                 .addAction(snoozeAction)
                 .addAction(dismissAction);
+    }
+
+    private void showNotification() {
 
         notificationManager.notify(1, notificationBuilder.build());
 

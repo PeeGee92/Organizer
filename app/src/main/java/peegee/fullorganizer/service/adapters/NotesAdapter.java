@@ -1,4 +1,4 @@
-package peegee.fullorganizer.service;
+package peegee.fullorganizer.service.adapters;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,18 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
 import java.util.List;
-
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.reminder.AddReminder;
-import peegee.fullorganizer.room_db.reminder.RemindersDB;
+import peegee.fullorganizer.notes.AddNote;
+import peegee.fullorganizer.room_db.notes.NotesDB;
 
-public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.ViewHolder> {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
-    List<RemindersDB> remindersDBList;
+    List<NotesDB> notesDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
@@ -28,12 +25,12 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         @Override
         public void onClick(View view) {
             int itemPosition = recyclerView.getChildLayoutPosition(view);
-            RemindersDB item = remindersDBList.get(itemPosition);
+            NotesDB item = notesDBList.get(itemPosition);
 
             // Load this item data in the next activity
-            int tempId = item.getReminderId();
-            Intent intent = new Intent(view.getContext(), AddReminder.class);
-            intent.putExtra("REMINDER_ID", tempId);
+            int tempId = item.getNoteID();
+            Intent intent = new Intent(view.getContext(), AddNote.class);
+            intent.putExtra("NOTE_ID", tempId);
             view.getContext().startActivity(intent);
         }
     };
@@ -45,71 +42,68 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         this.recyclerView =recyclerView;
     }
 
-    public RemindersAdapter(List<RemindersDB> remindersDBList) {
-        this.remindersDBList = remindersDBList;
+    public NotesAdapter(List<NotesDB> notesDBList) {
+        this.notesDBList = notesDBList;
     }
 
     @Override
-    public RemindersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_item, parent, false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
         view.setOnClickListener(myOnClickListener);
         adapter = this;
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RemindersAdapter.ViewHolder holder, final int position) {
-
-        RemindersDB remindersDB = remindersDBList.get(position);
-
-        holder.tvTitle.setText(remindersDB.getReminderTitle());
-        holder.tvDate.setText(new SimpleDateFormat("dd-MMM-yyyy").format(remindersDB.getReminderDate()));
-        holder.tvTime.setText(new SimpleDateFormat("hh:mm a").format(remindersDB.getReminderDate()));
+    public void onBindViewHolder(final NotesAdapter.ViewHolder holder, final int position) {
+        if (notesDBList.get(position).getNoteTitle().isEmpty()) {
+            holder.tvTitle.setText(notesDBList.get(position).getNoteText());
+        }
+        else {
+            holder.tvTitle.setText(notesDBList.get(position).getNoteTitle());
+        }
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 new AlertDialog.Builder(view.getContext())
-                        .setTitle("Delete reminder")
-                        .setMessage("Are you sure you want to delete this reminder permanently?")
+                        .setTitle("Delete note")
+                        .setMessage("Are you sure you want to delete this note permanently?")
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                RemindersDB item = remindersDBList.get(position);
+                                NotesDB item = notesDBList.get(position);
 
-                                MainActivity.db.remindersDAO().delete(item);
+                                // Database
+                                MainActivity.db.notesDAO().delete(item);
 
                                 // Update RecyclerView
-                                remindersDBList.remove(position);
+                                notesDBList.remove(position);
                                 recyclerView.removeViewAt(position);
                                 adapter.notifyItemRemoved(position);
-                                adapter.notifyItemRangeChanged(position, remindersDBList.size());
+                                adapter.notifyItemRangeChanged(position, notesDBList.size());
                                 adapter.notifyDataSetChanged();
                             }})
                         .setNegativeButton("Cancel", null).show();
             }
         });
-
     }
 
     @Override
     public int getItemCount() {
-        return remindersDBList.size();
+        return notesDBList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvTitle, tvDate, tvTime;
+        TextView tvTitle;
         ImageButton btnDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvDate = itemView.findViewById(R.id.tvDate);
-            tvTime = itemView.findViewById(R.id.tvTime);
             btnDelete = itemView.findViewById(R.id.btnDelete);
-
         }
     }
 }

@@ -28,7 +28,7 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.room_db.todo.TodoDB;
 import peegee.fullorganizer.room_db.todo.TodoListDB;
-import peegee.fullorganizer.service.TodoAdapter;
+import peegee.fullorganizer.service.adapters.TodoAdapter;
 
 public class AddTodoList extends AppCompatActivity {
 

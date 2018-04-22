@@ -1,4 +1,4 @@
-package peegee.fullorganizer.service;
+package peegee.fullorganizer.service.adapters;
 
 import android.content.DialogInterface;
 import android.content.Intent;
