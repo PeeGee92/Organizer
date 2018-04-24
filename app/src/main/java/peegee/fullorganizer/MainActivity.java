@@ -44,7 +44,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.alarm.AlarmActivity;
+import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.NotesDB;
+import peegee.fullorganizer.firebase_db.ReminderDB;
+import peegee.fullorganizer.firebase_db.TodoListDB;
 import peegee.fullorganizer.notes.NotesActivity;
 import peegee.fullorganizer.reminder.ReminderActivity;
 import peegee.fullorganizer.room_db.AppDatabase;
@@ -80,10 +83,13 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference notesRef;
     public static DatabaseReference reminderRef;
     public static DatabaseReference todoListRef;
-    public static DatabaseReference todoItemRef;
 
     // DB locally saved lists
     public static List<NotesDB> notesList = new ArrayList<>();
+    public static List<AlarmDB> alarmsList = new ArrayList<>();
+    public static List<TodoListDB> todoListList = new ArrayList<>();
+    public static List<ReminderDB> reminderList = new ArrayList<>();
+
     public boolean newUser;
     public static final String DB_PRIMARY_KEY = "user_id";
 
@@ -180,10 +186,36 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        reminderRef = userRef.child("Reminder");
         todoListRef = userRef.child("Todo List");
-        todoItemRef = todoListRef.child("Todo Item");
+        todoListRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                TodoListDB tempItem = dataSnapshot.getValue(TodoListDB.class);
+                tempItem.setTodoListId(dataSnapshot.getKey());
+                todoListList.add(tempItem);
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        reminderRef = userRef.child("Reminder");
     }
     private void authenticate() {
 

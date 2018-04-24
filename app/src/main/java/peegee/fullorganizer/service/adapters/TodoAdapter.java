@@ -9,23 +9,22 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.todo.TodoDB;
+import peegee.fullorganizer.firebase_db.TodoItemDB;
+import peegee.fullorganizer.firebase_db.TodoListDB;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
-    List<TodoDB> todoDBList;
+    List<TodoItemDB> todoDBList;
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
-    boolean onBind;
+    boolean onBind; // To handle exception
 
 
     @Override
@@ -35,7 +34,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         this.recyclerView =recyclerView;
     }
 
-    public TodoAdapter(List<TodoDB> todoDBList){
+    public TodoAdapter(List<TodoItemDB> todoDBList){
         this.todoDBList = todoDBList;
         sort();
     }
@@ -49,9 +48,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
-        viewHolder.cbTodoDone.setText(todoDBList.get(i).getTodoDescription());
+        viewHolder.cbTodoDone.setText(todoDBList.get(i).todoDescription);
         onBind = true;
-        viewHolder.cbTodoDone.setChecked(todoDBList.get(i).isTodoDone());
+        viewHolder.cbTodoDone.setChecked(todoDBList.get(i).done);
         onBind = false;
 
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -63,10 +62,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                TodoDB item = todoDBList.get(i);
+                                TodoItemDB item = todoDBList.get(i);
 
-                                // Database
-                                MainActivity.db.todoDAO().delete(item);
+                                // Firebase
+                                synchronized (MainActivity.FBLOCK) {
+                                    MainActivity.todoListRef.child(item.getItemId()).removeValue();
+                                }
 
                                 // Update RecyclerView
                                 todoDBList.remove(i);
@@ -95,13 +96,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         Collections.sort(todoDBList, listComparator);
     }
 
-    private Comparator<TodoDB> listComparator = new Comparator<TodoDB>() {
+    private Comparator<TodoItemDB> listComparator = new Comparator<TodoItemDB>() {
         @Override
-        public int compare(TodoDB t1, TodoDB t2) {
-            if(t1.isTodoDone() == t2.isTodoDone()){
+        public int compare(TodoItemDB t1, TodoItemDB t2) {
+            if(t1.done == t2.done){
                 return 0;
             }
-            return t1.isTodoDone() ? -1 : 1;
+            return t1.done ? -1 : 1;
         }
     };
 
@@ -120,9 +121,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (!onBind) {
                         boolean checked = cbTodoDone.isChecked();
-                        TodoDB item = todoDBList.get(getAdapterPosition());
-                        item.setTodoDone(checked);
-                        MainActivity.db.todoDAO().update(item);
+                        TodoItemDB item = todoDBList.get(getAdapterPosition());
+                        item.done = checked;
+
+                        //Firebase
+                        synchronized (MainActivity.FBLOCK) {
+                            MainActivity.todoListRef.child(item.getItemId()).setValue(item);
+                        }
 
                         sortAndNotify();
                     }

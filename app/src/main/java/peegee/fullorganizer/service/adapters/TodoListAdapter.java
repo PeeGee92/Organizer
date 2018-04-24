@@ -11,11 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.List;
-
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.todo.TodoDB;
-import peegee.fullorganizer.room_db.todo.TodoListDB;
+import peegee.fullorganizer.firebase_db.TodoItemDB;
+import peegee.fullorganizer.firebase_db.TodoListDB;
 import peegee.fullorganizer.todo.AddTodoList;
 
 public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
@@ -25,7 +24,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
-    int id;
+    String id;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -34,7 +33,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             TodoListDB item = todoListDBList.get(itemPosition);
 
             // Load this item data in the next activity
-            int tempId = item.getTodoListId();
+            String tempId = item.getTodoListId();
 
             Intent intent = new Intent(view.getContext(), AddTodoList.class);
             intent.putExtra("LIST_ID", tempId);
@@ -65,7 +64,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, final int position) {
         TodoListDB temp = todoListDBList.get(position);
 
-        holder.tvTitle.setText(temp.getTodoListTitle());
+        holder.tvTitle.setText(temp.todoListTitle);
         done = getByDoneCount(position, true);
         notDone = getByDoneCount(position, false);
         holder.tvDone.setText("Tasks done: " + done);
@@ -84,7 +83,10 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 TodoListDB item = todoListDBList.get(position);
 
-                                MainActivity.db.todoListDAO().delete(item);
+                                // Firebase
+                                synchronized (MainActivity.FBLOCK) {
+                                    MainActivity.todoListRef.child(item.getTodoListId()).removeValue();
+                                }
 
                                 // Update RecyclerView
                                 todoListDBList.remove(position);
@@ -121,13 +123,16 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     }
 
     private int getByDoneCount(int itemPosition, boolean done) {
-        List<TodoDB> doneItems;
-        TodoListDB item = todoListDBList.get(itemPosition);
-        id = item.getTodoListId();
+        int doneItems = 0;
+        TodoListDB listItem = todoListDBList.get(itemPosition);
+        List<TodoItemDB> itemsList= listItem.todoItemList;
 
-        doneItems = MainActivity.db.todoDAO().findByDone(id, done);
+        for (TodoItemDB item: itemsList) {
+            if (item.done)
+                doneItems++;
+        }
 
-        return doneItems.size();
+        return doneItems;
     }
 
     @Override

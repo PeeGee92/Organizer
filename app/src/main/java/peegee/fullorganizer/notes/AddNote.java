@@ -8,13 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -64,15 +60,12 @@ public class AddNote extends AppCompatActivity {
 
         if(id != null)
         {
-            // Firebase
-//            synchronized (MainActivity.FBLOCK) {
             Predicate condition = new Predicate() {
                 public boolean evaluate(Object sample) {
                     return ((NotesDB)sample).getNoteId().equals(id);
                 }
             };
             evaluateResult = (List<NotesDB>) CollectionUtils.select( MainActivity.notesList, condition );
-//            }
             notesDB = evaluateResult.get(0);
             etTitle.setText(notesDB.noteTitle);
             etNote.setText(notesDB.noteText);

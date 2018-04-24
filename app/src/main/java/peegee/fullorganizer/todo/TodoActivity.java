@@ -47,14 +47,9 @@ public class TodoActivity extends AppCompatActivity {
             }
         });
 
-        // Database
-        synchronized (MainActivity.DBLOCK) {
-            todoListDBList = MainActivity.db.todoListDAO().getAll();
-        }
-
         // RecyclerView setup
         rvTodo.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TodoListAdapter(todoListDBList);
+        adapter = new TodoListAdapter(MainActivity.todoListList);
         rvTodo.setAdapter(adapter);
 
         FloatingActionButton fbAddTodoList = findViewById(R.id.fbAddTodoList);

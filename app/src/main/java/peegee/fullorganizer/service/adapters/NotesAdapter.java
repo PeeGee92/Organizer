@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
@@ -74,16 +72,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                peegee.fullorganizer.firebase_db.NotesDB item = notesDBList.get(position);
-
-//                                // Database
-//                                MainActivity.db.notesDAO().delete(item);
+                                NotesDB item = notesDBList.get(position);
 
                                 // Firebase
                                 synchronized (MainActivity.FBLOCK) {
                                     MainActivity.notesRef.child(item.getNoteId()).removeValue();
                                 }
-//                                MainActivity.notesList.remove(item); // Remove item from main list
 
                                 // Update RecyclerView
                                 notesDBList.remove(position);
