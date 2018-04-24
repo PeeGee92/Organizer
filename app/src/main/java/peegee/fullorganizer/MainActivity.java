@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.alarm.AlarmActivity;
+import peegee.fullorganizer.firebase_db.NotesDB;
 import peegee.fullorganizer.notes.NotesActivity;
 import peegee.fullorganizer.reminder.ReminderActivity;
 import peegee.fullorganizer.room_db.AppDatabase;
@@ -73,8 +74,15 @@ public class MainActivity extends AppCompatActivity {
     private static FirebaseAuth firebaseAuth;
     private static FirebaseUser firebaseUser;
     public static DatabaseReference rootRef;
-    public static DatabaseReference userReference;
-    public static DatabaseReference dbReference;
+    public static DatabaseReference userRef;
+    public static DatabaseReference alarmRef;
+    public static DatabaseReference notesRef;
+    public static DatabaseReference reminderRef;
+    public static DatabaseReference todoListRef;
+    public static DatabaseReference todoItemRef;
+
+    // DB locally saved lists
+    public static List<NotesDB> notesList;
     public boolean newUser;
     public static final String DB_PRIMARY_KEY = "user_id";
 
@@ -134,103 +142,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // FireBase
     private void initFirebase() {
-        synchronized (FBLOCK) {
-            // TODO Check if user exists
-            rootRef = FirebaseDatabase.getInstance().getReference();
-            rootRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for(DataSnapshot val : dataSnapshot.getChildren()){
-                        if(val.child(DB_PRIMARY_KEY).getValue(String.class).contains(firebaseUser.getUid())) {
-                            newUser = false;
-                            // Database
-                            synchronized (DBLOCK) {
-                                db = val.child(DB_PRIMARY_KEY).child("database").getValue(AppDatabase.class);
-                            }
-                            break;
-                        }
-                        if(newUser != false){
-                            newUser = true;
-                        }
-                    }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Do Nothing
-                }
-            });
-
-            if(newUser) {
-                // Database
-                synchronized (DBLOCK) {
-                    db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "organizer_database")
-                            .allowMainThreadQueries()
-                            .fallbackToDestructiveMigration()
-                            .build();
-                }
-                userReference = rootRef.child(DB_PRIMARY_KEY);
-                dbReference = userReference.child("database");
-
-                rootRef.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        userReference.setValue(firebaseUser.getUid());
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        // Do Nothing
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        // Do Nothing
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                        // Do Nothing
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Do Nothing
-                    }
-                });
-
-                userReference.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        dbReference.setValue(db);
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        // Do Nothing
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        // Do Nothing
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                        // Do Nothing
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Do Nothing
-                    }
-                });
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        userRef = rootRef.child("User");
+        alarmRef = userRef.child("Alarm");
+        notesRef = userRef.child("Notes");
+        notesRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
+                tempItem.setNoteId(dataSnapshot.getKey());
+                notesList.add(tempItem);
             }
-        }
-    }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        reminderRef = userRef.child("Reminder");
+        todoListRef = userRef.child("Todo List");
+        todoItemRef = todoListRef.child("Todo Item");
+
+    }
     private void authenticate() {
 
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -260,43 +211,13 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                loadDBAccordingToUser();
+                // TODO
+//                loadDBAccordingToUser();
             } else {
                 Toast.makeText(getApplication(), "Sign in failed!", Toast.LENGTH_SHORT).show();
                 authenticate();
             }
         }
-    }
-
-    private void loadDBAccordingToUser() {
-        // Database
-        synchronized (DBLOCK) {
-            db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "organizer_database")
-                    .allowMainThreadQueries()
-                    .build();
-//            // Firebase
-//            synchronized (FBLOCK) {
-//                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-//                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-//                DatabaseReference rootRef = firebaseDatabase.getReference();
-//
-//                rootRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        // TODO
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                        // TODO
-//                    }
-//                });
-//
-//                rootRef.setValue(db);
-//
-//            }
-        }
-
     }
 
     /**
@@ -321,54 +242,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    private static class MyFireBase {
-//
-//        // Entity references
-//        static DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-//        static DatabaseReference notesReference = rootRef.child("Notes");
-//        static DatabaseReference todoReference = rootRef.child("Todo");
-//        static DatabaseReference alarmReference = rootRef.child("Alarm");
-//        static DatabaseReference ReminderReference = rootRef.child("Reminder");
-//
-//        // TEST
-//        static DatabaseReference dbReference = rootRef.child("Database");
-//
-//
-//        // TODO add value event listener
-//        public void test() {
-//
-//            dbReference.child("user_id").addChildEventListener(new ChildEventListener() {
-//                @Override
-//                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                    dbReference.child("user_id").setValue(firebaseUser.getUid());
-//                }
-//
-//                @Override
-//                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//                }
-//
-//                @Override
-//                public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//                }
-//
-//                @Override
-//                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            })
-//
-//            dbReference.setValue(db);
-//            dbReference.child("database_id").setValue(100);
-//            Query query = dbReference.orderByChild("database_id")
-//                    .equalTo(100);
-//
-//        }
-//    }
 }
