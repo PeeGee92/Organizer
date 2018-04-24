@@ -9,15 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.firebase_db.NotesDB;
 import peegee.fullorganizer.notes.AddNote;
-import peegee.fullorganizer.room_db.notes.NotesDB;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
-    List<peegee.fullorganizer.firebase_db.NotesDB> notesDBList;
+    List<NotesDB> notesDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
@@ -42,7 +44,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
-    public NotesAdapter(List<peegee.fullorganizer.firebase_db.NotesDB> notesDBList) {
+    public NotesAdapter(List<NotesDB> notesDBList) {
         this.notesDBList = notesDBList;
     }
 
@@ -81,7 +83,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                                 synchronized (MainActivity.FBLOCK) {
                                     MainActivity.notesRef.child(item.getNoteId()).removeValue();
                                 }
-                                MainActivity.notesList.remove(item); // Remove item from main list
+//                                MainActivity.notesList.remove(item); // Remove item from main list
 
                                 // Update RecyclerView
                                 notesDBList.remove(position);
@@ -97,7 +99,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return notesDBList.size();
+        if (notesDBList == null)
+            return 0;
+        else
+            return notesDBList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

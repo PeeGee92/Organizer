@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference todoItemRef;
 
     // DB locally saved lists
-    public static List<NotesDB> notesList;
+    public static List<NotesDB> notesList = new ArrayList<>();
     public boolean newUser;
     public static final String DB_PRIMARY_KEY = "user_id";
 
@@ -138,7 +139,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Firebase Initialization
-        initFirebase();
+        if (rootRef == null) {
+            initFirebase();
+        }
 
     }
 
