@@ -9,6 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -31,7 +35,7 @@ public class AddNote extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    List<NotesDB> streamResult; // Used to retrieve item by id
+    List<NotesDB> evaluateResult; // Used to retrieve item by id
     NotesDB notesDB;
 
     boolean update = false;
@@ -62,11 +66,14 @@ public class AddNote extends AppCompatActivity {
         {
             // Firebase
 //            synchronized (MainActivity.FBLOCK) {
-//                streamResult = MainActivity.notesList.stream()
-//                        .filter(item -> item.getNoteId().equals(id))
-//                        .collect(Collectors.toList());
+            Predicate condition = new Predicate() {
+                public boolean evaluate(Object sample) {
+                    return ((NotesDB)sample).getNoteId().equals(id);
+                }
+            };
+            evaluateResult = (List<NotesDB>) CollectionUtils.select( MainActivity.notesList, condition );
 //            }
-            notesDB = streamResult.get(0);
+            notesDB = evaluateResult.get(0);
             etTitle.setText(notesDB.noteTitle);
             etNote.setText(notesDB.noteText);
             update = true; // It's an opened note so save should just update
