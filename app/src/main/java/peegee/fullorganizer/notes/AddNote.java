@@ -3,19 +3,20 @@ package peegee.fullorganizer.notes;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.notes.NotesDB;
+import peegee.fullorganizer.firebase_db.NotesDB;
 
 public class AddNote extends AppCompatActivity {
 
@@ -30,10 +31,11 @@ public class AddNote extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
+    List<NotesDB> streamResult; // Used to retrieve item by id
     NotesDB notesDB;
 
     boolean update = false;
-    int id;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +56,19 @@ public class AddNote extends AppCompatActivity {
         // Get Intent extra to know which note to load
         // or to start a new note
         Intent intent = getIntent();
-        id = intent.getIntExtra("NOTE_ID", -1);
+        id = intent.getStringExtra("NOTE_ID");
 
-        if(id != -1)
+        if(id != null)
         {
-            // Database
-            synchronized (MainActivity.DBLOCK) {
-                NotesDB notesDB = MainActivity.db.notesDAO().getById(id);
-                etTitle.setText(notesDB.getNoteTitle());
-                etNote.setText(notesDB.getNoteText());
-            }
+            // Firebase
+//            synchronized (MainActivity.FBLOCK) {
+//                streamResult = MainActivity.notesList.stream()
+//                        .filter(item -> item.getNoteId().equals(id))
+//                        .collect(Collectors.toList());
+//            }
+            notesDB = streamResult.get(0);
+            etTitle.setText(notesDB.noteTitle);
+            etNote.setText(notesDB.noteText);
             update = true; // It's an opened note so save should just update
         }
     }
@@ -81,24 +86,23 @@ public class AddNote extends AppCompatActivity {
         }
     }
 
-    // Database
+    // Firebase
     synchronized private void saveToDB() {
 
-        synchronized (MainActivity.DBLOCK) {
-            if (update) {
-                notesDB = MainActivity.db.notesDAO().getById(id);
-                notesDB.setNoteTitle(etTitle.getText().toString());
-                notesDB.setNoteText(etNote.getText().toString());
-
-                MainActivity.db.notesDAO().update(notesDB);
-            } else {
-                String tempTitle = etTitle.getText().toString();
-                String tempNote = etNote.getText().toString();
-                notesDB = new NotesDB(tempTitle, tempNote);
-
-                MainActivity.db.notesDAO().insert(notesDB);
+        if (update) {
+            notesDB.noteTitle = etTitle.getText().toString();
+            notesDB.noteText = etNote.getText().toString();
+            synchronized (MainActivity.FBLOCK) {
+                MainActivity.notesRef.child(notesDB.getNoteId()).setValue(notesDB);
+            }
+        } else {
+            String tempTitle = etTitle.getText().toString();
+            String tempNote = etNote.getText().toString();
+            notesDB = new NotesDB(tempTitle, tempNote);
+            synchronized (MainActivity.FBLOCK) {
+                String key = MainActivity.notesRef.push().getKey();
+                MainActivity.notesRef.child(key).setValue(notesDB);
             }
         }
-
     }
 }
