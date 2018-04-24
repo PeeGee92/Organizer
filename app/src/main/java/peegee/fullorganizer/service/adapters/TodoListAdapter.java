@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,9 +127,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         TodoListDB listItem = todoListDBList.get(itemPosition);
         List<TodoItemDB> itemsList= listItem.todoItemList;
 
-        for (TodoItemDB item: itemsList) {
-            if (item.done == done)
-                items++;
+        if (itemsList != null) {
+            for (TodoItemDB item : itemsList) {
+                if (item.done == done)
+                    items++;
+            }
         }
 
         return items;

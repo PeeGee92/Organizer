@@ -66,7 +66,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
                                 // Firebase
                                 synchronized (MainActivity.FBLOCK) {
-                                    MainActivity.todoListRef.child(item.getItemId()).removeValue();
+                                    if (item.getItemId() != null)
+                                        MainActivity.todoListRef.child(item.getItemId()).removeValue();
                                 }
 
                                 // Update RecyclerView
@@ -83,7 +84,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return todoDBList.size();
+        if (todoDBList != null)
+            return todoDBList.size();
+        else
+            return 0;
     }
 
     // Sort list by checked items
@@ -93,7 +97,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     }
 
     private void sort() {
-        Collections.sort(todoDBList, listComparator);
+        if (todoDBList != null)
+            Collections.sort(todoDBList, listComparator);
     }
 
     private Comparator<TodoItemDB> listComparator = new Comparator<TodoItemDB>() {

@@ -97,7 +97,8 @@ public class AddTodoList extends AppCompatActivity {
             };
             evaluateResult = (List<TodoListDB>) CollectionUtils.select(MainActivity.todoListList, condition);
             list = evaluateResult.get(0);
-            todoDBList.addAll(list.todoItemList);
+            if (list.todoItemList != null)
+                todoDBList.addAll(list.todoItemList);
         }
 
         // RecyclerView setup
@@ -169,29 +170,30 @@ public class AddTodoList extends AppCompatActivity {
         }
 
         // Firebase
-        synchronized (MainActivity.FBLOCK) {
-
-            if (update) {
-                list.todoListTitle = etListName.getText().toString();
+        if (update) {
+            list.todoListTitle = etListName.getText().toString();
+            for (TodoItemDB item : addedItemsList) {
+                item.setListId(listId);
+            }
+            if (addedItemsList != null) {
+                if (list.todoItemList == null)
+                    list.todoItemList = new ArrayList<>();
+                list.todoItemList.addAll(addedItemsList);
+            }
+            synchronized (MainActivity.FBLOCK) {
+                MainActivity.todoListRef.child(list.getTodoListId()).setValue(list);
+            }
+        }
+        else {
+            String tempTitle = etListName.getText().toString();
+            list = new TodoListDB(tempTitle);
+            synchronized (MainActivity.FBLOCK) {
+                listId = MainActivity.todoListRef.push().getKey();
                 for (TodoItemDB item : addedItemsList) {
                     item.setListId(listId);
                 }
                 list.todoItemList.addAll(addedItemsList);
-                synchronized (MainActivity.FBLOCK) {
-                    MainActivity.todoListRef.child(list.getTodoListId()).setValue(list);
-                }
-            }
-            else {
-                String tempTitle = etListName.getText().toString();
-                list = new TodoListDB(tempTitle);
-                synchronized (MainActivity.FBLOCK) {
-                    listId = MainActivity.todoListRef.push().getKey();
-                    for (TodoItemDB item : addedItemsList) {
-                        item.setListId(listId);
-                    }
-                    list.todoItemList = addedItemsList;
-                    MainActivity.todoListRef.child(listId).setValue(list);
-                }
+                MainActivity.todoListRef.child(listId).setValue(list);
             }
         }
 
