@@ -22,8 +22,6 @@ import peegee.fullorganizer.service.adapters.TodoListAdapter;
 
 public class TodoActivity extends AppCompatActivity {
 
-    List<TodoListDB> todoListDBList = new ArrayList<>();
-
     @InjectView(R.id.rvTodo)
     RecyclerView rvTodo;
     @InjectView(R.id.toolbar)

@@ -89,9 +89,23 @@ public class AddTodoList extends AppCompatActivity {
             etListName.setText(list.todoListTitle);
         }
 
+        if (update) { // Amend added items to existing list
+            Predicate condition = new Predicate() {
+                public boolean evaluate(Object sample) {
+                    return ((TodoListDB) sample).getTodoListId().equals(listId);
+                }
+            };
+            evaluateResult = (List<TodoListDB>) CollectionUtils.select(MainActivity.todoListList, condition);
+            list = evaluateResult.get(0);
+            todoDBList.addAll(list.todoItemList);
+        }
+
         // RecyclerView setup
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TodoAdapter(list.todoItemList);
+        if (list == null)
+            adapter = new TodoAdapter(new ArrayList<TodoItemDB>());
+        else
+            adapter = new TodoAdapter(list.todoItemList);
         rvTasks.setAdapter(adapter);
 
         FloatingActionButton fbAddTodoList = findViewById(R.id.fbAddTodoTask);
@@ -157,28 +171,27 @@ public class AddTodoList extends AppCompatActivity {
         // Firebase
         synchronized (MainActivity.FBLOCK) {
 
-            if (!update) {
-                String tempTitle = etListName.getText().toString();
-                list = new TodoListDB(tempTitle);
+            if (update) {
+                list.todoListTitle = etListName.getText().toString();
+                for (TodoItemDB item : addedItemsList) {
+                    item.setListId(listId);
+                }
+                list.todoItemList.addAll(addedItemsList);
                 synchronized (MainActivity.FBLOCK) {
-                    listId = MainActivity.notesRef.push().getKey();
-                    MainActivity.notesRef.child(listId).setValue(list);
+                    MainActivity.todoListRef.child(list.getTodoListId()).setValue(list);
                 }
             }
             else {
-
-                list.todoListTitle = etListName.getText().toString();
+                String tempTitle = etListName.getText().toString();
+                list = new TodoListDB(tempTitle);
                 synchronized (MainActivity.FBLOCK) {
-                    MainActivity.notesRef.child(listId).setValue(list);
+                    listId = MainActivity.todoListRef.push().getKey();
+                    for (TodoItemDB item : addedItemsList) {
+                        item.setListId(listId);
+                    }
+                    list.todoItemList = addedItemsList;
+                    MainActivity.todoListRef.child(listId).setValue(list);
                 }
-            }
-
-            for (TodoItemDB item : addedItemsList) {
-                item.setListId(listId);
-            }
-
-            synchronized (MainActivity.FBLOCK) {
-                MainActivity.todoListRef.child(listId).child("todoItemList").setValue(addedItemsList);
             }
         }
 

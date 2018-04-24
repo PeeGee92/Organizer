@@ -24,7 +24,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
-    String id;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -65,8 +64,8 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         TodoListDB temp = todoListDBList.get(position);
 
         holder.tvTitle.setText(temp.todoListTitle);
-        done = getByDoneCount(position, true);
-        notDone = getByDoneCount(position, false);
+        done = getByDoneItemsCount(position, true);
+        notDone = getByDoneItemsCount(position, false);
         holder.tvDone.setText("Tasks done: " + done);
         holder.tvNotDone.setText("Tasks not done: " + notDone);
         float totalTasks = done + notDone;
@@ -122,17 +121,17 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         viewHolder.progressBar.setProgress((int) progress);
     }
 
-    private int getByDoneCount(int itemPosition, boolean done) {
-        int doneItems = 0;
+    private int getByDoneItemsCount(int itemPosition, boolean done) {
+        int items = 0;
         TodoListDB listItem = todoListDBList.get(itemPosition);
         List<TodoItemDB> itemsList= listItem.todoItemList;
 
         for (TodoItemDB item: itemsList) {
-            if (item.done)
-                doneItems++;
+            if (item.done == done)
+                items++;
         }
 
-        return doneItems;
+        return items;
     }
 
     @Override
