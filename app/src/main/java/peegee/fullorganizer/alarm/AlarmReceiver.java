@@ -3,6 +3,7 @@ package peegee.fullorganizer.alarm;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 
 /**
  * AlarmReceiver extending BroadcastReceiver
@@ -24,7 +25,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         if (alarmOn) {
             Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
-            context.startForegroundService(serviceIntent);
+            ContextCompat.startForegroundService(context, serviceIntent);
         }
     }
 }
