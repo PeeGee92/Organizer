@@ -17,7 +17,7 @@ import peegee.fullorganizer.room_db.notes.NotesDB;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
-    List<NotesDB> notesDBList;
+    List<peegee.fullorganizer.firebase_db.NotesDB> notesDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
@@ -25,10 +25,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         @Override
         public void onClick(View view) {
             int itemPosition = recyclerView.getChildLayoutPosition(view);
-            NotesDB item = notesDBList.get(itemPosition);
+            peegee.fullorganizer.firebase_db.NotesDB item = notesDBList.get(itemPosition);
 
             // Load this item data in the next activity
-            int tempId = item.getNoteID();
+            String tempId = item.getNoteId();
             Intent intent = new Intent(view.getContext(), AddNote.class);
             intent.putExtra("NOTE_ID", tempId);
             view.getContext().startActivity(intent);
@@ -42,7 +42,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
-    public NotesAdapter(List<NotesDB> notesDBList) {
+    public NotesAdapter(List<peegee.fullorganizer.firebase_db.NotesDB> notesDBList) {
         this.notesDBList = notesDBList;
     }
 
@@ -56,11 +56,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final NotesAdapter.ViewHolder holder, final int position) {
-        if (notesDBList.get(position).getNoteTitle().isEmpty()) {
-            holder.tvTitle.setText(notesDBList.get(position).getNoteText());
+        if (notesDBList.get(position).noteTitle.isEmpty()) {
+            holder.tvTitle.setText(notesDBList.get(position).noteText);
         }
         else {
-            holder.tvTitle.setText(notesDBList.get(position).getNoteTitle());
+            holder.tvTitle.setText(notesDBList.get(position).noteTitle);
         }
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -72,10 +72,16 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                NotesDB item = notesDBList.get(position);
+                                peegee.fullorganizer.firebase_db.NotesDB item = notesDBList.get(position);
 
-                                // Database
-                                MainActivity.db.notesDAO().delete(item);
+//                                // Database
+//                                MainActivity.db.notesDAO().delete(item);
+
+                                // Firebase
+                                synchronized (MainActivity.FBLOCK) {
+                                    MainActivity.notesRef.child(item.getNoteId()).removeValue();
+                                }
+                                MainActivity.notesList.remove(item); // Remove item from main list
 
                                 // Update RecyclerView
                                 notesDBList.remove(position);

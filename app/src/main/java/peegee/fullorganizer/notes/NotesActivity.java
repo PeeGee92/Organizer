@@ -28,7 +28,6 @@ public class NotesActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     RecyclerView.Adapter adapter;
-    List<NotesDB> notesDBList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +45,9 @@ public class NotesActivity extends AppCompatActivity {
             }
         });
 
-        // Database
-        synchronized (MainActivity.DBLOCK) {
-            notesDBList = MainActivity.db.notesDAO().getAll();
-        }
-
         // RecyclerView setup
         rvNotes.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new NotesAdapter(notesDBList);
+        adapter = new NotesAdapter(MainActivity.notesList);
         rvNotes.setAdapter(adapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
