@@ -51,7 +51,6 @@ import peegee.fullorganizer.firebase_db.TodoItemDB;
 import peegee.fullorganizer.firebase_db.TodoListDB;
 import peegee.fullorganizer.notes.NotesActivity;
 import peegee.fullorganizer.reminder.ReminderActivity;
-import peegee.fullorganizer.room_db.AppDatabase;
 import peegee.fullorganizer.todo.TodoActivity;
 
 /**
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    public static AppDatabase db;
     public static final Object DBLOCK = new Object(); // Database Lock
     public static final Object FBLOCK = new Object(); // Firebase Lock
     private static FirebaseAuth firebaseAuth;

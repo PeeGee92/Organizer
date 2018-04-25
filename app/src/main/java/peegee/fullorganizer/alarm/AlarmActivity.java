@@ -17,7 +17,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.alarm.AlarmDB;
 import peegee.fullorganizer.service.adapters.AlarmAdapter;
 
 
