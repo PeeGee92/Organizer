@@ -32,7 +32,7 @@ import peegee.fullorganizer.service.adapters.TodoAdapter;
 public class AddTodoList extends AppCompatActivity {
 
     List<TodoItemDB> todoDBList = new ArrayList<>();
-    List<TodoItemDB> addedItemsList = new ArrayList<>();
+    public static List<TodoItemDB> addedItemsList = new ArrayList<>();
     
     @InjectView(R.id.rvTasks)
     RecyclerView rvTasks;
@@ -102,6 +102,7 @@ public class AddTodoList extends AppCompatActivity {
         }
 
         // RecyclerView setup
+        addedItemsList.clear();
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         if (list == null)
             adapter = new TodoAdapter(new ArrayList<TodoItemDB>());

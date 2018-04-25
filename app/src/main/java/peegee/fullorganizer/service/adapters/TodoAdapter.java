@@ -16,6 +16,7 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.TodoItemDB;
 import peegee.fullorganizer.firebase_db.TodoListDB;
+import peegee.fullorganizer.todo.AddTodoList;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
@@ -68,6 +69,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                                 synchronized (MainActivity.FBLOCK) {
                                     if (item.getItemId() != null)
                                         MainActivity.todoListRef.child(item.getItemId()).removeValue();
+                                    AddTodoList.addedItemsList.remove(item);
                                 }
 
                                 // Update RecyclerView
