@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,13 @@ import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.List;
 
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.alarm.AddAlarm;
-import peegee.fullorganizer.room_db.alarm.AlarmDB;
+import peegee.fullorganizer.firebase_db.AlarmDB;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
@@ -33,9 +33,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             AlarmDB item = alarmDBList.get(itemPosition);
 
             // Load this item data in the next activity
-            int tempId = item.getAlarmId();
+            String tempId = item.getAlarmId();
             Intent intent = new Intent(view.getContext(), AddAlarm.class);
-            intent.putExtra("NOTE_ID", tempId);
+            intent.putExtra("ALARM_ID", tempId);
             view.getContext().startActivity(intent);
         }
     };
@@ -63,10 +63,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onBindViewHolder(final AlarmAdapter.ViewHolder holder, final int position) {
         final AlarmDB temp = alarmDBList.get(position);
 
-        holder.swOnOff.setChecked(temp.isAlarmOn());
+        holder.swOnOff.setChecked(temp.alarmOn);
         String time, amPm, h, m;
-        int hour = temp.getAlarmHour();
-        int min = temp.getAlarmMin();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(temp.alarmDate);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.MINUTE);
 
         // 24 to 12 format
         if (hour > 12) {
@@ -105,9 +107,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
-                                // Database
-                                synchronized (MainActivity.DBLOCK) {
-                                    MainActivity.db.alarmDAO().delete(temp);
+                                // Firebase
+                                synchronized (MainActivity.FBLOCK) {
+                                    MainActivity.alarmRef.child(temp.getAlarmId()).removeValue();
                                 }
 
                                 // Update RecyclerView
@@ -124,10 +126,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         holder.swOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                temp.setAlarmOn(holder.swOnOff.isChecked());
+                temp.alarmOn = holder.swOnOff.isChecked();
 
-                //Database
-                MainActivity.db.alarmDAO().update(temp);
+                // Firebase
+                synchronized (MainActivity.FBLOCK) {
+                    MainActivity.todoItemRef.child(temp.getAlarmId()).setValue(temp);
+                }
 
                 //TODO stop or start the broadcast
             }
@@ -136,8 +140,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        Log.d("ALARM_COUNT", "Count: " + alarmDBList.size());
-
         return alarmDBList.size();
     }
 

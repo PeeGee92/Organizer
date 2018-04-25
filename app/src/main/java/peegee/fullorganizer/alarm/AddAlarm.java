@@ -5,9 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,15 +15,18 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TimePicker;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.alarm.AlarmDAO;
-import peegee.fullorganizer.room_db.alarm.AlarmDB;
+import peegee.fullorganizer.firebase_db.AlarmDB;
 
 
 public class AddAlarm extends AppCompatActivity {
@@ -48,7 +49,10 @@ public class AddAlarm extends AppCompatActivity {
     AlarmManager alarmManager;
     Calendar calendar;
 
-    int id;
+    List<AlarmDB> evaluateResult; // Used to retrieve item by id
+    AlarmDB alarmDB;
+
+    String id;
     boolean update = false;
 
     @Override
@@ -70,22 +74,29 @@ public class AddAlarm extends AppCompatActivity {
         // Get Intent extra to know which note to load
         // or to start a new note
         Intent intent = getIntent();
-        id = intent.getIntExtra("NOTE_ID", -1);
+        id = intent.getStringExtra("ALARM_ID");
 
-        if(id != -1)
+        if(id != null)
         {
-            // Database
-            synchronized (MainActivity.DBLOCK) {
-                AlarmDB alarmDB = MainActivity.db.alarmDAO().getById(id);
-                timePicker.setHour(alarmDB.getAlarmHour());
-                timePicker.setMinute(alarmDB.getAlarmMin());
-                if (alarmDB.isAlarmRepeated()) {
-                    rbRepeat.setChecked(true);
-                } else {
-                    rbOnce.setChecked(true);
+            Predicate condition = new Predicate() {
+                public boolean evaluate(Object sample) {
+                    return ((AlarmDB)sample).getAlarmId().equals(id);
                 }
-                etSnooze.setText(alarmDB.getAlarmSnooze());
+            };
+            evaluateResult = (List<AlarmDB>) CollectionUtils.select( MainActivity.alarmsList, condition );
+            alarmDB = evaluateResult.get(0);
+            Calendar tempCal = Calendar.getInstance();
+            tempCal.setTime(alarmDB.alarmDate);
+
+            timePicker.setHour(tempCal.get(Calendar.HOUR_OF_DAY));
+            timePicker.setMinute(tempCal.get(Calendar.MINUTE));
+            if (alarmDB.alarmRepeated) {
+                rbRepeat.setChecked(true);
+            } else {
+                rbOnce.setChecked(true);
             }
+            etSnooze.setText(Integer.toString(alarmDB.alarmSnooze));
+
             update = true; // It's an already saved alarm so save should just update
         }
     }
@@ -95,7 +106,6 @@ public class AddAlarm extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.btnAddAlarm:
                 addAlarm();
-                startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
                 break;
             case R.id.btnCancelAlarm:
                 startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
@@ -103,17 +113,30 @@ public class AddAlarm extends AppCompatActivity {
         }
     }
 
-    private void addAlarm() {
+    synchronized private void addAlarm() {
+        // TODO Check input and return if error exists
 
-        // Database
-        synchronized (MainActivity.DBLOCK) {
+        Calendar tempCal = Calendar.getInstance();
+        tempCal.set(Calendar.HOUR_OF_DAY,timePicker.getHour());
+        tempCal.set(Calendar.MINUTE,timePicker.getMinute());
+
+        // Firebase
+        synchronized (MainActivity.FBLOCK) {
             if (update) {
-                AlarmDB alarmDB = MainActivity.db.alarmDAO().getById(id);
-                MainActivity.db.alarmDAO().update(alarmDB);
+                alarmDB.alarmRepeated = rbRepeat.isChecked();
+                alarmDB.alarmDate = tempCal.getTime();
+                synchronized (MainActivity.FBLOCK) {
+                    MainActivity.alarmRef.child(alarmDB.getAlarmId()).setValue(alarmDB);
+                }
             } else {
-                AlarmDB alarmDB = new AlarmDB(timePicker.getHour(), timePicker.getMinute(),
-                        Integer.parseInt(etSnooze.getText().toString()), rbRepeat.isChecked(), true);
-                MainActivity.db.alarmDAO().insert(alarmDB);
+                alarmDB = new AlarmDB(rbRepeat.isChecked(),
+                        Integer.parseInt(etSnooze.getText().toString()),
+                        tempCal.getTime(),
+                        true);
+                synchronized (MainActivity.FBLOCK) {
+                    String key = MainActivity.alarmRef.push().getKey();
+                    MainActivity.alarmRef.child(key).setValue(alarmDB);
+                }
             }
         }
 
@@ -132,5 +155,7 @@ public class AddAlarm extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
     }
 }

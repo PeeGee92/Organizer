@@ -160,6 +160,34 @@ public class MainActivity extends AppCompatActivity {
         rootRef = FirebaseDatabase.getInstance().getReference();
         userRef = rootRef.child("User");
         alarmRef = userRef.child("Alarm");
+        alarmRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
+                tempItem.setAlarmId(dataSnapshot.getKey());
+                alarmsList.add(tempItem);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         notesRef = userRef.child("Notes");
         notesRef.addChildEventListener(new ChildEventListener() {
             @Override

@@ -42,8 +42,6 @@ public class AlarmActivity extends AppCompatActivity {
 
     RecyclerView.Adapter adapter;
 
-    List<AlarmDB> alarmDBList = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,15 +58,9 @@ public class AlarmActivity extends AppCompatActivity {
             }
         });
 
-
-        // Database
-        synchronized (MainActivity.DBLOCK) {
-            alarmDBList = MainActivity.db.alarmDAO().getAll();
-        }
-
         // RecyclerView setup
         rvAlarm.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AlarmAdapter(alarmDBList);
+        adapter = new AlarmAdapter(MainActivity.alarmsList);
         rvAlarm.setAdapter(adapter);
 
         // Used to load a new activity to add a new alarm
