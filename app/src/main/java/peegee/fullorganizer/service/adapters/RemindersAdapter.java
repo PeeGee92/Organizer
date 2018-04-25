@@ -9,18 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
-
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.firebase_db.ReminderDB;
 import peegee.fullorganizer.reminder.AddReminder;
-import peegee.fullorganizer.room_db.reminder.RemindersDB;
 
 public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.ViewHolder> {
 
-    List<RemindersDB> remindersDBList;
+    List<ReminderDB> remindersDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
@@ -28,10 +26,10 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         @Override
         public void onClick(View view) {
             int itemPosition = recyclerView.getChildLayoutPosition(view);
-            RemindersDB item = remindersDBList.get(itemPosition);
+            ReminderDB item = remindersDBList.get(itemPosition);
 
             // Load this item data in the next activity
-            int tempId = item.getReminderId();
+            String tempId = item.getReminderId();
             Intent intent = new Intent(view.getContext(), AddReminder.class);
             intent.putExtra("REMINDER_ID", tempId);
             view.getContext().startActivity(intent);
@@ -45,7 +43,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         this.recyclerView =recyclerView;
     }
 
-    public RemindersAdapter(List<RemindersDB> remindersDBList) {
+    public RemindersAdapter(List<ReminderDB> remindersDBList) {
         this.remindersDBList = remindersDBList;
     }
 
@@ -60,11 +58,11 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
     @Override
     public void onBindViewHolder(RemindersAdapter.ViewHolder holder, final int position) {
 
-        RemindersDB remindersDB = remindersDBList.get(position);
+        ReminderDB remindersDB = remindersDBList.get(position);
 
-        holder.tvTitle.setText(remindersDB.getReminderTitle());
-        holder.tvDate.setText(new SimpleDateFormat("dd-MMM-yyyy").format(remindersDB.getReminderDate()));
-        holder.tvTime.setText(new SimpleDateFormat("hh:mm a").format(remindersDB.getReminderDate()));
+        holder.tvTitle.setText(remindersDB.reminderTitle);
+        holder.tvDate.setText(new SimpleDateFormat("dd-MMM-yyyy").format(remindersDB.reminderDate));
+        holder.tvTime.setText(new SimpleDateFormat("hh:mm a").format(remindersDB.reminderDate));
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,9 +73,12 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                RemindersDB item = remindersDBList.get(position);
+                                ReminderDB item = remindersDBList.get(position);
 
-                                MainActivity.db.remindersDAO().delete(item);
+                                // Firebase
+                                synchronized (MainActivity.FBLOCK) {
+                                    MainActivity.reminderRef.child(item.getReminderId()).removeValue();
+                                }
 
                                 // Update RecyclerView
                                 remindersDBList.remove(position);

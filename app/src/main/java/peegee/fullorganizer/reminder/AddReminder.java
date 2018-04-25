@@ -20,23 +20,29 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.reminder.RemindersDB;
+import peegee.fullorganizer.firebase_db.ReminderDB;
 
 public class AddReminder extends AppCompatActivity {
 
-    RemindersDB reminderDB;
+    List<ReminderDB> evaluateResult; // Used to retrieve item by id
+    ReminderDB reminderDB;
 
     boolean update = false;
-    int id;
+    String id;
+
     @InjectView(R.id.etTitle)
     EditText etTitle;
     @InjectView(R.id.etLocation)
@@ -89,7 +95,7 @@ public class AddReminder extends AppCompatActivity {
         // Get Intent extra to know which reminder to load
         // or to start a new reminder
         Intent intent = getIntent();
-        id = intent.getIntExtra("REMINDER_ID", -1);
+        id = intent.getStringExtra("REMINDER_ID");
 
         // Spinner setup
         final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(AddReminder.this,
@@ -98,30 +104,39 @@ public class AddReminder extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spAlarm.setAdapter(spinnerAdapter);
 
-        if (id != -1) {
+        if (id != null) {
             // Database
             synchronized (MainActivity.DBLOCK) {
-                reminderDB = MainActivity.db.remindersDAO().getById(id);
-                etTitle.setText(reminderDB.getReminderTitle());
-                etLocation.setText(reminderDB.getReminderLocation());
-                etDescription.setText(reminderDB.getReminderDescription());
-                reminderDate = reminderDB.getReminderDate();
+                Predicate condition = new Predicate() {
+                    public boolean evaluate(Object sample) {
+                        return ((ReminderDB)sample).getReminderId().equals(id);
+                    }
+                };
+                evaluateResult = (List<ReminderDB>) CollectionUtils.select( MainActivity.reminderList, condition );
+                reminderDB = evaluateResult.get(0);
+
+                etTitle.setText(reminderDB.reminderTitle);
+                etLocation.setText(reminderDB.reminderLocation);
+                etDescription.setText(reminderDB.reminderDescription);
+                reminderDate = reminderDB.reminderDate;
                 tvDate.setText(dateFormat.format(reminderDate));
                 tvTime.setText(timeFormat.format(reminderDate));
-                cbAlarm.setChecked(reminderDB.isReminderAlarm());
+                cbAlarm.setChecked(reminderDB.reminderAlarm);
                 if (cbAlarm.isChecked()) {
-                    String type = reminderDB.getReminderAlarmType();
+                    String type = reminderDB.reminderAlarmType;
                     int position = spinnerAdapter.getPosition(type);
                     spAlarm.setSelection(position);
-                    etAlarmTime.setText(Integer.toString(reminderDB.getReminderAlarmValue()));
+                    etAlarmTime.setText(Integer.toString(reminderDB.reminderAlarmValue));
                 }
             }
             update = true; // It's an opened reminder so save should just update
         }
 
-        reminderDate = Calendar.getInstance().getTime();
-        tvDate.setText(dateFormat.format(reminderDate));
-        tvTime.setText(timeFormat.format(reminderDate));
+        if (!update) {
+            reminderDate = Calendar.getInstance().getTime();
+            tvDate.setText(dateFormat.format(reminderDate));
+            tvTime.setText(timeFormat.format(reminderDate));
+        }
 
         // Initialize spinner enable/disable
         setEnableSpinner();
@@ -237,37 +252,46 @@ public class AddReminder extends AppCompatActivity {
             return;
         }
 
-        // Database
         synchronized (MainActivity.DBLOCK) {
+            // TODO Check input errors, return if errors exist
+
+            // Firebase
             if (update) {
-                reminderDB.setReminderTitle(etTitle.getText().toString());
-                reminderDB.setReminderLocation(etLocation.getText().toString());
-                reminderDB.setReminderDescription(etDescription.getText().toString());
-                reminderDB.setReminderDate(reminderDate);
-                reminderDB.setReminderAlarm(cbAlarm.isChecked());
+                reminderDB.reminderTitle = etTitle.getText().toString();
+                reminderDB.reminderLocation = etLocation.getText().toString();
+                reminderDB.reminderDescription = etDescription.getText().toString();
+                reminderDB.reminderDate = reminderDate;
+                reminderDB.reminderAlarm = cbAlarm.isChecked();
                 if (cbAlarm.isChecked()) {
                     if (etAlarmTime.getText().toString().trim().isEmpty()) {
                         etAlarmTime.setText("0");
                     }
-                    switchTimeToDate(spAlarm.getSelectedItem().toString(), Integer.parseInt(etAlarmTime.getText().toString()));
+                    reminderDB.reminderAlarmType = spAlarm.getSelectedItem().toString();
+                    reminderDB.reminderAlarmValue = Integer.parseInt(etAlarmTime.getText().toString());
+                    switchTimeToDate(reminderDB.reminderAlarmType, reminderDB.reminderAlarmValue);
 
-                    reminderDB.setReminderAlarmDate(alarmDate);
+                    reminderDB.reminderAlarmDate = alarmDate;
                 }
-                MainActivity.db.remindersDAO().update(reminderDB);
+
+                synchronized (MainActivity.FBLOCK) {
+                    MainActivity.reminderRef.child(reminderDB.getReminderId()).setValue(reminderDB);
+                }
             } else {
                 if (etAlarmTime.getText().toString().trim().isEmpty() && cbAlarm.isChecked()) {
                     etAlarmTime.setText("0");
                 }
                 switchTimeToDate(spAlarm.getSelectedItem().toString(), Integer.parseInt(etAlarmTime.getText().toString()));
-                Log.d("SWITCH", "cbChecked: " + cbAlarm.isChecked());
-                reminderDB = new RemindersDB(etTitle.getText().toString(),
+                reminderDB = new ReminderDB(etTitle.getText().toString(),
                         etLocation.getText().toString(),
                         etDescription.getText().toString(),
                         reminderDate,
                         cbAlarm.isChecked(), alarmDate,
                         Integer.parseInt(etAlarmTime.getText().toString()), spAlarm.getSelectedItem().toString());
 
-                MainActivity.db.remindersDAO().insert(reminderDB);
+                synchronized (MainActivity.FBLOCK) {
+                    String key = MainActivity.reminderRef.push().getKey();
+                    MainActivity.reminderRef.child(key).setValue(reminderDB);
+                }
             }
         }
 

@@ -93,9 +93,6 @@ public class MainActivity extends AppCompatActivity {
     public static List<TodoItemDB> todoItemsList = new ArrayList<>();
     public static List<ReminderDB> reminderList = new ArrayList<>();
 
-    public boolean newUser;
-    public static final String DB_PRIMARY_KEY = "user_id";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -276,6 +273,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         reminderRef = userRef.child("Reminder");
+        reminderRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
+                tempItem.setReminderId(dataSnapshot.getKey());
+                reminderList.add(tempItem);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
     private void authenticate() {
 
@@ -297,8 +322,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        boolean newUser = false; // TODO
 
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);

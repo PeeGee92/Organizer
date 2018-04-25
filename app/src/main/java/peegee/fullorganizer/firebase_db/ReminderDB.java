@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class ReminderDB {
 
+    private String reminderId;
     public String reminderTitle;
     public String reminderLocation;
     public String reminderDescription;
@@ -26,5 +27,13 @@ public class ReminderDB {
         this.reminderAlarmDate = reminderAlarmDate;
         this.reminderAlarmValue = reminderAlarmValue;
         this.reminderAlarmType = reminderAlarmType;
+    }
+
+    public String getReminderId() {
+        return reminderId;
+    }
+
+    public void setReminderId(String reminderId) {
+        this.reminderId = reminderId;
     }
 }

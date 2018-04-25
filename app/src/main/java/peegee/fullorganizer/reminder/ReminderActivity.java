@@ -9,15 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
-import peegee.fullorganizer.room_db.reminder.RemindersDB;
 import peegee.fullorganizer.service.adapters.RemindersAdapter;
 
 public class ReminderActivity extends AppCompatActivity {
@@ -28,8 +23,6 @@ public class ReminderActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     RecyclerView.Adapter adapter;
-
-    List<RemindersDB> remindersDBList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +40,9 @@ public class ReminderActivity extends AppCompatActivity {
             }
         });
 
-        // Database
-        synchronized (MainActivity.DBLOCK) {
-            remindersDBList = MainActivity.db.remindersDAO().getAll();
-        }
-
         // RecyclerView setup
         rvReminders.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RemindersAdapter(remindersDBList);
+        adapter = new RemindersAdapter(MainActivity.reminderList);
         rvReminders.setAdapter(adapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
