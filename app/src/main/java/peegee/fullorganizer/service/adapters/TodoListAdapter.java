@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
@@ -21,7 +25,7 @@ import peegee.fullorganizer.todo.AddTodoList;
 public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
 
     List<TodoListDB> todoListDBList;
-    int done, notDone, progress;
+    int done, notDone;
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
@@ -124,8 +128,15 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
 
     private int getByDoneItemsCount(int itemPosition, boolean done) {
         int items = 0;
-        TodoListDB listItem = todoListDBList.get(itemPosition);
-        List<TodoItemDB> itemsList= listItem.todoItemList;
+        final TodoListDB listItem = todoListDBList.get(itemPosition);
+
+        // Get items
+        Predicate condition = new Predicate() {
+            public boolean evaluate(Object sample) {
+                return ((TodoItemDB)sample).getListId().equals(listItem.getTodoListId());
+            }
+        };
+        List<TodoItemDB> itemsList = (List<TodoItemDB>) CollectionUtils.select( MainActivity.todoItemsList, condition );
 
         if (itemsList != null) {
             for (TodoItemDB item : itemsList) {

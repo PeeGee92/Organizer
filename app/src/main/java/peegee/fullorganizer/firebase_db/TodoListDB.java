@@ -7,7 +7,6 @@ public class TodoListDB {
 
     private String todoListId;
     public String todoListTitle;
-    public List<TodoItemDB> todoItemList;
 
     // Required for FireBase
     public TodoListDB() {
@@ -15,7 +14,6 @@ public class TodoListDB {
 
     public TodoListDB(String todoListTitle) {
         this.todoListTitle = todoListTitle;
-        this.todoItemList = new ArrayList<>();
     }
 
     public String getTodoListId() {

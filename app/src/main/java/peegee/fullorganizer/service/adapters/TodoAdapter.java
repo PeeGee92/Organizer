@@ -3,6 +3,7 @@ package peegee.fullorganizer.service.adapters;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,9 +69,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                                 // Firebase
                                 synchronized (MainActivity.FBLOCK) {
                                     if (item.getItemId() != null)
-                                        MainActivity.todoListRef.child(item.getItemId()).removeValue();
-                                    AddTodoList.addedItemsList.remove(item);
+                                        MainActivity.todoItemRef.child(item.getItemId()).removeValue();
                                 }
+                                AddTodoList.addedItemsList.remove(item);
+                                if (MainActivity.todoItemsList.contains(item))
+                                    MainActivity.todoItemsList.remove(item);
 
                                 // Update RecyclerView
                                 todoDBList.remove(i);
@@ -132,8 +135,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                         item.done = checked;
 
                         //Firebase
-                        synchronized (MainActivity.FBLOCK) {
-                            MainActivity.todoListRef.child(item.getItemId()).setValue(item);
+                        if (item.getItemId() != null) {
+                            synchronized (MainActivity.FBLOCK) {
+                                MainActivity.todoItemRef.child(item.getItemId()).setValue(item);
+                            }
+                        }
+                        else {
+                            AddTodoList.addedItemsList.get(getAdapterPosition()).done = checked;
                         }
 
                         sortAndNotify();

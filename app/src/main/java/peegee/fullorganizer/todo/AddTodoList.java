@@ -31,7 +31,7 @@ import peegee.fullorganizer.service.adapters.TodoAdapter;
 
 public class AddTodoList extends AppCompatActivity {
 
-    List<TodoItemDB> todoDBList = new ArrayList<>();
+    List<TodoItemDB> adapterItemsList = new ArrayList<>();
     public static List<TodoItemDB> addedItemsList = new ArrayList<>();
     
     @InjectView(R.id.rvTasks)
@@ -50,7 +50,8 @@ public class AddTodoList extends AppCompatActivity {
     private boolean update = false;
 
     private String listId;
-    List<TodoListDB> evaluateResult; // Used to retrieve item by id
+    List<TodoListDB> listResult; // Used to retrieve list by id
+    List<TodoItemDB> itemsResult; // Used to retrieve items by id
     TodoListDB list;
 
     TextInputEditText etAddTodo;
@@ -78,36 +79,39 @@ public class AddTodoList extends AppCompatActivity {
         listId = intent.getStringExtra("LIST_ID");
 
         if (listId != null) {
+            // Get list
             Predicate condition = new Predicate() {
                 public boolean evaluate(Object sample) {
                     return ((TodoListDB)sample).getTodoListId().equals(listId);
                 }
             };
-            evaluateResult = (List<TodoListDB>) CollectionUtils.select( MainActivity.todoListList, condition );
-            list = evaluateResult.get(0);
+            listResult = (List<TodoListDB>) CollectionUtils.select( MainActivity.todoListList, condition );
+            list = listResult.get(0);
+
+            // Get items
+            condition = new Predicate() {
+                public boolean evaluate(Object sample) {
+                    return ((TodoItemDB)sample).getListId().equals(listId);
+                }
+            };
+            itemsResult = (List<TodoItemDB>) CollectionUtils.select( MainActivity.todoItemsList, condition );
+
             update = true;
             etListName.setText(list.todoListTitle);
         }
 
-        if (update) { // Amend added items to existing list
-            Predicate condition = new Predicate() {
-                public boolean evaluate(Object sample) {
-                    return ((TodoListDB) sample).getTodoListId().equals(listId);
-                }
-            };
-            evaluateResult = (List<TodoListDB>) CollectionUtils.select(MainActivity.todoListList, condition);
-            list = evaluateResult.get(0);
-            if (list.todoItemList != null)
-                todoDBList.addAll(list.todoItemList);
+        if (update) { // Amend existing data to adapter list
+            if (itemsResult.size() > 0)
+                adapterItemsList.addAll(itemsResult);
         }
 
         // RecyclerView setup
         addedItemsList.clear();
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
-        if (list == null)
+        if (adapterItemsList == null)
             adapter = new TodoAdapter(new ArrayList<TodoItemDB>());
         else
-            adapter = new TodoAdapter(list.todoItemList);
+            adapter = new TodoAdapter(adapterItemsList);
         rvTasks.setAdapter(adapter);
 
         FloatingActionButton fbAddTodoList = findViewById(R.id.fbAddTodoTask);
@@ -131,8 +135,8 @@ public class AddTodoList extends AppCompatActivity {
                         TodoItemDB todoDB = new TodoItemDB(false, tempDesc);
                         addedItemsList.add(todoDB);
 
-                        todoDBList.add(todoDB);
-                        adapter = new TodoAdapter(todoDBList);
+                        adapterItemsList.add(todoDB);
+                        adapter = new TodoAdapter(adapterItemsList);
                         rvTasks.setAdapter(adapter);
 
                         dialog.dismiss();
@@ -164,6 +168,8 @@ public class AddTodoList extends AppCompatActivity {
     }
 
     private void saveList() {
+
+        // Input errors
         if (etListName.getText().toString().trim().isEmpty()) {
             etListName.setHint("Please choose a title for you todo list");
             etListName.setHintTextColor(Color.RED);
@@ -172,29 +178,49 @@ public class AddTodoList extends AppCompatActivity {
 
         // Firebase
         if (update) {
-            list.todoListTitle = etListName.getText().toString();
-            for (TodoItemDB item : addedItemsList) {
-                item.setListId(listId);
-            }
-            if (addedItemsList != null) {
-                if (list.todoItemList == null)
-                    list.todoItemList = new ArrayList<>();
-                list.todoItemList.addAll(addedItemsList);
-            }
+            list.todoListTitle = etListName.getText().toString(); // update title
+
             synchronized (MainActivity.FBLOCK) {
-                MainActivity.todoListRef.child(list.getTodoListId()).setValue(list);
+                MainActivity.todoListRef.child(listId).setValue(list); // update list item
+            }
+
+            if (addedItemsList != null) {
+                for (TodoItemDB item : addedItemsList) {
+                    item.setListId(listId); // set new added items listId
+                }
+            }
+
+            // Firebase
+            if (addedItemsList != null) {
+                for (TodoItemDB item : addedItemsList) {
+                    String itemId = MainActivity.todoItemRef.push().getKey();
+                    item.setItemId(itemId);
+                    MainActivity.todoItemRef.child(itemId).setValue(item);
+                    MainActivity.todoItemsList.add(item);
+                }
             }
         }
         else {
             String tempTitle = etListName.getText().toString();
-            list = new TodoListDB(tempTitle);
+            list = new TodoListDB(tempTitle); // create new list with title
+
             synchronized (MainActivity.FBLOCK) {
                 listId = MainActivity.todoListRef.push().getKey();
+                MainActivity.todoListRef.child(listId).setValue(list); // add new list to DB
+
                 for (TodoItemDB item : addedItemsList) {
-                    item.setListId(listId);
+                    item.setListId(listId); // set new added items listId
+                    MainActivity.todoItemsList.add(item);
                 }
-                list.todoItemList.addAll(addedItemsList);
-                MainActivity.todoListRef.child(listId).setValue(list);
+
+                // Firebase
+                if (addedItemsList != null) {
+                    for (TodoItemDB item : addedItemsList) {
+                        String itemId = MainActivity.todoItemRef.push().getKey();
+                        item.setItemId(itemId);
+                        MainActivity.todoItemRef.child(itemId).setValue(item);
+                    }
+                }
             }
         }
 

@@ -78,7 +78,6 @@ public class AddNote extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.btnAddNote:
                 saveToDB();
-                startActivity(new Intent(AddNote.this, NotesActivity.class));
                 break;
             case R.id.btnCancelNote:
                 startActivity(new Intent(AddNote.this, NotesActivity.class));
@@ -88,6 +87,13 @@ public class AddNote extends AppCompatActivity {
 
     // Firebase
     synchronized private void saveToDB() {
+
+        // Input errors
+        if (etNote.getText().toString().trim().isEmpty()) {
+            etNote.setHint("Please enter some text in note");
+            etNote.setHintTextColor(Color.RED);
+            return;
+        }
 
         if (update) {
             notesDB.noteTitle = etTitle.getText().toString();
@@ -104,5 +110,7 @@ public class AddNote extends AppCompatActivity {
                 MainActivity.notesRef.child(key).setValue(notesDB);
             }
         }
+
+        startActivity(new Intent(AddNote.this, NotesActivity.class));
     }
 }

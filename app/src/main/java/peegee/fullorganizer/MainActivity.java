@@ -47,6 +47,7 @@ import peegee.fullorganizer.alarm.AlarmActivity;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.NotesDB;
 import peegee.fullorganizer.firebase_db.ReminderDB;
+import peegee.fullorganizer.firebase_db.TodoItemDB;
 import peegee.fullorganizer.firebase_db.TodoListDB;
 import peegee.fullorganizer.notes.NotesActivity;
 import peegee.fullorganizer.reminder.ReminderActivity;
@@ -83,11 +84,13 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference notesRef;
     public static DatabaseReference reminderRef;
     public static DatabaseReference todoListRef;
+    public static DatabaseReference todoItemRef;
 
     // DB locally saved lists
     public static List<NotesDB> notesList = new ArrayList<>();
     public static List<AlarmDB> alarmsList = new ArrayList<>();
     public static List<TodoListDB> todoListList = new ArrayList<>();
+    public static List<TodoItemDB> todoItemsList = new ArrayList<>();
     public static List<ReminderDB> reminderList = new ArrayList<>();
 
     public boolean newUser;
@@ -190,9 +193,38 @@ public class MainActivity extends AppCompatActivity {
         todoListRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                TodoListDB tempItem = dataSnapshot.getValue(TodoListDB.class);
-                tempItem.setTodoListId(dataSnapshot.getKey());
-                todoListList.add(tempItem);
+                TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
+                tempList.setTodoListId(dataSnapshot.getKey());
+                if (!tempList.getTodoListId().equals("Todo Items"))
+                    todoListList.add(tempList);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        todoItemRef = todoListRef.child("Todo Items");
+        todoItemRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
+                tempItem.setItemId(dataSnapshot.getKey());
             }
 
             @Override
