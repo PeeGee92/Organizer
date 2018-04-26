@@ -112,7 +112,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             if(t1.done == t2.done){
                 return 0;
             }
-            return t1.done ? -1 : 1;
+            return t1.done ? 1 : -1;
         }
     };
 
