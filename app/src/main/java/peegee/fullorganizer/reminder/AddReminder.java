@@ -106,7 +106,7 @@ public class AddReminder extends AppCompatActivity {
 
         if (id != null) {
             // Database
-            synchronized (MainActivity.DBLOCK) {
+            synchronized (MainActivity.FBLOCK) {
                 Predicate condition = new Predicate() {
                     public boolean evaluate(Object sample) {
                         return ((ReminderDB)sample).getReminderId().equals(id);
@@ -252,7 +252,7 @@ public class AddReminder extends AppCompatActivity {
             return;
         }
 
-        synchronized (MainActivity.DBLOCK) {
+        synchronized (MainActivity.FBLOCK) {
             // TODO Check input errors, return if errors exist
 
             // Firebase

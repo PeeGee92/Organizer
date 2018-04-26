@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    public static final Object DBLOCK = new Object(); // Database Lock
     public static final Object FBLOCK = new Object(); // Firebase Lock
     private static FirebaseAuth firebaseAuth;
     private static FirebaseUser firebaseUser;
@@ -326,8 +325,9 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                // TODO
+                firebaseUser = firebaseAuth.getInstance().getCurrentUser();
+//                String key = userRef.push().getKey();
+//                userRef.child(key).setValue(firebaseUser);
 //                loadDBAccordingToUser();
             } else {
                 Toast.makeText(getApplication(), "Sign in failed!", Toast.LENGTH_SHORT).show();
