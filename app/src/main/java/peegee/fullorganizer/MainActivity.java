@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference todoItemRef;
 
     // DB locally saved lists
+    private static boolean listsInitialized = false;
     public static List<NotesDB> notesList = new ArrayList<>();
     public static List<AlarmDB> alarmsList = new ArrayList<>();
     public static List<TodoListDB> todoListList = new ArrayList<>();
@@ -146,6 +147,16 @@ public class MainActivity extends AppCompatActivity {
             initFirebase();
         }
 
+        // Local db lists initialization
+        if(!listsInitialized) {
+            initDBLists();
+        }
+
+    }
+
+    private void initDBLists() {
+        // TODO
+        listsInitialized = true;
     }
 
     private void initFirebase() {
@@ -299,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void authenticate() {
 
         List<AuthUI.IdpConfig> providers = Arrays.asList(
