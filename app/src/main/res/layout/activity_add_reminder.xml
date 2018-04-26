@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/etTitle"
         android:padding="@dimen/tv_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <EditText
         android:id="@+id/etDescription"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/etLocation"
         android:padding="@dimen/tv_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <Button
         android:id="@+id/btnSetDate"
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/etDescription"
         android:padding="@dimen/small_btn_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <TextView
         android:id="@+id/tvDate"
@@ -56,10 +56,10 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/btnSetDate"
         android:layout_alignBottom="@+id/btnSetDate"
-        android:layout_alignEnd="@+id/tvTime"
+        android:layout_toEndOf="@+id/btnSetDate"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:padding="@dimen/tv_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <Button
         android:id="@+id/btnSetTime"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btnSetDate"
         android:padding="@dimen/small_btn_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <TextView
         android:id="@+id/tvTime"
@@ -76,11 +76,10 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/btnSetTime"
         android:layout_alignBottom="@+id/btnSetTime"
-        android:layout_marginStart="15dp"
-        android:layout_toEndOf="@+id/btnSetDate"
+        android:layout_toEndOf="@+id/btnSetTime"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:padding="@dimen/tv_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <CheckBox
         android:id="@+id/cbAlarm"
@@ -88,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnSetTime"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <TextView
         android:id="@+id/tvSpinner"
@@ -98,7 +97,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:padding="@dimen/tv_padding"
-        android:layout_marginTop="@dimen/reminder_margin_top"/>
+        android:layout_margin="@dimen/reminder_margin_top"/>
 
     <EditText
         android:id="@+id/etAlarmTime"
@@ -116,7 +115,7 @@
         android:id="@+id/spAlarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/etAlarmTime"
+        android:layout_alignBaseline="@+id/etAlarmTime"
         android:layout_toEndOf="@+id/etAlarmTime"
         android:padding="@dimen/small_btn_padding">
 
