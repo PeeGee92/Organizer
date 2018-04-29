@@ -133,6 +133,7 @@ public class AddAlarm extends AppCompatActivity {
                         Integer.parseInt(etSnooze.getText().toString()),
                         tempCal.getTime(),
                         true);
+                alarmDB.setUid(MainActivity.getCurrentUid());
                 synchronized (MainActivity.FBLOCK) {
                     String key = MainActivity.alarmRef.push().getKey();
                     MainActivity.alarmRef.child(key).setValue(alarmDB);

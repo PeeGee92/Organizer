@@ -4,7 +4,8 @@ import java.util.Date;
 
 public class AlarmDB {
 
-    public String alarmId;
+    private String uid;
+    private String alarmId;
     public boolean alarmRepeated;
     public int alarmSnooze;
     public Date alarmDate;
@@ -19,6 +20,14 @@ public class AlarmDB {
         this.alarmSnooze = alarmSnooze;
         this.alarmDate = alarmDate;
         this.alarmOn = alarmOn;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getAlarmId() {
