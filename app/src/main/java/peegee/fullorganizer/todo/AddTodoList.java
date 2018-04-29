@@ -196,7 +196,6 @@ public class AddTodoList extends AppCompatActivity {
                     String itemId = MainActivity.todoItemRef.push().getKey();
                     item.setItemId(itemId);
                     MainActivity.todoItemRef.child(itemId).setValue(item);
-                    MainActivity.todoItemsList.add(item);
                 }
             }
         }

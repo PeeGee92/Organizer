@@ -96,18 +96,33 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
                         .setIcon(android.R.drawable.ic_menu_delete)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                TodoListDB item = todoListDBList.get(position);
+                                final TodoListDB item = todoListDBList.get(position);
+                                List<TodoItemDB> itemsList;
 
                                 // Firebase
                                 synchronized (MainActivity.FBLOCK) {
+                                    Predicate condition = new Predicate() {
+                                        public boolean evaluate(Object sample) {
+                                            return ((TodoItemDB)sample).getListId().equals(item.getTodoListId());
+                                        }
+                                    };
+                                    itemsList = (List<TodoItemDB>) CollectionUtils.select( MainActivity.todoItemsList, condition );
+
+                                    for (TodoItemDB itemDB: itemsList) {
+                                        MainActivity.todoItemRef.child(itemDB.getItemId()).removeValue();
+                                    }
+
                                     MainActivity.todoListRef.child(item.getTodoListId()).removeValue();
                                 }
 
                                 // Remove from local list
                                 MainActivity.todoListList.remove(item);
+                                for (TodoItemDB itemDB: itemsList) {
+                                    MainActivity.todoItemsList.remove(itemDB);
+                                }
 
                                 // Update RecyclerView
-                                todoListDBList.remove(position);
+//                                todoListDBList.remove(position);
                                 recyclerView.removeViewAt(position);
                                 adapter.notifyItemRemoved(position);
                                 adapter.notifyItemRangeChanged(position, todoListDBList.size());

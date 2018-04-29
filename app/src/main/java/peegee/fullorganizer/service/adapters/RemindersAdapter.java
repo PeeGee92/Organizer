@@ -84,7 +84,6 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
                                 MainActivity.reminderList.remove(item);
 
                                 // Update RecyclerView
-                                remindersDBList.remove(position);
                                 recyclerView.removeViewAt(position);
                                 adapter.notifyItemRemoved(position);
                                 adapter.notifyItemRangeChanged(position, remindersDBList.size());

@@ -239,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
                     tempItem.setItemId(dataSnapshot.getKey());
+                    todoItemsList.add(tempItem);
                 }
 
                 @Override
