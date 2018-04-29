@@ -11,8 +11,6 @@ import android.support.v4.content.ContextCompat;
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
-    private static final String TAG  = "ALARM_JOB";
-
     @Override
     public void onReceive(final Context context, Intent intent) {
 
