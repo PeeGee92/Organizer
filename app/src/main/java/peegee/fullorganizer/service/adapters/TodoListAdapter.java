@@ -61,11 +61,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         // Remove To-do items from the list
         Predicate condition = new Predicate() {
             public boolean evaluate(Object sample) {
-                return ((TodoListDB)sample).getTodoListId().equals(String.valueOf(R.string.db_todo_items));
+                return ((TodoListDB)sample).getTodoListId().equals("Todo Items");
 
             }
         };
-        List<TodoListDB> evaluateResult = (List<TodoListDB>) CollectionUtils.select( MainActivity.todoListList, condition );
+        List<TodoListDB> evaluateResult = (List<TodoListDB>) CollectionUtils.select( this.todoListDBList, condition );
         if (evaluateResult.size() > 0)
             this.todoListDBList.remove(evaluateResult.get(0));
     }

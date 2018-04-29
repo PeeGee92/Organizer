@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import java.util.ArrayList;
@@ -131,7 +133,14 @@ public class AddTodoList extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         etAddTodo = dialogView.findViewById(R.id.etAddTodo);
-                        String tempDesc = etAddTodo.getText().toString();
+                        String tempDesc = etAddTodo.getText().toString().trim();
+
+                        // Check input
+                        if (tempDesc.isEmpty()) {
+                            Toast.makeText(getApplication(), "Cannot add empty item!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         TodoItemDB todoDB = new TodoItemDB(false, tempDesc);
                         addedItemsList.add(todoDB);
 

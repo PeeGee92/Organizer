@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -132,16 +136,22 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                     if (!onBind) {
                         boolean checked = cbTodoDone.isChecked();
                         TodoItemDB item = todoDBList.get(getAdapterPosition());
-                        item.done = checked;
 
                         //Firebase
-                        if (item.getItemId() != null) {
-                            synchronized (MainActivity.FBLOCK) {
-                                MainActivity.todoItemRef.child(item.getItemId()).setValue(item);
-                            }
+                        int index = AddTodoList.addedItemsList.indexOf(item);
+                        if (index != -1) {
+                            AddTodoList.addedItemsList.get(index).done = checked;
                         }
                         else {
-                            AddTodoList.addedItemsList.get(getAdapterPosition()).done = checked;
+                            index = MainActivity.todoItemsList.indexOf(item);
+                            MainActivity.todoItemsList.get(index).done = checked;
+
+                            if (item.getItemId() != null) {
+                                item.done = checked;
+                                synchronized (MainActivity.FBLOCK) {
+                                    MainActivity.todoItemRef.child(item.getItemId()).setValue(item);
+                                }
+                            }
                         }
 
                         sortAndNotify();
