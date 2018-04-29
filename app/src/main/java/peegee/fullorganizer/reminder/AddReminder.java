@@ -105,7 +105,7 @@ public class AddReminder extends AppCompatActivity {
         spAlarm.setAdapter(spinnerAdapter);
 
         if (id != null) {
-            // Database
+            // Firebase
             synchronized (MainActivity.FBLOCK) {
                 Predicate condition = new Predicate() {
                     public boolean evaluate(Object sample) {
@@ -287,6 +287,7 @@ public class AddReminder extends AppCompatActivity {
                         reminderDate,
                         cbAlarm.isChecked(), alarmDate,
                         Integer.parseInt(etAlarmTime.getText().toString()), spAlarm.getSelectedItem().toString());
+                reminderDB.setUid(MainActivity.getCurrentUid());
 
                 synchronized (MainActivity.FBLOCK) {
                     String key = MainActivity.reminderRef.push().getKey();
