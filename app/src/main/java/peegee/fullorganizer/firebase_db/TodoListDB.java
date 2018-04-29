@@ -5,6 +5,7 @@ import java.util.List;
 
 public class TodoListDB {
 
+    private String uid;
     private String todoListId;
     public String todoListTitle;
 
@@ -14,6 +15,14 @@ public class TodoListDB {
 
     public TodoListDB(String todoListTitle) {
         this.todoListTitle = todoListTitle;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getTodoListId() {

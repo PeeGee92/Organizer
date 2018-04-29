@@ -203,7 +203,9 @@ public class AddTodoList extends AppCompatActivity {
         else {
             String tempTitle = etListName.getText().toString();
             list = new TodoListDB(tempTitle); // create new list with title
+            list.setUid(MainActivity.getCurrentUid());
 
+            // Firebase
             synchronized (MainActivity.FBLOCK) {
                 listId = MainActivity.todoListRef.push().getKey();
                 MainActivity.todoListRef.child(listId).setValue(list); // add new list to DB
