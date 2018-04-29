@@ -32,6 +32,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference reminderRef;
     public static DatabaseReference todoListRef;
     public static DatabaseReference todoItemRef;
+    public static DatabaseReference alarmIdRef;
 
     // DB locally saved lists
     public static List<NotesDB> notesList = new ArrayList<>();
@@ -87,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public static List<ReminderDB> reminderList = new ArrayList<>();
 
     // Alarm ID
-    private static int alarmId; // TODO save it to DB and retrieve on start
+    private static Integer alarmId; // Used as a unique id for alarms
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +149,18 @@ public class MainActivity extends AppCompatActivity {
             rootRef = FirebaseDatabase.getInstance().getReference();
             userRef = rootRef.child(getString(R.string.db_user));
             userDataRef = userRef.child(firebaseUser.getUid());
+            alarmIdRef = userRef.child(getString(R.string.db_alarm_id));
+            alarmIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    alarmId = dataSnapshot.getValue(Integer.class);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             alarmRef = userDataRef.child(getString(R.string.db_alarm));
             alarmRef.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -292,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Toast.makeText(getApplication(), "Firebase initialized", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(), "Application linked to server", Toast.LENGTH_SHORT).show();
     }
 
     private void clearLists() {
@@ -338,14 +353,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO
+    // TODO check
     public static int getAlarmId() {
-        return 0;
+        if (alarmId == null)
+            alarmId = 0;
+        int temp = alarmId++;
+        synchronized (FBLOCK) {
+            alarmIdRef.setValue(alarmId);
+        }
+        return temp;
     }
 
-    // TODO
+    // TODO check
+    // TODO check if value less than zero, will it make issues?
     public static void decreaseAlarmId() {
-
+        alarmId--;
+        synchronized (FBLOCK) {
+            alarmIdRef.setValue(alarmId);
+        }
     }
 
     public static String getCurrentUid() {

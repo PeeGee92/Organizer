@@ -157,10 +157,12 @@ public class AddAlarm extends AppCompatActivity {
             calendar.add(Calendar.DATE, 1);
         }
 
+        int alarmId = MainActivity.getAlarmId();
+
         Intent intent = new Intent(AddAlarm.this, AlarmReceiver.class)
                 .putExtra("ALARM_ON", true)
-                .putExtra("ID", 00); // TODO Generate a unique ID
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                .putExtra("ID", alarmId);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 

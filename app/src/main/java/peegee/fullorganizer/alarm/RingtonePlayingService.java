@@ -54,6 +54,10 @@ public class RingtonePlayingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        // TODO use id to cancel alarm
+        // TODO decrease unique ID value
+        intent.getIntExtra("ID", -1);
+
         // TODO Check for actions
         String action = intent.getStringExtra("intent_action");
         if (action != null) {
@@ -71,9 +75,6 @@ public class RingtonePlayingService extends Service {
             }
         }
 
-        // TODO use id to cancel alarm
-        // TODO decrease unique ID value
-        intent.getIntExtra("ID", -1);
 
         // TODO Check conditions (on start, when playing, stop, ...)
         if (!isRunning) {
