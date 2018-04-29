@@ -1,9 +1,12 @@
 /**
- * Final Project
- * Owner: Pierre Ghaly
+ * Full Organizer is an application wich contains four main functions:
+ * Alarm, notes, to-do list and reminders
+ * <p>
  * Professor: Constandinos Mavromoustakis
  * Student ID: U153N0003
- * Description: A full organizer which includes: alarm, notes, to do list and reminders
+ *
+ * @author Pierre Ghaly
+ * @version 1.0
  */
 
 package peegee.fullorganizer;
@@ -67,10 +70,12 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     public static final Object FBLOCK = new Object(); // Firebase Lock
+    private static boolean firebaseInitialized = false;
     private static FirebaseAuth firebaseAuth;
     private static FirebaseUser firebaseUser;
     public static DatabaseReference rootRef;
     public static DatabaseReference userRef;
+    public static DatabaseReference userDataRef;
     public static DatabaseReference alarmRef;
     public static DatabaseReference notesRef;
     public static DatabaseReference reminderRef;
@@ -136,11 +141,6 @@ public class MainActivity extends AppCompatActivity {
             authenticate();
         }
 
-        // Firebase Initialization
-        if (rootRef == null) {
-            initFirebase();
-        }
-
         // Local db lists initialization
         if(!listsInitialized) {
             initDBLists();
@@ -155,10 +155,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void initFirebase() {
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if (!firebaseInitialized)
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         rootRef = FirebaseDatabase.getInstance().getReference();
         userRef = rootRef.child("User");
-        alarmRef = userRef.child("Alarm");
+        // TODO if user already exists
+        userDataRef = userRef.child(firebaseUser.getUid());
+        alarmRef = userDataRef.child("Alarm");
         alarmRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        notesRef = userRef.child("Notes");
+        notesRef = userDataRef.child("Notes");
         notesRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -216,14 +220,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        todoListRef = userRef.child("Todo List");
+        todoListRef = userDataRef.child("Todo List");
         todoListRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
                 tempList.setTodoListId(dataSnapshot.getKey());
-                if (!tempList.getTodoListId().equals("Todo Items"))
-                    todoListList.add(tempList);
+                todoListList.add(tempList);
             }
 
             @Override
@@ -274,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        reminderRef = userRef.child("Reminder");
+        reminderRef = userDataRef.child("Reminder");
         reminderRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -303,6 +306,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        firebaseInitialized = true;
     }
 
     private void authenticate() {
@@ -332,6 +337,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 firebaseUser = firebaseAuth.getInstance().getCurrentUser();
+                // Firebase Initialization
+                initFirebase();
 //                String key = userRef.push().getKey();
 //                userRef.child(key).setValue(firebaseUser);
 //                loadDBAccordingToUser();
