@@ -25,6 +25,12 @@
     <string name="toolbar_title_reminder">Reminder</string>
     <string name="toolbar_title_add_reminder">Add Reminder</string>
     <string name="toolbar_title_main">Full Organizer</string>
+    <string name="db_user">User</string>
+    <string name="db_alarm">Alarm</string>
+    <string name="db_notes">Notes</string>
+    <string name="db_todo_list">Todo List</string>
+    <string name="db_todo_items">Todo Items</string>
+    <string name="db_reminder">Reminder</string>
 
     // Spinner for reminders
     <string-array name="reminder_spinner">

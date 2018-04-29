@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     public static final Object FBLOCK = new Object(); // Firebase Lock
-    private static boolean firebaseInitialized = false;
     private static FirebaseAuth firebaseAuth;
     private static FirebaseUser firebaseUser;
     public static DatabaseReference rootRef;
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference todoItemRef;
 
     // DB locally saved lists
-    private static boolean listsInitialized = false;
     public static List<NotesDB> notesList = new ArrayList<>();
     public static List<AlarmDB> alarmsList = new ArrayList<>();
     public static List<TodoListDB> todoListList = new ArrayList<>();
@@ -141,173 +139,167 @@ public class MainActivity extends AppCompatActivity {
             authenticate();
         }
 
-        // Local db lists initialization
-        if(!listsInitialized) {
-            initDBLists();
-        }
-
-    }
-
-    private void initDBLists() {
-        // TODO
-        listsInitialized = true;
     }
 
     private void initFirebase() {
+            clearLists();
+            rootRef = FirebaseDatabase.getInstance().getReference();
+            userRef = rootRef.child(getString(R.string.db_user));
+            userDataRef = userRef.child(firebaseUser.getUid());
+            alarmRef = userDataRef.child(getString(R.string.db_alarm));
+            alarmRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
+                    tempItem.setAlarmId(dataSnapshot.getKey());
+                    alarmsList.add(tempItem);
+                }
 
-        if (!firebaseInitialized)
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        userRef = rootRef.child("User");
-        // TODO if user already exists
-        userDataRef = userRef.child(firebaseUser.getUid());
-        alarmRef = userDataRef.child("Alarm");
-        alarmRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
-                tempItem.setAlarmId(dataSnapshot.getKey());
-                alarmsList.add(tempItem);
-            }
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
+                }
+            });
+            notesRef = userDataRef.child(getString(R.string.db_notes));
+            notesRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
+                    tempItem.setNoteId(dataSnapshot.getKey());
+                    notesList.add(tempItem);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-        });
-        notesRef = userDataRef.child("Notes");
-        notesRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
-                tempItem.setNoteId(dataSnapshot.getKey());
-                notesList.add(tempItem);
-            }
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
+                }
+            });
+            todoListRef = userDataRef.child(getString(R.string.db_todo_list));
+            todoListRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
+                    tempList.setTodoListId(dataSnapshot.getKey());
+                    todoListList.add(tempList);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-        });
-        todoListRef = userDataRef.child("Todo List");
-        todoListRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
-                tempList.setTodoListId(dataSnapshot.getKey());
-                todoListList.add(tempList);
-            }
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
+                }
+            });
+            todoItemRef = todoListRef.child(getString(R.string.db_todo_items));
+            todoItemRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
+                    tempItem.setItemId(dataSnapshot.getKey());
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-        });
-        todoItemRef = todoListRef.child("Todo Items");
-        todoItemRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
-                tempItem.setItemId(dataSnapshot.getKey());
-            }
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
+                }
+            });
+            reminderRef = userDataRef.child(getString(R.string.db_reminder));
+            reminderRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
+                    tempItem.setReminderId(dataSnapshot.getKey());
+                    reminderList.add(tempItem);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-        });
-        reminderRef = userDataRef.child("Reminder");
-        reminderRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
-                tempItem.setReminderId(dataSnapshot.getKey());
-                reminderList.add(tempItem);
-            }
+                }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
+                }
+            });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            Toast.makeText(getApplication(), "Firebase initialized", Toast.LENGTH_SHORT).show();
+    }
 
-            }
-        });
-
-        firebaseInitialized = true;
+    private void clearLists() {
+        notesList.clear();
+        alarmsList.clear();
+        reminderList.clear();
+        todoListList.clear();
+        todoItemsList.clear();
     }
 
     private void authenticate() {
@@ -332,21 +324,21 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 firebaseUser = firebaseAuth.getInstance().getCurrentUser();
                 // Firebase Initialization
                 initFirebase();
-//                String key = userRef.push().getKey();
-//                userRef.child(key).setValue(firebaseUser);
-//                loadDBAccordingToUser();
             } else {
                 Toast.makeText(getApplication(), "Sign in failed!", Toast.LENGTH_SHORT).show();
                 authenticate();
             }
         }
+    }
+
+    public static String getCurrentUid() {
+        return firebaseUser.getUid();
     }
 
     /**

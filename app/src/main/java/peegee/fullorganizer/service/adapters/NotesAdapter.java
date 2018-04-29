@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
@@ -42,8 +46,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
-    public NotesAdapter(List<NotesDB> notesDBList) {
-        this.notesDBList = notesDBList;
+    public NotesAdapter() {
+        Predicate condition = new Predicate() {
+            public boolean evaluate(Object sample) {
+                return ((NotesDB)sample).getUid().equals(MainActivity.getCurrentUid());
+            }
+        };
+        this.notesDBList = (List<NotesDB>) CollectionUtils.select( MainActivity.notesList, condition );
     }
 
     @Override
@@ -78,6 +87,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                                 synchronized (MainActivity.FBLOCK) {
                                     MainActivity.notesRef.child(item.getNoteId()).removeValue();
                                 }
+
+                                // Remove from local list
+                                MainActivity.notesList.remove(item);
 
                                 // Update RecyclerView
                                 notesDBList.remove(position);

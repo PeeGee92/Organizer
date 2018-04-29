@@ -3,6 +3,7 @@ package peegee.fullorganizer.firebase_db;
 public class NotesDB {
 
     private String noteId;
+    private String uid;
     public String noteTitle;
     public String noteText;
 
@@ -16,6 +17,14 @@ public class NotesDB {
 
     public void setNoteId(String noteId) {
         this.noteId = noteId;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public NotesDB(String noteTitle, String noteText) {

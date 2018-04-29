@@ -46,7 +46,7 @@ public class NotesActivity extends AppCompatActivity {
 
         // RecyclerView setup
         rvNotes.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new NotesAdapter(MainActivity.notesList);
+        adapter = new NotesAdapter();
         rvNotes.setAdapter(adapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
