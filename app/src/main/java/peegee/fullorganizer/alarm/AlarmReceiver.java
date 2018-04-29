@@ -20,9 +20,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        }
 
         boolean alarmOn = intent.getExtras().getBoolean("ALARM_ON");
+        int id = intent.getIntExtra("ID", -1);
 
         if (alarmOn) {
             Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
+            serviceIntent.putExtra("ID", id);
             ContextCompat.startForegroundService(context, serviceIntent);
         }
     }

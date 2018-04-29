@@ -23,6 +23,8 @@ import peegee.fullorganizer.R;
  */
 public class RingtonePlayingService extends Service {
 
+    private int id;
+
     // Player
     MediaPlayer player;
     boolean isRunning;
@@ -68,6 +70,10 @@ public class RingtonePlayingService extends Service {
                 default:
             }
         }
+
+        // TODO use id to cancel alarm
+        // TODO decrease unique ID value
+        intent.getIntExtra("ID", -1);
 
         // TODO Check conditions (on start, when playing, stop, ...)
         if (!isRunning) {

@@ -20,6 +20,7 @@ import org.apache.commons.collections4.Predicate;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -114,7 +115,9 @@ public class AddAlarm extends AppCompatActivity {
     }
 
     synchronized private void addAlarm() {
-        // TODO Check input and return if error exists
+        if(etSnooze.getText().toString().trim().isEmpty()) {
+            etSnooze.setText("0");
+        }
 
         Calendar tempCal = Calendar.getInstance();
         tempCal.set(Calendar.HOUR_OF_DAY,timePicker.getHour());
@@ -123,6 +126,9 @@ public class AddAlarm extends AppCompatActivity {
         // Firebase
         synchronized (MainActivity.FBLOCK) {
             if (update) {
+
+                // TODO Cancel broadcast and resend it
+
                 alarmDB.alarmRepeated = rbRepeat.isChecked();
                 alarmDB.alarmDate = tempCal.getTime();
                 synchronized (MainActivity.FBLOCK) {
@@ -135,24 +141,25 @@ public class AddAlarm extends AppCompatActivity {
                         true);
                 alarmDB.setUid(MainActivity.getCurrentUid());
                 synchronized (MainActivity.FBLOCK) {
-                    String key = MainActivity.alarmRef.push().getKey();
-                    MainActivity.alarmRef.child(key).setValue(alarmDB);
+                    id = MainActivity.alarmRef.push().getKey();
+                    MainActivity.alarmRef.child(id).setValue(alarmDB);
                 }
             }
         }
 
-        // TODO check
-        Log.d("Add Alarm", "addAlarm: IN");
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         calendar = Calendar.getInstance();
 
         calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
         calendar.set(Calendar.MINUTE, timePicker.getMinute());
 
-        Log.d("Add Alarm", "calender: " + calendar.toString());
+        if(calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
+        }
 
         Intent intent = new Intent(AddAlarm.this, AlarmReceiver.class)
-                .putExtra("ALARM_ON", true);
+                .putExtra("ALARM_ON", true)
+                .putExtra("ID", 00); // TODO Generate a unique ID
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);

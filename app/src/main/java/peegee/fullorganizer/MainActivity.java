@@ -19,12 +19,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -88,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
     public static List<TodoItemDB> todoItemsList = new ArrayList<>();
     public static List<ReminderDB> reminderList = new ArrayList<>();
 
+    // Alarm ID
+    private static int alarmId; // TODO save it to DB and retrieve on start
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("SIGNOUT", "onClick: IN!");
                 new AlertDialog.Builder(v.getContext())
                         .setTitle("Log Out")
                         .setMessage("Are you sure you want to log out?")
@@ -336,6 +336,16 @@ public class MainActivity extends AppCompatActivity {
                 authenticate();
             }
         }
+    }
+
+    // TODO
+    public static int getAlarmId() {
+        return 0;
+    }
+
+    // TODO
+    public static void decreaseAlarmId() {
+
     }
 
     public static String getCurrentUid() {

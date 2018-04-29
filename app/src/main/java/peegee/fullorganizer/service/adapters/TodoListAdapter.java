@@ -1,8 +1,11 @@
 package peegee.fullorganizer.service.adapters;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +61,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         // Remove To-do items from the list
         Predicate condition = new Predicate() {
             public boolean evaluate(Object sample) {
-                return ((TodoListDB)sample).getTodoListId().equals("Todo Items");
+                return ((TodoListDB)sample).getTodoListId().equals(String.valueOf(R.string.db_todo_items));
 
             }
         };
