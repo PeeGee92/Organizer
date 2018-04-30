@@ -364,15 +364,6 @@ public class MainActivity extends AppCompatActivity {
         return temp;
     }
 
-    // TODO check
-    // TODO check if value less than zero, will it make issues?
-    public static void decreaseAlarmId() {
-        alarmId--;
-        synchronized (FBLOCK) {
-            alarmIdRef.setValue(alarmId);
-        }
-    }
-
     public static String getCurrentUid() {
         return firebaseUser.getUid();
     }
