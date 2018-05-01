@@ -166,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
-                    tempItem.setAlarmId(dataSnapshot.getKey());
                     alarmsList.add(tempItem);
                 }
 
@@ -195,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
-                    tempItem.setNoteId(dataSnapshot.getKey());
                     notesList.add(tempItem);
                 }
 
@@ -224,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
-                    tempList.setTodoListId(dataSnapshot.getKey());
                     todoListList.add(tempList);
                 }
 
@@ -253,7 +250,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
-                    tempItem.setItemId(dataSnapshot.getKey());
                     todoItemsList.add(tempItem);
                 }
 
@@ -282,7 +278,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
-                    tempItem.setReminderId(dataSnapshot.getKey());
                     reminderList.add(tempItem);
                 }
 

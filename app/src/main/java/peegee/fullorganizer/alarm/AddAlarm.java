@@ -142,6 +142,7 @@ public class AddAlarm extends AppCompatActivity {
                 alarmDB.setUid(MainActivity.getCurrentUid());
                 synchronized (MainActivity.FBLOCK) {
                     id = MainActivity.alarmRef.push().getKey();
+                    alarmDB.setAlarmId(id);
                     MainActivity.alarmRef.child(id).setValue(alarmDB);
                 }
             }

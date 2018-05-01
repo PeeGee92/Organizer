@@ -108,6 +108,7 @@ public class AddNote extends AppCompatActivity {
             notesDB.setUid(MainActivity.getCurrentUid());
             synchronized (MainActivity.FBLOCK) {
                 String key = MainActivity.notesRef.push().getKey();
+                notesDB.setNoteId(key);
                 MainActivity.notesRef.child(key).setValue(notesDB);
             }
         }

@@ -291,6 +291,7 @@ public class AddReminder extends AppCompatActivity {
 
                 synchronized (MainActivity.FBLOCK) {
                     String key = MainActivity.reminderRef.push().getKey();
+                    reminderDB.setReminderId(key);
                     MainActivity.reminderRef.child(key).setValue(reminderDB);
                 }
             }
