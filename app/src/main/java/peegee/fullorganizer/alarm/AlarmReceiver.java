@@ -39,9 +39,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         int index = MainActivity.alarmsList.indexOf(alarmDB);
         boolean alarmOn = MainActivity.alarmsList.get(index).alarmOn;
 
-        int alarmRequestCode = intent.getIntExtra("REQUEST_CODE", -1);
-
         if (alarmOn) {
+            int alarmRequestCode = intent.getIntExtra("REQUEST_CODE", -1);
             Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
             serviceIntent.putExtra("REQUEST_CODE", alarmRequestCode)
                          .putExtra("ID", alarmId);

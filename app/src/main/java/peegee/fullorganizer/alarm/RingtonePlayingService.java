@@ -155,7 +155,6 @@ public class RingtonePlayingService extends Service {
         boolean repeat = MainActivity.alarmsList.get(index).alarmRepeated;
 
         if (repeat) {
-
             Date date = MainActivity.alarmsList.get(index).alarmDate;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
@@ -166,7 +165,6 @@ public class RingtonePlayingService extends Service {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
         }
         else {
             MainActivity.alarmsList.get(index).alarmOn = false;

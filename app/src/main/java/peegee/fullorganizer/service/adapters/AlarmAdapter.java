@@ -129,6 +129,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         holder.swOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                int index = MainActivity.alarmsList.indexOf(temp);
+                MainActivity.alarmsList.get(index).alarmOn = holder.swOnOff.isChecked();
+
                 temp.alarmOn = holder.swOnOff.isChecked();
 
                 // Firebase
