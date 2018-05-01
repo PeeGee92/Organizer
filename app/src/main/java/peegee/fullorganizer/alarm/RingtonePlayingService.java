@@ -19,6 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import peegee.fullorganizer.MainActivity;
@@ -142,12 +143,37 @@ public class RingtonePlayingService extends Service {
     }
 
     private void changeAlarmValuesToOff() {
-        // TODO
-    }
+        Predicate condition = new Predicate() {
+            public boolean evaluate(Object sample) {
+                return ((AlarmDB)sample).getAlarmId().equals(alarmId);
+            }
+        };
+        List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select( MainActivity.alarmsList, condition );
+        AlarmDB alarmDB = evaluateResult.get(0);
 
-    @Override
-    public void onDestroy() {
-        // TODO
+        int index = MainActivity.alarmsList.indexOf(alarmDB);
+        boolean repeat = MainActivity.alarmsList.get(index).alarmRepeated;
+
+        if (repeat) {
+
+            Date date = MainActivity.alarmsList.get(index).alarmDate;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class)
+                    .putExtra("ID", alarmId)
+                    .putExtra("REQUEST_CODE", alarmRequestCode);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        }
+        else {
+            MainActivity.alarmsList.get(index).alarmOn = false;
+            synchronized (MainActivity.FBLOCK) {
+                MainActivity.alarmRef.child(alarmId).setValue(MainActivity.alarmsList.get(index));
+            }
+        }
     }
 
     private void initNotification() {
