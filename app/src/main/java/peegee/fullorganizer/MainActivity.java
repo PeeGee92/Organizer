@@ -11,6 +11,9 @@
 
 package peegee.fullorganizer;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -44,6 +47,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.alarm.AlarmActivity;
+import peegee.fullorganizer.alarm.AlarmReceiver;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.NotesDB;
 import peegee.fullorganizer.firebase_db.ReminderDB;
@@ -190,7 +194,19 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
+                    // Cancel previous broadcast
+                    int alarmRequestCode = tempItem.getAlarmRequestCode();
+
+                    // Used to cancel alarm
+                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    Intent cancelIntent = new Intent(getApplicationContext(), AlarmReceiver.class)
+                            .putExtra("ID", tempItem.getAlarmId())
+                            .putExtra("REQUEST_CODE", alarmRequestCode);
+                    PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    alarmManager.cancel(cancelPendingIntent);
                 }
 
                 @Override
