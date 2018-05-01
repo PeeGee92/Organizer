@@ -6,6 +6,7 @@ public class AlarmDB {
 
     private String uid;
     private String alarmId;
+    private int alarmRequestCode;
     public boolean alarmRepeated;
     public int alarmSnooze;
     public Date alarmDate;
@@ -36,5 +37,13 @@ public class AlarmDB {
 
     public void setAlarmId(String alarmId) {
         this.alarmId = alarmId;
+    }
+
+    public int getAlarmRequestCode() {
+        return alarmRequestCode;
+    }
+
+    public void setAlarmRequestCode(int alarmRequestCode) {
+        this.alarmRequestCode = alarmRequestCode;
     }
 }

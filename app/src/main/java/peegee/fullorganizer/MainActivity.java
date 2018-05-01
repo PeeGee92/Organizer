@@ -34,6 +34,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -171,7 +174,18 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((AlarmDB)sample).getAlarmId().equals(tempItem.getAlarmId());
+                        }
+                    };
+                    List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select( MainActivity.alarmsList, condition );
+                    AlarmDB oldItem = evaluateResult.get(0);
+
+                    MainActivity.alarmsList.remove(oldItem);
+                    MainActivity.alarmsList.add(tempItem);
                 }
 
                 @Override

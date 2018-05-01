@@ -138,8 +138,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 synchronized (MainActivity.FBLOCK) {
                     MainActivity.todoItemRef.child(temp.getAlarmId()).setValue(temp);
                 }
-
-                //TODO stop or start the broadcast
             }
         });
     }

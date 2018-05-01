@@ -117,15 +117,29 @@ public class AddAlarm extends AppCompatActivity {
             etSnooze.setText("0");
         }
 
+        int alarmRequestCode;
+
         Calendar tempCal = Calendar.getInstance();
         tempCal.set(Calendar.HOUR_OF_DAY,timePicker.getHour());
         tempCal.set(Calendar.MINUTE,timePicker.getMinute());
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // Firebase
         synchronized (MainActivity.FBLOCK) {
             if (update) {
 
-                // TODO Cancel broadcast and resend it
+                // Cancel previous broadcast
+                alarmRequestCode = alarmDB.getAlarmRequestCode();
+
+                // Used to cancel alarm
+                alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent cancelIntent = new Intent(getApplicationContext(), AlarmReceiver.class)
+                        .putExtra("ID", alarmDB.getAlarmId())
+                        .putExtra("REQUEST_CODE", alarmRequestCode);
+                PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                alarmManager.cancel(cancelPendingIntent);
 
                 alarmDB.alarmRepeated = rbRepeat.isChecked();
                 alarmDB.alarmDate = tempCal.getTime();
@@ -138,6 +152,8 @@ public class AddAlarm extends AppCompatActivity {
                         tempCal.getTime(),
                         true);
                 alarmDB.setUid(MainActivity.getCurrentUid());
+                alarmRequestCode = MainActivity.getRequestCode();
+                alarmDB.setAlarmRequestCode(alarmRequestCode);
                 synchronized (MainActivity.FBLOCK) {
                     id = MainActivity.alarmRef.push().getKey();
                     alarmDB.setAlarmId(id);
@@ -146,7 +162,6 @@ public class AddAlarm extends AppCompatActivity {
             }
         }
 
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         calendar = Calendar.getInstance();
 
         calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
@@ -155,8 +170,6 @@ public class AddAlarm extends AppCompatActivity {
         if(calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
         }
-
-        int alarmRequestCode = MainActivity.getRequestCode();
 
         Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class)
                 .putExtra("ID", id)

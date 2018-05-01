@@ -6,6 +6,7 @@ public class ReminderDB {
 
     private String uid;
     private String reminderId;
+    private int alarmRequestCode;
     public String reminderTitle;
     public String reminderLocation;
     public String reminderDescription;
@@ -44,5 +45,13 @@ public class ReminderDB {
 
     public void setReminderId(String reminderId) {
         this.reminderId = reminderId;
+    }
+
+    public int getAlarmRequestCode() {
+        return alarmRequestCode;
+    }
+
+    public void setAlarmRequestCode(int alarmRequestCode) {
+        this.alarmRequestCode = alarmRequestCode;
     }
 }
