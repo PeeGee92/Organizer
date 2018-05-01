@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference reminderRef;
     public static DatabaseReference todoListRef;
     public static DatabaseReference todoItemRef;
-    public static DatabaseReference alarmIdRef;
+    public static DatabaseReference requestCodeRef;
 
     // DB locally saved lists
     public static List<NotesDB> notesList = new ArrayList<>();
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public static List<ReminderDB> reminderList = new ArrayList<>();
 
     // Alarm ID
-    private static Integer alarmId; // Used as a unique id for alarms
+    private static Integer requestCode; // Used as a unique auto incremented request code for intents
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +149,11 @@ public class MainActivity extends AppCompatActivity {
             rootRef = FirebaseDatabase.getInstance().getReference();
             userRef = rootRef.child(getString(R.string.db_user));
             userDataRef = userRef.child(firebaseUser.getUid());
-            alarmIdRef = userRef.child(getString(R.string.db_alarm_id));
-            alarmIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            requestCodeRef = userRef.child(getString(R.string.db_request_code));
+            requestCodeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    alarmId = dataSnapshot.getValue(Integer.class);
+                    requestCode = dataSnapshot.getValue(Integer.class);
                 }
 
                 @Override
@@ -349,12 +349,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO check
-    public static int getAlarmId() {
-        if (alarmId == null)
-            alarmId = 0;
-        int temp = alarmId++;
+    public static int getRequestCode() {
+        if (requestCode == null)
+            requestCode = 0;
+        int temp = requestCode++;
         synchronized (FBLOCK) {
-            alarmIdRef.setValue(alarmId);
+            requestCodeRef.setValue(requestCode);
         }
         return temp;
     }

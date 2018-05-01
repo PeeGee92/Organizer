@@ -31,7 +31,7 @@
     <string name="db_todo_list">Todo List</string>
     <string name="db_todo_items">Todo Items</string>
     <string name="db_reminder">Reminder</string>
-    <string name="db_alarm_id">Alarm Id</string>
+    <string name="db_request_code">Alarm Id</string>
 
     // Spinner for reminders
     <string-array name="reminder_spinner">

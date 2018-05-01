@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +19,6 @@ import org.apache.commons.collections4.Predicate;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -158,7 +156,7 @@ public class AddAlarm extends AppCompatActivity {
             calendar.add(Calendar.DATE, 1);
         }
 
-        int alarmRequestCode = MainActivity.getAlarmId();
+        int alarmRequestCode = MainActivity.getRequestCode();
 
         Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class)
                 .putExtra("ID", id)

@@ -58,18 +58,18 @@ public class RingtonePlayingService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        initNotification();
-        startForeground(1, notificationBuilder.build());
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         alarmRequestCode = intent.getIntExtra("REQUEST_CODE", -1);
         alarmId = intent.getStringExtra("ID");
         action = intent.getStringExtra("intent_action");
+
+        if (action == null) {
+            initNotification();
+            startForeground(alarmRequestCode, notificationBuilder.build());
+        }
 
         // Used to cancel alarm
         if (action != null) {
@@ -83,20 +83,20 @@ public class RingtonePlayingService extends Service {
         if (action != null) {
             switch (action) {
                 case "click":
-                    Log.d("Action", "click: " + action);
                     alarmManager.cancel(cancelPendingIntent);
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
                 case "snooze":
-                    Log.d("Action", "snooze: " + action);
                     alarmManager.cancel(cancelPendingIntent);
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     setNewSnoozeAlarm();
                     break;
                 case "dismiss":
-                    Log.d("Action", "dismiss: " + action);
                     alarmManager.cancel(cancelPendingIntent);
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
@@ -113,12 +113,7 @@ public class RingtonePlayingService extends Service {
     }
 
     private void setNewSnoozeAlarm() {
-        Intent snoozeIntent = new Intent(getApplicationContext(), AlarmReceiver.class)
-                .putExtra("ID", alarmId)
-                .putExtra("REQUEST_CODE", alarmRequestCode);
-        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
         Predicate condition = new Predicate() {
             public boolean evaluate(Object sample) {
                 return ((AlarmDB)sample).getAlarmId().equals(alarmId);
@@ -129,9 +124,21 @@ public class RingtonePlayingService extends Service {
 
         int index = MainActivity.alarmsList.indexOf(alarmDB);
         int snooze = MainActivity.alarmsList.get(index).alarmSnooze;
-        calendar.add(Calendar.MINUTE, snooze);
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), snoozePendingIntent);
+        if (snooze > 0) {
+            Intent snoozeIntent = new Intent(getApplicationContext(), AlarmReceiver.class)
+                    .putExtra("ID", alarmId)
+                    .putExtra("REQUEST_CODE", alarmRequestCode);
+            PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MINUTE, snooze);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), snoozePendingIntent);
+        }
+        else { // Just dismiss the alarm
+            changeAlarmValuesToOff();
+        }
     }
 
     private void changeAlarmValuesToOff() {
@@ -144,46 +151,48 @@ public class RingtonePlayingService extends Service {
     }
 
     private void initNotification() {
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         setNotificationChannel();
 
         notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), notificationChannel.getId());
 
-        Intent click_intent = new Intent(getApplicationContext(), AlarmActivity.class)
-                .putExtra("intent_action", "click");
-        PendingIntent onclick_intent = PendingIntent.getActivity(this, 1, click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent click_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
+                .putExtra("intent_action", "click")
+                .putExtra("REQUEST_CODE", alarmRequestCode)
+                .putExtra("ID", alarmId);
+        PendingIntent click_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent dismiss_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
-                .putExtra("intent_action", "dismiss");
-        PendingIntent dismiss_pending = PendingIntent.getService(getApplicationContext(),1, dismiss_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                .putExtra("intent_action", "dismiss")
+                .putExtra("REQUEST_CODE", alarmRequestCode)
+                .putExtra("ID", alarmId);
+        PendingIntent dismiss_pending = PendingIntent.getService(getApplicationContext(),MainActivity.getRequestCode(), dismiss_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent snooze_intent=new Intent(getApplicationContext(), RingtonePlayingService.class)
-                .putExtra("intent_action", "snooze");
-        PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(),1, snooze_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent snooze_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
+                .putExtra("intent_action", "snooze")
+                .putExtra("REQUEST_CODE", alarmRequestCode)
+                .putExtra("ID", alarmId);
+        PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(),MainActivity.getRequestCode(), snooze_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         dismissAction = new NotificationCompat.Action(R.drawable.small_delete,
                 "Dismiss", dismiss_pending);
         snoozeAction = new NotificationCompat.Action(R.drawable.bell_ring,
                 "Snooze", snooze_pending);
-        //
 
         notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                 .setSmallIcon(R.drawable.alarm)
                 .setContentTitle("Alarm On!")
                 .setContentText("Click the notification to dismiss")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(onclick_intent)
-                .setDeleteIntent(onclick_intent)
-                .setOngoing(true)
-                .setAutoCancel(true)
+                .setContentIntent(click_pending)
+                .setDeleteIntent(click_pending)
+                .addAction(dismissAction)
                 .addAction(snoozeAction)
-                .addAction(dismissAction);
+                .setAutoCancel(true);
     }
 
     private void showNotification() {
 
-        notificationManager.notify(1, notificationBuilder.build());
+        notificationManager.notify(alarmRequestCode, notificationBuilder.build());
 
     }
 
