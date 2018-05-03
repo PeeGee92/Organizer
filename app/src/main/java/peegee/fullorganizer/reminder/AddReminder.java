@@ -259,7 +259,7 @@ public class AddReminder extends AppCompatActivity {
             if (update) {
                 // Update alarm
                 if (reminderDB.reminderAlarm) { // There was an alarm set before
-                    AddAlarm.cancelReminderAlarm(reminderDB);
+                    AddAlarm.cancelReminderAlarm(reminderDB, getApplicationContext());
                 }
 
                 if (cbAlarm.isChecked()) {
@@ -273,7 +273,7 @@ public class AddReminder extends AppCompatActivity {
 
                     reminderDB.reminderAlarmDate = alarmDate;
 
-                    AddAlarm.setReminderAlarm(reminderDB);
+                    AddAlarm.setReminderAlarm(reminderDB, getApplicationContext());
                 }
 
                 reminderDB.reminderTitle = etTitle.getText().toString();
@@ -299,15 +299,15 @@ public class AddReminder extends AppCompatActivity {
                 reminderDB.setUid(MainActivity.getCurrentUid());
                 reminderDB.setAlarmRequestCode(MainActivity.getRequestCode());
 
-                // Add alarm
-                if (cbAlarm.isChecked()) {
-                    AddAlarm.setReminderAlarm(reminderDB);
-                }
-
                 synchronized (MainActivity.FBLOCK) {
                     String key = MainActivity.reminderRef.push().getKey();
                     reminderDB.setReminderId(key);
                     MainActivity.reminderRef.child(key).setValue(reminderDB);
+
+                    // Add alarm
+                    if (cbAlarm.isChecked()) {
+                        AddAlarm.setReminderAlarm(reminderDB, getApplicationContext());
+                    }
                 }
             }
         }

@@ -1,8 +1,5 @@
 package peegee.fullorganizer.service.adapters;
 
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,24 +12,20 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.alarm.AddAlarm;
-import peegee.fullorganizer.alarm.AlarmReceiver;
 import peegee.fullorganizer.firebase_db.AlarmDB;
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     List<AlarmDB> alarmDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
+    Context appContext;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -55,8 +48,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
-    public AlarmAdapter(List<AlarmDB> alarmDBList) {
+    public AlarmAdapter(List<AlarmDB> alarmDBList, Context appContext) {
         this.alarmDBList = alarmDBList;
+        this.appContext = appContext;
     }
 
     @Override
@@ -150,7 +144,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                     temp.alarmDate = newCalendar.getTime();
                     MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
 
-                    AddAlarm.cancelOldAndSetNew(temp, newCalendar);
+                    AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext);
                 }
 
                 MainActivity.alarmsList.get(index).alarmOn = holder.swOnOff.isChecked();

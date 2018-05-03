@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
-                    AddAlarm.cancelAlarm(tempItem);
+                    AddAlarm.cancelAlarm(tempItem, getApplicationContext());
                 }
 
                 @Override
@@ -226,17 +226,6 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    final NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
-
-                    Predicate condition = new Predicate() {
-                        public boolean evaluate(Object sample) {
-                            return ((NotesDB)sample).getNoteId().equals(tempItem.getNoteId());
-                        }
-                    };
-                    List<NotesDB> evaluateResult = (List<NotesDB>) CollectionUtils.select( notesList, condition );
-                    NotesDB result = evaluateResult.get(0);
-
-                    notesList.remove(result);
 
                 }
 
@@ -360,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
 
-                    AddAlarm.cancelReminderAlarm(tempItem);
+                    AddAlarm.cancelReminderAlarm(tempItem, getApplicationContext());
                 }
 
                 @Override

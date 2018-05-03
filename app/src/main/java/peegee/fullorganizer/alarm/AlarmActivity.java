@@ -55,7 +55,7 @@ public class AlarmActivity extends AppCompatActivity {
 
         // RecyclerView setup
         rvAlarm.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AlarmAdapter(MainActivity.alarmsList);
+        adapter = new AlarmAdapter(MainActivity.alarmsList, getApplicationContext());
         rvAlarm.setAdapter(adapter);
 
         // Used to load a new activity to add a new alarm
