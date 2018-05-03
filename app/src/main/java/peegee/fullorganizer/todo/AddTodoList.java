@@ -193,14 +193,14 @@ public class AddTodoList extends AppCompatActivity {
                 MainActivity.todoListRef.child(listId).setValue(list); // update list item
             }
 
-            if (addedItemsList != null) {
+            if (addedItemsList.size() > 0) {
                 for (TodoItemDB item : addedItemsList) {
                     item.setListId(listId); // set new added items listId
                 }
             }
 
             // Firebase
-            if (addedItemsList != null) {
+            if (addedItemsList.size() > 0) {
                 for (TodoItemDB item : addedItemsList) {
                     String itemId = MainActivity.todoItemRef.push().getKey();
                     item.setItemId(itemId);

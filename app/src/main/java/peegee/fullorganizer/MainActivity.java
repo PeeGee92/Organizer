@@ -252,7 +252,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
-                    todoListList.add(tempList);
+                    if (tempList.getTodoListId() != null)
+                        todoListList.add(tempList);
                 }
 
                 @Override
@@ -285,7 +286,9 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+//                    TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
+//                    int index = todoItemsList.indexOf(tempItem);
+//                    todoItemsList.set(index, tempItem);
                 }
 
                 @Override
