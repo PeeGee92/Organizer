@@ -107,12 +107,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
                                     MainActivity.todoListRef.child(item.getTodoListId()).removeValue();
                                 }
 
-                                // Remove from local list
-//                                MainActivity.todoListList.remove(item);
-//                                for (TodoItemDB itemDB: itemsList) {
-//                                    MainActivity.todoItemsList.remove(itemDB);
-//                                }
-
                                 // Update RecyclerView
                                 todoListDBList.remove(position);
                                 recyclerView.removeViewAt(position);

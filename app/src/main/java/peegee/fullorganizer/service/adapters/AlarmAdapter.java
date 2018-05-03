@@ -112,9 +112,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                                     MainActivity.alarmRef.child(temp.getAlarmId()).removeValue();
                                 }
 
-                                // Remove from local list
-                                MainActivity.alarmsList.remove(temp);
-
                                 // Update RecyclerView
                                 alarmDBList.remove(position);
                                 recyclerView.removeViewAt(position);

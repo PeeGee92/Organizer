@@ -88,9 +88,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                                     MainActivity.notesRef.child(item.getNoteId()).removeValue();
                                 }
 
-                                // Remove from local list
-                                MainActivity.notesList.remove(item);
-
                                 // Update RecyclerView
                                 notesDBList.remove(position);
                                 recyclerView.removeViewAt(position);

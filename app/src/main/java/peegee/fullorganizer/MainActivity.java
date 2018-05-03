@@ -185,11 +185,11 @@ public class MainActivity extends AppCompatActivity {
                             return ((AlarmDB)sample).getAlarmId().equals(tempItem.getAlarmId());
                         }
                     };
-                    List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select( MainActivity.alarmsList, condition );
+                    List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select( alarmsList, condition );
                     AlarmDB oldItem = evaluateResult.get(0);
 
-                    MainActivity.alarmsList.remove(oldItem);
-                    MainActivity.alarmsList.add(tempItem);
+                    alarmsList.remove(oldItem);
+                    alarmsList.add(tempItem);
                 }
 
                 @Override
@@ -234,6 +234,17 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    final NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
+
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((NotesDB)sample).getNoteId().equals(tempItem.getNoteId());
+                        }
+                    };
+                    List<NotesDB> evaluateResult = (List<NotesDB>) CollectionUtils.select( notesList, condition );
+                    NotesDB result = evaluateResult.get(0);
+
+                    notesList.remove(result);
 
                 }
 
