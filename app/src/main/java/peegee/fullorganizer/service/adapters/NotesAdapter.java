@@ -46,13 +46,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
-    public NotesAdapter() {
-        Predicate condition = new Predicate() {
-            public boolean evaluate(Object sample) {
-                return ((NotesDB)sample).getUid().equals(MainActivity.getCurrentUid());
-            }
-        };
-        this.notesDBList = (List<NotesDB>) CollectionUtils.select( MainActivity.notesList, condition );
+    public NotesAdapter(List<NotesDB> notesDBList) {
+        this.notesDBList = notesDBList;
     }
 
     @Override
