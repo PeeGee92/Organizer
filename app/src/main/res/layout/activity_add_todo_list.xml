@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_list_name"
-        android:layout_below="@id/toolbar"/>
+        android:layout_below="@id/toolbar"
+        android:singleLine="true"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvTasks"

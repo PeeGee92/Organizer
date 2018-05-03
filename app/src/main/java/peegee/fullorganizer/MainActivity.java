@@ -16,6 +16,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -97,7 +98,11 @@ public class MainActivity extends AppCompatActivity {
     public static List<ReminderDB> reminderList = new ArrayList<>();
 
     // Alarm ID
-    private static Integer requestCode; // Used as a unique auto incremented request code for intents
+    private static int requestCode; // Used as a unique auto incremented request code for intents
+
+    // Shared Preferences
+    private static SharedPreferences sharedPreferences;
+    private static SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +154,14 @@ public class MainActivity extends AppCompatActivity {
             authenticate();
         }
 
+        // SharedPreferences
+        sharedPreferences = getSharedPreferences("REQUEST_CODE", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        requestCode = sharedPreferences.getInt("REQUEST_CODE", 0);
+        if (requestCode > (Integer.MAX_VALUE - 1000)) {
+            requestCode = 0;
+        }
+
     }
 
     private void initFirebase() {
@@ -156,18 +169,6 @@ public class MainActivity extends AppCompatActivity {
             rootRef = FirebaseDatabase.getInstance().getReference();
             userRef = rootRef.child(getString(R.string.db_user));
             userDataRef = userRef.child(firebaseUser.getUid());
-            requestCodeRef = userRef.child(getString(R.string.db_request_code));
-            requestCodeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    requestCode = dataSnapshot.getValue(Integer.class);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
             alarmRef = userDataRef.child(getString(R.string.db_alarm));
             alarmRef.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -415,14 +416,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO check
     public static int getRequestCode() {
-        if (requestCode == null)
-            requestCode = 0;
         int temp = requestCode++;
-        synchronized (FBLOCK) {
-            requestCodeRef.setValue(requestCode);
-        }
+        editor.putInt("REQUEST_CODE", requestCode).commit();
         return temp;
     }
 
