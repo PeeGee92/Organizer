@@ -221,7 +221,6 @@ public class AddTodoList extends AppCompatActivity {
 
                 for (TodoItemDB item : addedItemsList) {
                     item.setListId(listId); // set new added items listId
-                    MainActivity.todoItemsList.add(item);
                 }
 
                 // Firebase
