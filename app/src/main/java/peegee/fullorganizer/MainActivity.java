@@ -263,7 +263,19 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    final TodoListDB tempList = dataSnapshot.getValue(TodoListDB.class);
 
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((TodoListDB) sample).getTodoListId().equals(tempList.getTodoListId());
+                        }
+                    };
+                    List<TodoListDB> evaluateResult = (List<TodoListDB>) CollectionUtils.select(todoListList, condition);
+
+                    if (evaluateResult.size() > 0) {
+                        TodoListDB result = evaluateResult.get(0);
+                    todoListList.remove(result);
+                    }
                 }
 
                 @Override
@@ -293,7 +305,17 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    final TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
 
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((TodoItemDB)sample).getItemId().equals(tempItem.getItemId());
+                        }
+                    };
+                    List<TodoItemDB> evaluateResult = (List<TodoItemDB>) CollectionUtils.select( todoItemsList, condition );
+                    TodoItemDB result = evaluateResult.get(0);
+
+                    todoItemsList.remove(result);
                 }
 
                 @Override
