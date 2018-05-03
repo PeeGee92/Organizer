@@ -342,12 +342,25 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    final ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
 
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((ReminderDB)sample).getReminderId().equals(tempItem.getReminderId());
+                        }
+                    };
+                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select( reminderList, condition );
+                    ReminderDB oldItem = evaluateResult.get(0);
+
+                    reminderList.remove(oldItem);
+                    reminderList.add(tempItem);
                 }
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    final ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
 
+                    AddAlarm.cancelReminderAlarm(tempItem);
                 }
 
                 @Override

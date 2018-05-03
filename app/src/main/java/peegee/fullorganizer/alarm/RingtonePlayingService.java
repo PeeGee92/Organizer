@@ -25,6 +25,8 @@ import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.AlarmDB;
+import peegee.fullorganizer.firebase_db.ReminderDB;
+import peegee.fullorganizer.reminder.AddReminder;
 
 /**
  * RingtonePlayingService extending Service
@@ -68,7 +70,10 @@ public class RingtonePlayingService extends Service {
         action = intent.getStringExtra("intent_action");
 
         if (action == null) {
-            initNotification();
+            if (intent.getBooleanExtra("REMINDER", false))
+                initReminderNotification();
+            else
+                initNotification();
             startForeground(alarmRequestCode, notificationBuilder.build());
         }
 
@@ -101,6 +106,30 @@ public class RingtonePlayingService extends Service {
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
+                case "reminder":
+                    cancelIntent.putExtra("REMINDER", true);
+                    cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
+                            alarmRequestCode,
+                            cancelIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
+                    alarmManager.cancel(cancelPendingIntent);
+                    notificationManager.cancelAll();
+                    player.stop();
+
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((ReminderDB)sample).getReminderId().equals(alarmId);
+                        }
+                    };
+                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select( MainActivity.reminderList, condition );
+                    ReminderDB reminderDB = evaluateResult.get(0);
+
+                    int index = MainActivity.reminderList.indexOf(reminderDB);
+                    MainActivity.reminderList.get(index).reminderAlarm = false;
+
+                    Intent reminderIntent = new Intent(this, AddReminder.class)
+                            .putExtra("REMINDER_ID", alarmId);
+                    startActivity(reminderIntent);
                 default:
             }
         }
@@ -180,6 +209,27 @@ public class RingtonePlayingService extends Service {
         }
 
         startActivity(new Intent(getApplicationContext(), AlarmActivity.class));
+    }
+
+    private void initReminderNotification() {
+        setNotificationChannel();
+
+        notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), notificationChannel.getId());
+
+        Intent click_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
+                .putExtra("intent_action", "reminder")
+                .putExtra("REQUEST_CODE", alarmRequestCode)
+                .putExtra("ID", alarmId);
+        PendingIntent click_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                .setSmallIcon(R.drawable.alarm)
+                .setContentTitle("Reminder!")
+                .setContentText("Click the notification to open reminder")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(click_pending)
+                .setDeleteIntent(click_pending)
+                .setAutoCancel(true);
     }
 
     private void initNotification() {

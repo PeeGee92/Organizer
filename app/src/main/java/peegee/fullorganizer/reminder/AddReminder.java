@@ -33,6 +33,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.alarm.AddAlarm;
 import peegee.fullorganizer.firebase_db.ReminderDB;
 
 public class AddReminder extends AppCompatActivity {
@@ -253,16 +254,16 @@ public class AddReminder extends AppCompatActivity {
         }
 
         synchronized (MainActivity.FBLOCK) {
-            // TODO Check input errors, return if errors exist
 
             // Firebase
             if (update) {
-                reminderDB.reminderTitle = etTitle.getText().toString();
-                reminderDB.reminderLocation = etLocation.getText().toString();
-                reminderDB.reminderDescription = etDescription.getText().toString();
-                reminderDB.reminderDate = reminderDate;
-                reminderDB.reminderAlarm = cbAlarm.isChecked();
+                // Update alarm
+                if (reminderDB.reminderAlarm) { // There was an alarm set before
+                    AddAlarm.cancelReminderAlarm(reminderDB);
+                }
+
                 if (cbAlarm.isChecked()) {
+                    // Set the new alarm
                     if (etAlarmTime.getText().toString().trim().isEmpty()) {
                         etAlarmTime.setText("0");
                     }
@@ -271,7 +272,15 @@ public class AddReminder extends AppCompatActivity {
                     switchTimeToDate(reminderDB.reminderAlarmType, reminderDB.reminderAlarmValue);
 
                     reminderDB.reminderAlarmDate = alarmDate;
+
+                    AddAlarm.setReminderAlarm(reminderDB);
                 }
+
+                reminderDB.reminderTitle = etTitle.getText().toString();
+                reminderDB.reminderLocation = etLocation.getText().toString();
+                reminderDB.reminderDescription = etDescription.getText().toString();
+                reminderDB.reminderDate = reminderDate;
+                reminderDB.reminderAlarm = cbAlarm.isChecked();
 
                 synchronized (MainActivity.FBLOCK) {
                     MainActivity.reminderRef.child(reminderDB.getReminderId()).setValue(reminderDB);
@@ -288,6 +297,12 @@ public class AddReminder extends AppCompatActivity {
                         cbAlarm.isChecked(), alarmDate,
                         Integer.parseInt(etAlarmTime.getText().toString()), spAlarm.getSelectedItem().toString());
                 reminderDB.setUid(MainActivity.getCurrentUid());
+                reminderDB.setAlarmRequestCode(MainActivity.getRequestCode());
+
+                // Add alarm
+                if (cbAlarm.isChecked()) {
+                    AddAlarm.setReminderAlarm(reminderDB);
+                }
 
                 synchronized (MainActivity.FBLOCK) {
                     String key = MainActivity.reminderRef.push().getKey();

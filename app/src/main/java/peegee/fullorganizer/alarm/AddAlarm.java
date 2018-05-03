@@ -27,6 +27,7 @@ import butterknife.OnClick;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.AlarmDB;
+import peegee.fullorganizer.firebase_db.ReminderDB;
 
 
 public class AddAlarm extends AppCompatActivity {
@@ -206,6 +207,36 @@ public class AddAlarm extends AppCompatActivity {
 
         Intent cancelIntent = new Intent(appContext, AlarmReceiver.class)
                 .putExtra("ID", alarmId)
+                .putExtra("REQUEST_CODE", alarmRequestCode);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.cancel(cancelPendingIntent);
+        notificationManager.cancel(alarmRequestCode);
+    }
+
+    public static void setReminderAlarm(ReminderDB reminderDB) {
+        String id = reminderDB.getReminderId();
+        int alarmRequestCode = reminderDB.getAlarmRequestCode();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(reminderDB.reminderAlarmDate);
+
+        Intent intent = new Intent(appContext, AlarmReceiver.class)
+                .putExtra("REMINDER", true)
+                .putExtra("ID", id)
+                .putExtra("REQUEST_CODE", alarmRequestCode);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    public static void cancelReminderAlarm(ReminderDB reminderDB) {
+        String id = reminderDB.getReminderId();
+        int alarmRequestCode = reminderDB.getAlarmRequestCode();
+
+        Intent cancelIntent = new Intent(appContext, AlarmReceiver.class)
+                .putExtra("REMINDER", true)
+                .putExtra("ID", id)
                 .putExtra("REQUEST_CODE", alarmRequestCode);
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
