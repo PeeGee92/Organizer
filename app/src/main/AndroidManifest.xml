@@ -3,19 +3,19 @@
     package="peegee.fullorganizer">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <!--TODO Icons-->
+    
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_app"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_app"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <activity android:name=".MainActivity"
             android:label="@string/toolbar_title_main"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,12 +26,14 @@
         <activity
             android:name=".alarm.AlarmActivity"
             android:label="@string/toolbar_title_alarm"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".alarm.AddAlarm"
             android:label="@string/toolbar_title_add_alarm"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <receiver android:name=".alarm.AlarmReceiver">
             <intent-filter>
@@ -46,32 +48,38 @@
         <activity
             android:name=".todo.TodoActivity"
             android:label="@string/toolbar_title_todo"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".todo.AddTodoList"
             android:label="@string/toolbar_title_add_todo"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".notes.NotesActivity"
             android:label="@string/toolbar_title_notes"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".notes.AddNote"
             android:label="@string/toolbar_title_add_note"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".reminder.ReminderActivity"
             android:label="@string/toolbar_title_reminder"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".reminder.AddReminder"
             android:label="@string/toolbar_title_add_reminder"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
 
     </application>
 

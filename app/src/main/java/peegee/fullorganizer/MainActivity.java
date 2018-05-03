@@ -324,9 +324,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     };
                     List<TodoItemDB> evaluateResult = (List<TodoItemDB>) CollectionUtils.select( todoItemsList, condition );
-                    TodoItemDB result = evaluateResult.get(0);
-
-                    todoItemsList.remove(result);
+                    if (evaluateResult.size() > 0) {
+                        TodoItemDB result = evaluateResult.get(0);
+                        todoItemsList.remove(result);
+                    }
                 }
 
                 @Override
