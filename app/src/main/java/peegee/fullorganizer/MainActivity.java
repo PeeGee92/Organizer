@@ -47,6 +47,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import peegee.fullorganizer.alarm.AddAlarm;
 import peegee.fullorganizer.alarm.AlarmActivity;
 import peegee.fullorganizer.alarm.AlarmReceiver;
 import peegee.fullorganizer.firebase_db.AlarmDB;
@@ -197,17 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
-                    // Cancel previous broadcast
-                    int alarmRequestCode = tempItem.getAlarmRequestCode();
-
-                    // Used to cancel alarm
-                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    Intent cancelIntent = new Intent(getApplicationContext(), AlarmReceiver.class)
-                            .putExtra("ID", tempItem.getAlarmId())
-                            .putExtra("REQUEST_CODE", alarmRequestCode);
-                    PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    alarmManager.cancel(cancelPendingIntent);
+                    AddAlarm.cancelAlarm(tempItem);
                 }
 
                 @Override

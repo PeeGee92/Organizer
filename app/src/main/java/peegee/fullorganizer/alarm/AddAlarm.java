@@ -1,6 +1,7 @@
 package peegee.fullorganizer.alarm;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +46,9 @@ public class AddAlarm extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    AlarmManager alarmManager;
+    static AlarmManager alarmManager;
+    static NotificationManager notificationManager;
+    static Context appContext;
     Calendar calendar;
 
     List<AlarmDB> evaluateResult; // Used to retrieve item by id
@@ -69,6 +72,10 @@ public class AddAlarm extends AppCompatActivity {
                 startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
             }
         });
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        appContext = getApplicationContext();
 
         // Get Intent extra to know which note to load
         // or to start a new note
@@ -122,8 +129,6 @@ public class AddAlarm extends AppCompatActivity {
         Calendar tempCal = Calendar.getInstance();
         tempCal.set(Calendar.HOUR_OF_DAY,timePicker.getHour());
         tempCal.set(Calendar.MINUTE,timePicker.getMinute());
-
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // Firebase
         synchronized (MainActivity.FBLOCK) {
@@ -179,5 +184,32 @@ public class AddAlarm extends AppCompatActivity {
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
         startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
+    }
+
+    public static void cancelOldAndSetNew(AlarmDB alarmDB, Calendar calendar) {
+        cancelAlarm(alarmDB);
+
+        String alarmId = alarmDB.getAlarmId();
+        int alarmRequestCode = alarmDB.getAlarmRequestCode();
+
+        Intent intent = new Intent(appContext, AlarmReceiver.class)
+                .putExtra("ID", alarmId)
+                .putExtra("REQUEST_CODE", alarmRequestCode);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
+
+    public static void cancelAlarm(AlarmDB alarmDB) {
+        String alarmId = alarmDB.getAlarmId();
+        int alarmRequestCode = alarmDB.getAlarmRequestCode();
+
+        Intent cancelIntent = new Intent(appContext, AlarmReceiver.class)
+                .putExtra("ID", alarmId)
+                .putExtra("REQUEST_CODE", alarmRequestCode);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.cancel(cancelPendingIntent);
+        notificationManager.cancel(alarmRequestCode);
     }
 }

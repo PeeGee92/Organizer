@@ -85,19 +85,19 @@ public class RingtonePlayingService extends Service {
             switch (action) {
                 case "click":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancel(alarmRequestCode);
+                    notificationManager.cancelAll();
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
                 case "snooze":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancel(alarmRequestCode);
+                    notificationManager.cancelAll();
                     player.stop();
                     setNewSnoozeAlarm();
                     break;
                 case "dismiss":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancel(alarmRequestCode);
+                    notificationManager.cancelAll();
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
@@ -158,6 +158,8 @@ public class RingtonePlayingService extends Service {
             Date date = MainActivity.alarmsList.get(index).alarmDate;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
+            calendar.add(Calendar.DATE, 1);
+            MainActivity.alarmsList.get(index).alarmDate = calendar.getTime();
 
             Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class)
                     .putExtra("ID", alarmId)
@@ -165,6 +167,10 @@ public class RingtonePlayingService extends Service {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            synchronized (MainActivity.FBLOCK) {
+                MainActivity.alarmRef.child(alarmId).setValue(MainActivity.alarmsList.get(index));
+            }
         }
         else {
             MainActivity.alarmsList.get(index).alarmOn = false;
@@ -172,6 +178,8 @@ public class RingtonePlayingService extends Service {
                 MainActivity.alarmRef.child(alarmId).setValue(MainActivity.alarmsList.get(index));
             }
         }
+
+        startActivity(new Intent(getApplicationContext(), AlarmActivity.class));
     }
 
     private void initNotification() {
@@ -206,7 +214,7 @@ public class RingtonePlayingService extends Service {
                 .setSmallIcon(R.drawable.alarm)
                 .setContentTitle("Alarm On!")
                 .setContentText("Click the notification to dismiss")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(click_pending)
                 .setDeleteIntent(click_pending)
                 .addAction(dismissAction)
@@ -215,15 +223,13 @@ public class RingtonePlayingService extends Service {
     }
 
     private void showNotification() {
-
         notificationManager.notify(alarmRequestCode, notificationBuilder.build());
-
     }
 
     private void setNotificationChannel() {
         channelId = "alarm_channel_id";
         channelName = "alarm_notification_channel";
-        int importance = NotificationManager.IMPORTANCE_HIGH;
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
         notificationChannel = new NotificationChannel(channelId, channelName, importance);
         notificationChannel.enableLights(true);
         notificationChannel.setLightColor(Color.RED);

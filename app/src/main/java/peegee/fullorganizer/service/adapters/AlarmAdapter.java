@@ -1,5 +1,9 @@
 package peegee.fullorganizer.service.adapters;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -13,12 +17,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.alarm.AddAlarm;
+import peegee.fullorganizer.alarm.AlarmReceiver;
 import peegee.fullorganizer.firebase_db.AlarmDB;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
@@ -127,7 +135,26 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 int index = MainActivity.alarmsList.indexOf(temp);
+
+                // Check if alarm time has passed
+                Date oldDate = temp.alarmDate;
+                Calendar oldCalendar = Calendar.getInstance();
+                oldCalendar.setTime(oldDate);
+                if (oldCalendar.before(Calendar.getInstance())) {
+                    Calendar newCalendar = Calendar.getInstance();
+                    newCalendar.set(Calendar.MINUTE, oldCalendar.get(Calendar.MINUTE));
+                    newCalendar.set(Calendar.HOUR_OF_DAY, oldCalendar.get(Calendar.HOUR_OF_DAY));
+                    if (newCalendar.before(Calendar.getInstance()))
+                        newCalendar.add(Calendar.DATE, 1);
+
+                    temp.alarmDate = newCalendar.getTime();
+                    MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
+
+                    AddAlarm.cancelOldAndSetNew(temp, newCalendar);
+                }
+
                 MainActivity.alarmsList.get(index).alarmOn = holder.swOnOff.isChecked();
+
 
                 temp.alarmOn = holder.swOnOff.isChecked();
 
