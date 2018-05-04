@@ -12,6 +12,7 @@
 package peegee.fullorganizer;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -198,7 +199,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
-                    AddAlarm.cancelAlarm(tempItem, getApplicationContext());
+                    AddAlarm.cancelAlarm(tempItem, getApplicationContext(),
+                            (AlarmManager) getSystemService(Context.ALARM_SERVICE),
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
                 }
 
                 @Override
@@ -349,7 +352,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
 
-                    AddAlarm.cancelReminderAlarm(tempItem, getApplicationContext());
+                    AddAlarm.cancelReminderAlarm(tempItem, getApplicationContext(),
+                            (AlarmManager) getSystemService(Context.ALARM_SERVICE),
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
                 }
 
                 @Override

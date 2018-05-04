@@ -1,5 +1,7 @@
 package peegee.fullorganizer.service.adapters;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +28,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     Context appContext;
+    AlarmManager alarmManager;
+    NotificationManager notificationManager;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -48,9 +52,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
-    public AlarmAdapter(List<AlarmDB> alarmDBList, Context appContext) {
+    public AlarmAdapter(List<AlarmDB> alarmDBList, Context appContext,
+                        AlarmManager alarmManager, NotificationManager notificationManager) {
+
         this.alarmDBList = alarmDBList;
         this.appContext = appContext;
+        this.alarmManager = alarmManager;
+        this.notificationManager = notificationManager;
     }
 
     @Override
@@ -144,7 +152,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                     temp.alarmDate = newCalendar.getTime();
                     MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
 
-                    AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext);
+                    AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext, alarmManager, notificationManager);
                 }
 
                 MainActivity.alarmsList.get(index).alarmOn = holder.swOnOff.isChecked();

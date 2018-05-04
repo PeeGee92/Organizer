@@ -47,8 +47,8 @@ public class AddAlarm extends AppCompatActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
-    static AlarmManager alarmManager;
-    static NotificationManager notificationManager;
+    AlarmManager alarmManager;
+    NotificationManager notificationManager;
     Calendar calendar;
 
     List<AlarmDB> evaluateResult; // Used to retrieve item by id
@@ -185,8 +185,10 @@ public class AddAlarm extends AppCompatActivity {
         startActivity(new Intent(AddAlarm.this, AlarmActivity.class));
     }
 
-    public static void cancelOldAndSetNew(AlarmDB alarmDB, Calendar calendar, Context appContext) {
-        cancelAlarm(alarmDB, appContext);
+    public static void cancelOldAndSetNew(AlarmDB alarmDB, Calendar calendar, Context appContext,
+                                          AlarmManager alarmManager, NotificationManager notificationManager) {
+
+        cancelAlarm(alarmDB, appContext, alarmManager, notificationManager);
 
         String alarmId = alarmDB.getAlarmId();
         int alarmRequestCode = alarmDB.getAlarmRequestCode();
@@ -199,7 +201,8 @@ public class AddAlarm extends AppCompatActivity {
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
-    public static void cancelAlarm(AlarmDB alarmDB, Context appContext) {
+    public static void cancelAlarm(AlarmDB alarmDB, Context appContext,
+                                   AlarmManager alarmManager, NotificationManager notificationManager) {
         String alarmId = alarmDB.getAlarmId();
         int alarmRequestCode = alarmDB.getAlarmRequestCode();
 
@@ -212,7 +215,8 @@ public class AddAlarm extends AppCompatActivity {
         notificationManager.cancel(alarmRequestCode);
     }
 
-    public static void setReminderAlarm(ReminderDB reminderDB, Context appContext) {
+    public static void setReminderAlarm(ReminderDB reminderDB, Context appContext,
+                                        AlarmManager alarmManager) {
         String id = reminderDB.getReminderId();
         int alarmRequestCode = reminderDB.getAlarmRequestCode();
 
@@ -228,7 +232,9 @@ public class AddAlarm extends AppCompatActivity {
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
-    public static void cancelReminderAlarm(ReminderDB reminderDB, Context appContext) {
+    public static void cancelReminderAlarm(ReminderDB reminderDB, Context appContext,
+                                           AlarmManager alarmManager, NotificationManager notificationManager) {
+
         String id = reminderDB.getReminderId();
         int alarmRequestCode = reminderDB.getAlarmRequestCode();
 

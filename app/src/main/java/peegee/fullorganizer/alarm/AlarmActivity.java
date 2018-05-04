@@ -1,5 +1,8 @@
 package peegee.fullorganizer.alarm;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -55,7 +58,9 @@ public class AlarmActivity extends AppCompatActivity {
 
         // RecyclerView setup
         rvAlarm.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AlarmAdapter(MainActivity.alarmsList, getApplicationContext());
+        adapter = new AlarmAdapter(MainActivity.alarmsList, getApplicationContext(),
+                (AlarmManager) getSystemService(Context.ALARM_SERVICE),
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
         rvAlarm.setAdapter(adapter);
 
         // Used to load a new activity to add a new alarm

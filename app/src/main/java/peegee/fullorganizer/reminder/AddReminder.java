@@ -1,7 +1,10 @@
 package peegee.fullorganizer.reminder;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -259,7 +262,9 @@ public class AddReminder extends AppCompatActivity {
             if (update) {
                 // Update alarm
                 if (reminderDB.reminderAlarm) { // There was an alarm set before
-                    AddAlarm.cancelReminderAlarm(reminderDB, getApplicationContext());
+                    AddAlarm.cancelReminderAlarm(reminderDB, getApplicationContext(),
+                            (AlarmManager) getSystemService(Context.ALARM_SERVICE),
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
                 }
 
                 if (cbAlarm.isChecked()) {
@@ -273,7 +278,8 @@ public class AddReminder extends AppCompatActivity {
 
                     reminderDB.reminderAlarmDate = alarmDate;
 
-                    AddAlarm.setReminderAlarm(reminderDB, getApplicationContext());
+                    AddAlarm.setReminderAlarm(reminderDB, getApplicationContext(),
+                            (AlarmManager) getSystemService(Context.ALARM_SERVICE));
                 }
 
                 reminderDB.reminderTitle = etTitle.getText().toString();
@@ -306,7 +312,8 @@ public class AddReminder extends AppCompatActivity {
 
                     // Add alarm
                     if (cbAlarm.isChecked()) {
-                        AddAlarm.setReminderAlarm(reminderDB, getApplicationContext());
+                        AddAlarm.setReminderAlarm(reminderDB, getApplicationContext(),
+                                (AlarmManager) getSystemService(Context.ALARM_SERVICE));
                     }
                 }
             }

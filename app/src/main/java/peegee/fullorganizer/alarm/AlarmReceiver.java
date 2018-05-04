@@ -28,23 +28,34 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        }
 
         final String alarmId = intent.getStringExtra("ID");
-        Predicate condition = new Predicate() {
-            public boolean evaluate(Object sample) {
-                return ((AlarmDB)sample).getAlarmId().equals(alarmId);
-            }
-        };
-        List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select( MainActivity.alarmsList, condition );
-        AlarmDB alarmDB = evaluateResult.get(0);
+        final boolean reminder = intent.getBooleanExtra("REMINDER", false);
+        int alarmRequestCode = intent.getIntExtra("REQUEST_CODE", -1);
 
-        int index = MainActivity.alarmsList.indexOf(alarmDB);
-        boolean alarmOn = MainActivity.alarmsList.get(index).alarmOn;
-
-        if (alarmOn) {
-            int alarmRequestCode = intent.getIntExtra("REQUEST_CODE", -1);
+        if (reminder) {
             Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
             serviceIntent.putExtra("REQUEST_CODE", alarmRequestCode)
-                         .putExtra("ID", alarmId);
+                         .putExtra("ID", alarmId)
+                         .putExtra("REMINDER", true);
             ContextCompat.startForegroundService(context, serviceIntent);
+        }
+        else {
+            Predicate condition = new Predicate() {
+                public boolean evaluate(Object sample) {
+                    return ((AlarmDB) sample).getAlarmId().equals(alarmId);
+                }
+            };
+            List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select(MainActivity.alarmsList, condition);
+            AlarmDB alarmDB = evaluateResult.get(0);
+
+            int index = MainActivity.alarmsList.indexOf(alarmDB);
+            boolean alarmOn = MainActivity.alarmsList.get(index).alarmOn;
+
+            if (alarmOn) {
+                Intent serviceIntent = new Intent(context, RingtonePlayingService.class);
+                serviceIntent.putExtra("REQUEST_CODE", alarmRequestCode)
+                             .putExtra("ID", alarmId);
+                ContextCompat.startForegroundService(context, serviceIntent);
+            }
         }
     }
 }
