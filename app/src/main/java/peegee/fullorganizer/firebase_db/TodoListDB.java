@@ -1,8 +1,5 @@
 package peegee.fullorganizer.firebase_db;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TodoListDB {
 
     private String uid;

@@ -14,13 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TimePicker;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
-
 import java.util.Calendar;
 import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -147,6 +144,7 @@ public class AddAlarm extends AppCompatActivity {
 
                 alarmDB.alarmRepeated = rbRepeat.isChecked();
                 alarmDB.alarmDate = tempCal.getTime();
+                alarmDB.alarmSnooze = Integer.parseInt(etSnooze.getText().toString());
                 synchronized (MainActivity.FBLOCK) {
                     MainActivity.alarmRef.child(alarmDB.getAlarmId()).setValue(alarmDB);
                 }

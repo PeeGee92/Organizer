@@ -13,7 +13,6 @@ package peegee.fullorganizer;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,11 +36,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +46,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import peegee.fullorganizer.alarm.AddAlarm;
 import peegee.fullorganizer.alarm.AlarmActivity;
-import peegee.fullorganizer.alarm.AlarmReceiver;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.NotesDB;
 import peegee.fullorganizer.firebase_db.ReminderDB;

@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,15 +21,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -178,11 +174,9 @@ public class AddReminder extends AppCompatActivity {
         final TimePickerDialog.OnTimeSetListener myTimeListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                Log.d("TIME", "timeBefore: " + reminderDate);
                 myCalender.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 myCalender.set(Calendar.MINUTE, minute);
                 reminderDate = myCalender.getTime();
-                Log.d("TIME", "timeAfter: " + reminderDate);
             }
         };
         final TimePickerDialog timePickerDialog = new TimePickerDialog(AddReminder.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, hour, minute, false);
@@ -203,7 +197,6 @@ public class AddReminder extends AppCompatActivity {
         int year = myCalender.get(Calendar.YEAR);
         int month = myCalender.get(Calendar.MONTH);
         int day = myCalender.get(Calendar.DAY_OF_MONTH);
-        Log.d("DATE", "year: " + year + " month: " + month + " day: " + day);
 
 
         DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
