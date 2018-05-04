@@ -86,19 +86,19 @@ public class RingtonePlayingService extends Service {
             switch (action) {
                 case "click":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancelAll();
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
                 case "snooze":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancelAll();
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     setNewSnoozeAlarm();
                     break;
                 case "dismiss":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancelAll();
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     changeAlarmValuesToOff();
                     break;
@@ -109,7 +109,7 @@ public class RingtonePlayingService extends Service {
                             cancelIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancelAll();
+                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
 
                     Predicate condition = new Predicate() {
@@ -237,19 +237,19 @@ public class RingtonePlayingService extends Service {
                 .putExtra("intent_action", "click")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent click_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent click_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent dismiss_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
                 .putExtra("intent_action", "dismiss")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent dismiss_pending = PendingIntent.getService(getApplicationContext(),MainActivity.getRequestCode(), dismiss_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent dismiss_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, dismiss_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent snooze_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
                 .putExtra("intent_action", "snooze")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(),MainActivity.getRequestCode(), snooze_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, snooze_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         dismissAction = new NotificationCompat.Action(R.drawable.small_delete,
                 "Dismiss", dismiss_pending);
@@ -260,7 +260,7 @@ public class RingtonePlayingService extends Service {
                 .setSmallIcon(R.drawable.alarm)
                 .setContentTitle("Alarm On!")
                 .setContentText("Click the notification to dismiss")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(click_pending)
                 .setDeleteIntent(click_pending)
                 .addAction(dismissAction)
@@ -275,7 +275,7 @@ public class RingtonePlayingService extends Service {
     private void setNotificationChannel() {
         channelId = "alarm_channel_id";
         channelName = "alarm_notification_channel";
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        int importance = NotificationManager.IMPORTANCE_HIGH;
         notificationChannel = new NotificationChannel(channelId, channelName, importance);
         notificationChannel.enableLights(true);
         notificationChannel.setLightColor(Color.RED);
