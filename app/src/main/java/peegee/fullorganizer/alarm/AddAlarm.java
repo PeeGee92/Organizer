@@ -125,11 +125,11 @@ public class AddAlarm extends AppCompatActivity {
         Calendar tempCal = Calendar.getInstance();
         tempCal.set(Calendar.HOUR_OF_DAY,timePicker.getHour());
         tempCal.set(Calendar.MINUTE,timePicker.getMinute());
+        tempCal.set(Calendar.SECOND, 0);
 
         // Firebase
         synchronized (MainActivity.FBLOCK) {
             if (update) {
-
                 // Cancel previous broadcast
                 alarmRequestCode = alarmDB.getAlarmRequestCode();
 
@@ -145,9 +145,8 @@ public class AddAlarm extends AppCompatActivity {
                 alarmDB.alarmRepeated = rbRepeat.isChecked();
                 alarmDB.alarmDate = tempCal.getTime();
                 alarmDB.alarmSnooze = Integer.parseInt(etSnooze.getText().toString());
-                synchronized (MainActivity.FBLOCK) {
-                    MainActivity.alarmRef.child(alarmDB.getAlarmId()).setValue(alarmDB);
-                }
+
+                MainActivity.alarmRef.child(alarmDB.getAlarmId()).setValue(alarmDB);
             } else {
                 alarmDB = new AlarmDB(rbRepeat.isChecked(),
                         Integer.parseInt(etSnooze.getText().toString()),
@@ -156,11 +155,10 @@ public class AddAlarm extends AppCompatActivity {
                 alarmDB.setUid(MainActivity.getCurrentUid());
                 alarmRequestCode = MainActivity.getRequestCode();
                 alarmDB.setAlarmRequestCode(alarmRequestCode);
-                synchronized (MainActivity.FBLOCK) {
-                    id = MainActivity.alarmRef.push().getKey();
-                    alarmDB.setAlarmId(id);
-                    MainActivity.alarmRef.child(id).setValue(alarmDB);
-                }
+
+                id = MainActivity.alarmRef.push().getKey();
+                alarmDB.setAlarmId(id);
+                MainActivity.alarmRef.child(id).setValue(alarmDB);
             }
         }
 
@@ -168,6 +166,7 @@ public class AddAlarm extends AppCompatActivity {
 
         calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
         calendar.set(Calendar.MINUTE, timePicker.getMinute());
+        calendar.set(Calendar.SECOND, 0);
 
         if(calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
@@ -196,6 +195,7 @@ public class AddAlarm extends AppCompatActivity {
                 .putExtra("REQUEST_CODE", alarmRequestCode);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        calendar.set(Calendar.SECOND, 0);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
@@ -220,6 +220,7 @@ public class AddAlarm extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(reminderDB.reminderAlarmDate);
+        calendar.set(Calendar.SECOND, 0);
 
         Intent intent = new Intent(appContext, AlarmReceiver.class)
                 .putExtra("REMINDER", true)
