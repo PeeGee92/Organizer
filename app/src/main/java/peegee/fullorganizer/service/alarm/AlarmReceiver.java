@@ -19,11 +19,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
 
-        // TODO
-//        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-//            // Reset Alarms after reboot
-//        }
-
         final String alarmId = intent.getStringExtra("ID");
         final boolean reminder = intent.getBooleanExtra("REMINDER", false);
         int alarmRequestCode = intent.getIntExtra("REQUEST_CODE", -1);

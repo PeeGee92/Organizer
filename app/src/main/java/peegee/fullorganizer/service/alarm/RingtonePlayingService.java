@@ -87,15 +87,15 @@ public class RingtonePlayingService extends Service {
             switch (action) {
                 case "click":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     changeAlarmValuesToOff();
+                    stopSelf();
                     break;
                 case "snooze":
                     alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     setNewSnoozeAlarm();
+                    stopSelf();
                     break;
                 case "reminder":
                     cancelIntent.putExtra("REMINDER", true);
@@ -121,6 +121,7 @@ public class RingtonePlayingService extends Service {
                     Intent reminderIntent = new Intent(this, AddReminder.class)
                             .putExtra("REMINDER_ID", alarmId);
                     startActivity(reminderIntent);
+                    stopSelf();
                 default:
             }
         }
@@ -131,6 +132,13 @@ public class RingtonePlayingService extends Service {
         }
 
         return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        notificationManager.cancel(alarmRequestCode);
     }
 
     private void setNewSnoozeAlarm() {

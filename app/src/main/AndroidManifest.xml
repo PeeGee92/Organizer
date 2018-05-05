@@ -35,7 +35,9 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden"/>
 
-        <receiver android:name=".service.alarm.AlarmReceiver">
+        <receiver android:name=".service.alarm.AlarmReceiver" android:enabled="true"/>
+
+        <receiver android:name=".service.alarm.ResetAlarmReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
