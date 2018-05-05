@@ -1,4 +1,4 @@
-package peegee.fullorganizer.alarm;
+package peegee.fullorganizer.service.alarm;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.alarm.AlarmActivity;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.ReminderDB;
 import peegee.fullorganizer.reminder.AddReminder;

@@ -1,4 +1,4 @@
-package peegee.fullorganizer.alarm;
+package peegee.fullorganizer.service.alarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

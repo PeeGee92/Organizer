@@ -25,7 +25,7 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.ReminderDB;
-
+import peegee.fullorganizer.service.alarm.AlarmReceiver;
 
 public class AddAlarm extends AppCompatActivity {
 
