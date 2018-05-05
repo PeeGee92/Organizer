@@ -194,6 +194,18 @@ public class MainActivity extends AppCompatActivity {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((AlarmDB) sample).getAlarmId().equals(tempItem.getAlarmId());
+                        }
+                    };
+                    List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select(alarmsList, condition);
+
+                    if (evaluateResult.size() > 0) {
+                        AlarmDB result = evaluateResult.get(0);
+                        alarmsList.remove(result);
+                    }
+
                     AddAlarm.cancelAlarm(tempItem, getApplicationContext(),
                             (AlarmManager) getSystemService(Context.ALARM_SERVICE),
                             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
@@ -224,7 +236,19 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    final NotesDB tempItem = dataSnapshot.getValue(NotesDB.class);
 
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((NotesDB) sample).getNoteId().equals(tempItem.getNoteId());
+                        }
+                    };
+                    List<NotesDB> evaluateResult = (List<NotesDB>) CollectionUtils.select(notesList, condition);
+
+                    if (evaluateResult.size() > 0) {
+                        NotesDB result = evaluateResult.get(0);
+                        notesList.remove(result);
+                    }
                 }
 
                 @Override
@@ -264,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (evaluateResult.size() > 0) {
                         TodoListDB result = evaluateResult.get(0);
-                    todoListList.remove(result);
+                        todoListList.remove(result);
                     }
                 }
 
@@ -288,9 +312,6 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                    TodoItemDB tempItem = dataSnapshot.getValue(TodoItemDB.class);
-//                    int index = todoItemsList.indexOf(tempItem);
-//                    todoItemsList.set(index, tempItem);
                 }
 
                 @Override
@@ -346,6 +367,18 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     final ReminderDB tempItem = dataSnapshot.getValue(ReminderDB.class);
+
+                    Predicate condition = new Predicate() {
+                        public boolean evaluate(Object sample) {
+                            return ((ReminderDB) sample).getReminderId().equals(tempItem.getReminderId());
+                        }
+                    };
+                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select(reminderList, condition);
+
+                    if (evaluateResult.size() > 0) {
+                        ReminderDB result = evaluateResult.get(0);
+                        reminderList.remove(result);
+                    }
 
                     AddAlarm.cancelReminderAlarm(tempItem, getApplicationContext(),
                             (AlarmManager) getSystemService(Context.ALARM_SERVICE),
