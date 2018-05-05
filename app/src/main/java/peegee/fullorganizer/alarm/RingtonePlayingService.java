@@ -47,7 +47,6 @@ public class RingtonePlayingService extends Service {
     NotificationChannel notificationChannel;
     String channelId;
     CharSequence channelName;
-    NotificationCompat.Action dismissAction;
     NotificationCompat.Action snoozeAction;
 
     @Nullable
@@ -70,6 +69,7 @@ public class RingtonePlayingService extends Service {
                 initReminderNotification();
             else
                 initNotification();
+
             startForeground(alarmRequestCode, notificationBuilder.build());
         }
 
@@ -95,12 +95,6 @@ public class RingtonePlayingService extends Service {
                     notificationManager.cancel(alarmRequestCode);
                     player.stop();
                     setNewSnoozeAlarm();
-                    break;
-                case "dismiss":
-                    alarmManager.cancel(cancelPendingIntent);
-                    notificationManager.cancel(alarmRequestCode);
-                    player.stop();
-                    changeAlarmValuesToOff();
                     break;
                 case "reminder":
                     cancelIntent.putExtra("REMINDER", true);
@@ -222,9 +216,10 @@ public class RingtonePlayingService extends Service {
                 .setSmallIcon(R.drawable.alarm)
                 .setContentTitle("Reminder!")
                 .setContentText("Click the notification to open reminder")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(click_pending)
                 .setDeleteIntent(click_pending)
+                .setOngoing(false)
                 .setAutoCancel(true);
     }
 
@@ -239,20 +234,12 @@ public class RingtonePlayingService extends Service {
                 .putExtra("ID", alarmId);
         PendingIntent click_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent dismiss_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
-                .putExtra("intent_action", "dismiss")
-                .putExtra("REQUEST_CODE", alarmRequestCode)
-                .putExtra("ID", alarmId);
-        PendingIntent dismiss_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, dismiss_intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         Intent snooze_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
                 .putExtra("intent_action", "snooze")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
         PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, snooze_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        dismissAction = new NotificationCompat.Action(R.drawable.small_delete,
-                "Dismiss", dismiss_pending);
         snoozeAction = new NotificationCompat.Action(R.drawable.bell_ring,
                 "Snooze", snooze_pending);
 
@@ -260,11 +247,11 @@ public class RingtonePlayingService extends Service {
                 .setSmallIcon(R.drawable.alarm)
                 .setContentTitle("Alarm On!")
                 .setContentText("Click the notification to dismiss")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(click_pending)
                 .setDeleteIntent(click_pending)
-                .addAction(dismissAction)
                 .addAction(snoozeAction)
+                .setOngoing(false)
                 .setAutoCancel(true);
     }
 
@@ -273,12 +260,15 @@ public class RingtonePlayingService extends Service {
     }
 
     private void setNotificationChannel() {
-        channelId = "alarm_channel_id";
+        channelId = "channel_id";
         channelName = "alarm_notification_channel";
         int importance = NotificationManager.IMPORTANCE_HIGH;
+
         notificationChannel = new NotificationChannel(channelId, channelName, importance);
         notificationChannel.enableLights(true);
         notificationChannel.setLightColor(Color.RED);
+        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
         notificationManager.createNotificationChannel(notificationChannel);
     }
 }
