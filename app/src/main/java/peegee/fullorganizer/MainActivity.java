@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference reminderRef;
     public static DatabaseReference todoListRef;
     public static DatabaseReference todoItemRef;
-    public static DatabaseReference requestCodeRef;
 
     // DB locally saved lists
     public static List<NotesDB> notesList = new ArrayList<>();
@@ -163,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initFirebase() {
             clearLists();
+
             rootRef = FirebaseDatabase.getInstance().getReference();
             userRef = rootRef.child(getString(R.string.db_user));
             userDataRef = userRef.child(firebaseUser.getUid());
