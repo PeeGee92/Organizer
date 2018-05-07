@@ -10,13 +10,8 @@ public class ResetAlarmReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
 
-            // It is better to reset alarms using Background IntentService
-            Intent i = new Intent(context, BootService.class);
-            ComponentName service = context.startService(i);
-
-            if (service != null) {
-
-            }
+            Intent resetServiceIntent = new Intent(context, BootService.class);
+            context.startService(resetServiceIntent);
 
         }
     }
