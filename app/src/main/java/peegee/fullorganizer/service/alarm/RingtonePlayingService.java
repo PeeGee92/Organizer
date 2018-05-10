@@ -49,6 +49,7 @@ public class RingtonePlayingService extends Service {
     String channelId;
     CharSequence channelName;
     NotificationCompat.Action snoozeAction;
+    NotificationCompat.Action deleteAction;
 
     @Nullable
     @Override
@@ -97,7 +98,8 @@ public class RingtonePlayingService extends Service {
                     setNewSnoozeAlarm();
                     stopSelf();
                     break;
-                case "reminder":
+                case "reminder_click":
+                case "reminder_delete":
                     cancelIntent.putExtra("REMINDER", true);
                     cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
                             alarmRequestCode,
@@ -109,20 +111,24 @@ public class RingtonePlayingService extends Service {
 
                     Predicate condition = new Predicate() {
                         public boolean evaluate(Object sample) {
-                            return ((ReminderDB)sample).getReminderId().equals(alarmId);
+                            return ((ReminderDB) sample).getReminderId().equals(alarmId);
                         }
                     };
-                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select( MainActivity.reminderList, condition );
+                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select(MainActivity.reminderList, condition);
                     ReminderDB reminderDB = evaluateResult.get(0);
 
                     int index = MainActivity.reminderList.indexOf(reminderDB);
                     MainActivity.reminderList.get(index).reminderAlarm = false;
+                    MainActivity.reminderList.get(index).reminderAlarmValue = 0;
+                    MainActivity.reminderList.get(index).reminderAlarmType = "Minutes";
 
-                    Intent reminderIntent = new Intent(this, AddReminder.class)
-                            .putExtra("REMINDER_ID", alarmId);
-                    startActivity(reminderIntent);
+                    if (action.equals("reminder_click")) {
+                        Intent reminderIntent = new Intent(this, AddReminder.class)
+                                .putExtra("REMINDER_ID", alarmId);
+                        startActivity(reminderIntent);
+                    }
+
                     stopSelf();
-                default:
             }
         }
         else { // New Alarm to start
@@ -213,21 +219,38 @@ public class RingtonePlayingService extends Service {
     private void initReminderNotification() {
         setNotificationChannel();
 
+        Predicate condition = new Predicate() {
+            public boolean evaluate(Object sample) {
+                return ((ReminderDB) sample).getReminderId().equals(alarmId);
+            }
+        };
+        List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select(MainActivity.reminderList, condition);
+        ReminderDB reminderDB = evaluateResult.get(0);
+
         notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), notificationChannel.getId());
 
         Intent click_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
-                .putExtra("intent_action", "reminder")
+                .putExtra("intent_action", "reminder_click")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
         PendingIntent click_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent delete_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
+                .putExtra("intent_action", "reminder_delete")
+                .putExtra("REQUEST_CODE", alarmRequestCode)
+                .putExtra("ID", alarmId);
+        PendingIntent delete_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), delete_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        deleteAction = new NotificationCompat.Action(R.drawable.small_delete,
+                "Dismiss", delete_pending);
+
         notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                 .setSmallIcon(R.drawable.alarm)
-                .setContentTitle("Reminder!")
+                .setContentTitle(reminderDB.reminderTitle)
                 .setContentText("Click the notification to open reminder")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(click_pending)
-                .setDeleteIntent(click_pending)
+                .addAction(deleteAction)
                 .setOngoing(false)
                 .setAutoCancel(true);
     }
