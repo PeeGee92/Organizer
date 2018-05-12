@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +35,8 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.alarm.AddAlarm;
 import peegee.fullorganizer.firebase_db.ReminderDB;
+import peegee.fullorganizer.service.local_db.AlarmItemDB;
+import peegee.fullorganizer.service.local_db.AppDatabase;
 
 public class AddReminder extends AppCompatActivity {
 
@@ -284,7 +287,7 @@ public class AddReminder extends AppCompatActivity {
                 synchronized (MainActivity.FBLOCK) {
                     MainActivity.reminderRef.child(reminderDB.getReminderId()).setValue(reminderDB);
                 }
-            } else {
+            } else { // New alarm
                 if (etAlarmTime.getText().toString().trim().isEmpty() && cbAlarm.isChecked()) {
                     etAlarmTime.setText("0");
                 }
@@ -308,6 +311,29 @@ public class AddReminder extends AppCompatActivity {
                         AddAlarm.setReminderAlarm(reminderDB, getApplicationContext(),
                                 (AlarmManager) getSystemService(Context.ALARM_SERVICE));
                     }
+                }
+            }
+
+            // Local db
+            AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "alarms_reset")
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
+            if (cbAlarm.isChecked()) {
+                AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(reminderDB.getReminderId());
+                if (tempAlarmDb == null) {
+                    tempAlarmDb = new AlarmItemDB(reminderDB.getReminderId(), reminderDB.getAlarmRequestCode(), reminderDB.reminderAlarmDate, true);
+                    db.alarmItemDAO().insert(tempAlarmDb);
+                }
+                else {
+                    tempAlarmDb.setAlarmTime(reminderDB.reminderAlarmDate);
+                    db.alarmItemDAO().update(tempAlarmDb);
+                }
+            }
+            else {
+                AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(reminderDB.getReminderId());
+                if (tempAlarmDb != null) {
+                    db.alarmItemDAO().delete(tempAlarmDb);
                 }
             }
         }

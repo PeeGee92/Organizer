@@ -3,6 +3,7 @@ package peegee.fullorganizer.alarm;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -26,6 +27,8 @@ import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.firebase_db.ReminderDB;
 import peegee.fullorganizer.service.alarm.AlarmReceiver;
+import peegee.fullorganizer.service.local_db.AlarmItemDB;
+import peegee.fullorganizer.service.local_db.AppDatabase;
 
 public class AddAlarm extends AppCompatActivity {
 
@@ -51,6 +54,9 @@ public class AddAlarm extends AppCompatActivity {
     List<AlarmDB> evaluateResult; // Used to retrieve item by id
     AlarmDB alarmDB;
 
+    AppDatabase db;
+    AlarmItemDB alarmItemDB;
+
     String id;
     boolean update = false;
 
@@ -59,6 +65,12 @@ public class AddAlarm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_alarm);
         ButterKnife.inject(this);
+
+        // Local db
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "alarms_reset")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
 
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.back);
@@ -99,6 +111,9 @@ public class AddAlarm extends AppCompatActivity {
             }
             etSnooze.setText(Integer.toString(alarmDB.alarmSnooze));
 
+            // Local db
+            alarmItemDB = db.alarmItemDAO().getAlarmById(id);
+
             update = true; // It's an already saved alarm so save should just update
         }
     }
@@ -127,6 +142,10 @@ public class AddAlarm extends AppCompatActivity {
         tempCal.set(Calendar.MINUTE,timePicker.getMinute());
         tempCal.set(Calendar.SECOND, 0);
 
+        if(tempCal.before(Calendar.getInstance())) {
+            tempCal.add(Calendar.DATE, 1);
+        }
+
         // Firebase
         synchronized (MainActivity.FBLOCK) {
             if (update) {
@@ -147,6 +166,10 @@ public class AddAlarm extends AppCompatActivity {
                 alarmDB.alarmSnooze = Integer.parseInt(etSnooze.getText().toString());
 
                 MainActivity.alarmRef.child(alarmDB.getAlarmId()).setValue(alarmDB);
+
+                // Local db
+                alarmItemDB.setAlarmTime(tempCal.getTime());
+                db.alarmItemDAO().update(alarmItemDB);
             } else {
                 alarmDB = new AlarmDB(rbRepeat.isChecked(),
                         Integer.parseInt(etSnooze.getText().toString()),
@@ -159,6 +182,10 @@ public class AddAlarm extends AppCompatActivity {
                 id = MainActivity.alarmRef.push().getKey();
                 alarmDB.setAlarmId(id);
                 MainActivity.alarmRef.child(id).setValue(alarmDB);
+
+                // Local db
+                alarmItemDB = new AlarmItemDB(alarmDB.getAlarmId(), alarmRequestCode, tempCal.getTime(), false);
+                db.alarmItemDAO().insert(alarmItemDB);
             }
         }
 
@@ -197,6 +224,15 @@ public class AddAlarm extends AppCompatActivity {
 
         calendar.set(Calendar.SECOND, 0);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        // Local db
+        AppDatabase staticDb = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
+        AlarmItemDB tempLocalAlarm = staticDb.alarmItemDAO().getAlarmById(alarmId);
+        tempLocalAlarm.setAlarmTime(calendar.getTime());
+        staticDb.alarmItemDAO().update(tempLocalAlarm);
     }
 
     public static void cancelAlarm(AlarmDB alarmDB, Context appContext,
@@ -229,6 +265,14 @@ public class AddAlarm extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(appContext, alarmRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        // Local db
+        AlarmItemDB tempLocalAlarm = new AlarmItemDB(id, alarmRequestCode, calendar.getTime(), true);
+        AppDatabase staticDb = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
+        staticDb.alarmItemDAO().insert(tempLocalAlarm);
     }
 
     public static void cancelReminderAlarm(ReminderDB reminderDB, Context appContext,
@@ -245,5 +289,13 @@ public class AddAlarm extends AppCompatActivity {
 
         alarmManager.cancel(cancelPendingIntent);
         notificationManager.cancel(alarmRequestCode);
+
+        // Local db
+        AppDatabase staticDb = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
+                .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                .build();
+        AlarmItemDB temp = staticDb.alarmItemDAO().getAlarmById(id);
+        staticDb.alarmItemDAO().delete(temp);
     }
 }

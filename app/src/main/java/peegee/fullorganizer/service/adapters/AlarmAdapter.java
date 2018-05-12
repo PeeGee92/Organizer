@@ -2,6 +2,7 @@ package peegee.fullorganizer.service.adapters;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.alarm.AddAlarm;
 import peegee.fullorganizer.firebase_db.AlarmDB;
+import peegee.fullorganizer.service.local_db.AlarmItemDB;
+import peegee.fullorganizer.service.local_db.AppDatabase;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
@@ -163,6 +166,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 // Firebase
                 synchronized (MainActivity.FBLOCK) {
                     MainActivity.todoItemRef.child(temp.getAlarmId()).setValue(temp);
+                }
+
+                // Local db
+                AppDatabase db = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
+                        .allowMainThreadQueries()
+                        .fallbackToDestructiveMigration()
+                        .build();
+                if (holder.swOnOff.isChecked()) {
+                    AlarmItemDB tempAlarmDb = new AlarmItemDB(temp.getAlarmId(), temp.getAlarmRequestCode(), temp.alarmDate, false);
+                    db.alarmItemDAO().insert(tempAlarmDb);
+                }
+                else {
+                    AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
+                    db.alarmItemDAO().delete(tempAlarmDb);
                 }
             }
         });

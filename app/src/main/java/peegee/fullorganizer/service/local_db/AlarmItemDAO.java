@@ -14,6 +14,9 @@ public interface AlarmItemDAO {
     @Query("SELECT * FROM alarm_items")
     List<AlarmItemDB> getAll();
 
+    @Query("SELECT * FROM alarm_items WHERE id = :alarmId")
+    AlarmItemDB getAlarmById(String alarmId);
+
     @Insert
     void insert (AlarmItemDB alarmItemDB);
 

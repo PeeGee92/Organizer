@@ -50,6 +50,7 @@ public class RingtonePlayingService extends Service {
     CharSequence channelName;
     NotificationCompat.Action snoozeAction;
     NotificationCompat.Action deleteAction;
+    NotificationCompat.Action dismissAction;
 
     @Nullable
     @Override
@@ -87,6 +88,7 @@ public class RingtonePlayingService extends Service {
         if (action != null) {
             switch (action) {
                 case "click":
+                case "dismiss":
                     alarmManager.cancel(cancelPendingIntent);
                     player.stop();
                     changeAlarmValuesToOff();
@@ -144,7 +146,7 @@ public class RingtonePlayingService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        notificationManager.cancel(alarmRequestCode);
+        notificationManager.cancelAll();
     }
 
     private void setNewSnoozeAlarm() {
@@ -213,7 +215,9 @@ public class RingtonePlayingService extends Service {
             }
         }
 
-        startActivity(new Intent(getApplicationContext(), AlarmActivity.class));
+        if (!action.equals("dismiss")) {
+            startActivity(new Intent(getApplicationContext(), AlarmActivity.class));
+        }
     }
 
     private void initReminderNotification() {
@@ -233,13 +237,13 @@ public class RingtonePlayingService extends Service {
                 .putExtra("intent_action", "reminder_click")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent click_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent click_pending = PendingIntent.getService(getApplicationContext(), MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent delete_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
                 .putExtra("intent_action", "reminder_delete")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent delete_pending = PendingIntent.getService(this, MainActivity.getRequestCode(), delete_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent delete_pending = PendingIntent.getService(getApplicationContext(), MainActivity.getRequestCode(), delete_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         deleteAction = new NotificationCompat.Action(R.drawable.small_delete,
                 "Dismiss", delete_pending);
@@ -264,24 +268,34 @@ public class RingtonePlayingService extends Service {
                 .putExtra("intent_action", "click")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent click_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, click_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent click_pending = PendingIntent.getService(getApplicationContext(), MainActivity.getRequestCode(), click_intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Intent snooze_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
                 .putExtra("intent_action", "snooze")
                 .putExtra("REQUEST_CODE", alarmRequestCode)
                 .putExtra("ID", alarmId);
-        PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(), alarmRequestCode, snooze_intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent snooze_pending = PendingIntent.getService(getApplicationContext(), MainActivity.getRequestCode(), snooze_intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         snoozeAction = new NotificationCompat.Action(R.drawable.bell_ring,
                 "Snooze", snooze_pending);
 
+        Intent dismiss_intent = new Intent(getApplicationContext(), RingtonePlayingService.class)
+                .putExtra("intent_action", "dismiss")
+                .putExtra("REQUEST_CODE", alarmRequestCode)
+                .putExtra("ID", alarmId);
+        PendingIntent dismiss_pending = PendingIntent.getService(getApplicationContext(), MainActivity.getRequestCode(), dismiss_intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        dismissAction = new NotificationCompat.Action(R.drawable.bell_ring,
+                "Dismiss", dismiss_pending);
+
         notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                 .setSmallIcon(R.drawable.alarm)
                 .setContentTitle("Alarm On!")
-                .setContentText("Click the notification to dismiss")
+                .setContentText("Click the notification to dismiss and open alarm")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(click_pending)
                 .setDeleteIntent(click_pending)
+                .addAction(dismissAction)
                 .addAction(snoozeAction)
                 .setOngoing(false)
                 .setAutoCancel(true);
