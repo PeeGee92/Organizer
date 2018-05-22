@@ -231,8 +231,10 @@ public class AddAlarm extends AppCompatActivity {
                 .fallbackToDestructiveMigration()
                 .build();
         AlarmItemDB tempLocalAlarm = staticDb.alarmItemDAO().getAlarmById(alarmId);
-        tempLocalAlarm.setAlarmTime(calendar.getTime());
-        staticDb.alarmItemDAO().update(tempLocalAlarm);
+        if (tempLocalAlarm != null) {
+            tempLocalAlarm.setAlarmTime(calendar.getTime());
+            staticDb.alarmItemDAO().update(tempLocalAlarm);
+        }
     }
 
     public static void cancelAlarm(AlarmDB alarmDB, Context appContext,

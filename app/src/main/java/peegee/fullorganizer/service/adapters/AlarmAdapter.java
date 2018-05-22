@@ -16,6 +16,8 @@ import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import peegee.fullorganizer.MainActivity;
@@ -33,6 +35,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     Context appContext;
     AlarmManager alarmManager;
     NotificationManager notificationManager;
+
+    private boolean onBind = false;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -52,12 +56,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
 
-        this.recyclerView =recyclerView;
+        this.recyclerView = recyclerView;
     }
 
     public AlarmAdapter(List<AlarmDB> alarmDBList, Context appContext,
                         AlarmManager alarmManager, NotificationManager notificationManager) {
-
         this.alarmDBList = alarmDBList;
         this.appContext = appContext;
         this.alarmManager = alarmManager;
@@ -76,7 +79,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onBindViewHolder(final AlarmAdapter.ViewHolder holder, final int position) {
         final AlarmDB temp = alarmDBList.get(position);
 
+        onBind = true;
         holder.swOnOff.setChecked(temp.alarmOn);
+        onBind = false;
         String time, amPm, h, m;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(temp.alarmDate);
@@ -135,54 +140,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                         .setNegativeButton("Cancel", null).show();
             }
         });
-
-        holder.swOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                int index = MainActivity.alarmsList.indexOf(temp);
-
-                // Check if alarm time has passed
-                Date oldDate = temp.alarmDate;
-                Calendar oldCalendar = Calendar.getInstance();
-                oldCalendar.setTime(oldDate);
-                if (oldCalendar.before(Calendar.getInstance())) {
-                    Calendar newCalendar = Calendar.getInstance();
-                    newCalendar.set(Calendar.MINUTE, oldCalendar.get(Calendar.MINUTE));
-                    newCalendar.set(Calendar.HOUR_OF_DAY, oldCalendar.get(Calendar.HOUR_OF_DAY));
-                    if (newCalendar.before(Calendar.getInstance()))
-                        newCalendar.add(Calendar.DATE, 1);
-
-                    temp.alarmDate = newCalendar.getTime();
-                    MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
-
-                    AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext, alarmManager, notificationManager);
-                }
-
-                MainActivity.alarmsList.get(index).alarmOn = holder.swOnOff.isChecked();
-
-
-                temp.alarmOn = holder.swOnOff.isChecked();
-
-                // Firebase
-                synchronized (MainActivity.FBLOCK) {
-                    MainActivity.todoItemRef.child(temp.getAlarmId()).setValue(temp);
-                }
-
-                // Local db
-                AppDatabase db = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
-                        .allowMainThreadQueries()
-                        .fallbackToDestructiveMigration()
-                        .build();
-                if (holder.swOnOff.isChecked()) {
-                    AlarmItemDB tempAlarmDb = new AlarmItemDB(temp.getAlarmId(), temp.getAlarmRequestCode(), temp.alarmDate, false);
-                    db.alarmItemDAO().insert(tempAlarmDb);
-                }
-                else {
-                    AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
-                    db.alarmItemDAO().delete(tempAlarmDb);
-                }
-            }
-        });
     }
 
     @Override
@@ -199,9 +156,71 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            swOnOff = itemView.findViewById(R.id.swOnOff);
             tvTime = itemView.findViewById(R.id.tvTime);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+            swOnOff = itemView.findViewById(R.id.swOnOff);
+            swOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                    if (!onBind) {
+                        final AlarmDB temp = alarmDBList.get(getAdapterPosition());
+                        int index = MainActivity.alarmsList.indexOf(temp);
+
+                        if (swOnOff.isChecked()) {
+                            // Check if alarm time has passed
+                            Date oldDate = temp.alarmDate;
+                            Calendar oldCalendar = Calendar.getInstance();
+                            oldCalendar.setTime(oldDate);
+                            if (oldCalendar.before(Calendar.getInstance())) {
+                                Calendar newCalendar = Calendar.getInstance();
+                                newCalendar.set(Calendar.MINUTE, oldCalendar.get(Calendar.MINUTE));
+                                newCalendar.set(Calendar.HOUR_OF_DAY, oldCalendar.get(Calendar.HOUR_OF_DAY));
+                                if (newCalendar.before(Calendar.getInstance()))
+                                    newCalendar.add(Calendar.DATE, 1);
+
+                                temp.alarmDate = newCalendar.getTime();
+                                MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
+
+                                AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext, alarmManager, notificationManager);
+                            }
+                        }
+
+                        MainActivity.alarmsList.get(index).alarmOn = swOnOff.isChecked();
+                        alarmDBList.get(getAdapterPosition()).alarmOn = swOnOff.isChecked();
+                        temp.alarmOn = swOnOff.isChecked();
+
+                        // Firebase
+                        synchronized (MainActivity.FBLOCK) {
+                            MainActivity.alarmRef.child(temp.getAlarmId()).setValue(temp);
+                        }
+
+                        // Local db
+                        AppDatabase db = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
+                                .allowMainThreadQueries()
+                                .fallbackToDestructiveMigration()
+                                .build();
+                        if (swOnOff.isChecked()) {
+                            AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
+                            if (tempAlarmDb == null) {
+                                tempAlarmDb = new AlarmItemDB(temp.getAlarmId(), temp.getAlarmRequestCode(), temp.alarmDate, false);
+                                db.alarmItemDAO().insert(tempAlarmDb);
+                            }
+                        } else {
+                            AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
+                            if (tempAlarmDb != null) {
+                                db.alarmItemDAO().delete(tempAlarmDb);
+                            }
+                        }
+
+                        // Update RecyclerView
+//                        adapter.notifyDataSetChanged();
+                    }
+                    else {
+
+                    }
+                }
+            });
         }
     }
 }

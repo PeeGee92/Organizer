@@ -12,10 +12,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import java.util.Collections;
+import java.util.Comparator;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
+import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.service.adapters.AlarmAdapter;
 
 
@@ -56,6 +61,9 @@ public class AlarmActivity extends AppCompatActivity {
             }
         });
 
+        // Sort list
+        Collections.sort(MainActivity.alarmsList, listComparator);
+
         // RecyclerView setup
         rvAlarm.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AlarmAdapter(MainActivity.alarmsList, getApplicationContext(),
@@ -73,5 +81,15 @@ public class AlarmActivity extends AppCompatActivity {
             }
         });
     }
+
+    private Comparator<AlarmDB> listComparator = new Comparator<AlarmDB>() {
+        @Override
+        public int compare(AlarmDB a1, AlarmDB a2) {
+            if(a1.alarmDate.equals(a2.alarmDate)){
+                return 0;
+            }
+            return (a1.alarmDate.compareTo(a2.alarmDate));
+        }
+    };
 
 }
