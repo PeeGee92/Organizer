@@ -388,9 +388,11 @@ public class MainActivity extends AppCompatActivity {
                         reminderList.remove(result);
                     }
 
-                    AddAlarm.cancelReminderAlarm(tempItem, getApplicationContext(),
-                            (AlarmManager) getSystemService(Context.ALARM_SERVICE),
-                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+                    if (tempItem.reminderAlarm) {
+                        AddAlarm.cancelReminderAlarm(tempItem, getApplicationContext(),
+                                (AlarmManager) getSystemService(Context.ALARM_SERVICE),
+                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+                    }
                 }
 
                 @Override

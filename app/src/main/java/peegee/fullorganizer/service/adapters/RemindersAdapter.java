@@ -80,9 +80,6 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
                                     MainActivity.reminderRef.child(item.getReminderId()).removeValue();
                                 }
 
-                                // Remove from local list
-                                MainActivity.reminderList.remove(item);
-
                                 // Update RecyclerView
                                 recyclerView.removeViewAt(position);
                                 adapter.notifyItemRemoved(position);
