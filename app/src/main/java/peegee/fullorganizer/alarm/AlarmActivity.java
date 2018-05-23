@@ -82,7 +82,7 @@ public class AlarmActivity extends AppCompatActivity {
         });
     }
 
-    private Comparator<AlarmDB> listComparator = new Comparator<AlarmDB>() {
+    public static Comparator<AlarmDB> listComparator = new Comparator<AlarmDB>() {
         @Override
         public int compare(AlarmDB a1, AlarmDB a2) {
             if(a1.alarmDate.equals(a2.alarmDate)){

@@ -40,6 +40,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,6 +54,7 @@ import peegee.fullorganizer.firebase_db.TodoItemDB;
 import peegee.fullorganizer.firebase_db.TodoListDB;
 import peegee.fullorganizer.notes.NotesActivity;
 import peegee.fullorganizer.reminder.ReminderActivity;
+import peegee.fullorganizer.service.adapters.AlarmAdapter;
 import peegee.fullorganizer.todo.TodoActivity;
 
 /**
@@ -176,18 +178,24 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
+                    if (!AlarmAdapter.switchChanged) {
+                        final AlarmDB tempItem = dataSnapshot.getValue(AlarmDB.class);
 
-                    Predicate condition = new Predicate() {
-                        public boolean evaluate(Object sample) {
-                            return ((AlarmDB)sample).getAlarmId().equals(tempItem.getAlarmId());
-                        }
-                    };
-                    List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select( alarmsList, condition );
-                    AlarmDB oldItem = evaluateResult.get(0);
+                        Predicate condition = new Predicate() {
+                            public boolean evaluate(Object sample) {
+                                return ((AlarmDB) sample).getAlarmId().equals(tempItem.getAlarmId());
+                            }
+                        };
+                        List<AlarmDB> evaluateResult = (List<AlarmDB>) CollectionUtils.select(alarmsList, condition);
+                        AlarmDB oldItem = evaluateResult.get(0);
 
-                    alarmsList.remove(oldItem);
-                    alarmsList.add(tempItem);
+                        alarmsList.remove(oldItem);
+                        alarmsList.add(tempItem);
+                    }
+                    else {
+                        AlarmAdapter.switchChanged = false; // do nothing and reset the value
+                    }
+
                 }
 
                 @Override
@@ -354,10 +362,10 @@ public class MainActivity extends AppCompatActivity {
 
                     Predicate condition = new Predicate() {
                         public boolean evaluate(Object sample) {
-                            return ((ReminderDB)sample).getReminderId().equals(tempItem.getReminderId());
+                            return ((ReminderDB) sample).getReminderId().equals(tempItem.getReminderId());
                         }
                     };
-                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select( reminderList, condition );
+                    List<ReminderDB> evaluateResult = (List<ReminderDB>) CollectionUtils.select(reminderList, condition);
                     ReminderDB oldItem = evaluateResult.get(0);
 
                     reminderList.remove(oldItem);

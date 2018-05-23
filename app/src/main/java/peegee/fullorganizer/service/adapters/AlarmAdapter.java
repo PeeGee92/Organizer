@@ -23,6 +23,7 @@ import java.util.List;
 import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.alarm.AddAlarm;
+import peegee.fullorganizer.alarm.AlarmActivity;
 import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.service.local_db.AlarmItemDB;
 import peegee.fullorganizer.service.local_db.AppDatabase;
@@ -37,6 +38,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     NotificationManager notificationManager;
 
     private boolean onBind = false;
+    public static boolean switchChanged = false;
 
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
@@ -162,63 +164,56 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             swOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    boolean checked = swOnOff.isChecked();
+                    final AlarmDB temp = alarmDBList.get(getAdapterPosition());
+                    int index = MainActivity.alarmsList.indexOf(temp);
 
-                    if (!onBind) {
-                        final AlarmDB temp = alarmDBList.get(getAdapterPosition());
-                        int index = MainActivity.alarmsList.indexOf(temp);
+                    if (checked) {
+                        // Check if alarm time has passed
+                        Date oldDate = temp.alarmDate;
+                        Calendar oldCalendar = Calendar.getInstance();
+                        oldCalendar.setTime(oldDate);
+                        if (oldCalendar.before(Calendar.getInstance())) {
+                            Calendar newCalendar = Calendar.getInstance();
+                            newCalendar.set(Calendar.MINUTE, oldCalendar.get(Calendar.MINUTE));
+                            newCalendar.set(Calendar.HOUR_OF_DAY, oldCalendar.get(Calendar.HOUR_OF_DAY));
+                            if (newCalendar.before(Calendar.getInstance()))
+                                newCalendar.add(Calendar.DATE, 1);
 
-                        if (swOnOff.isChecked()) {
-                            // Check if alarm time has passed
-                            Date oldDate = temp.alarmDate;
-                            Calendar oldCalendar = Calendar.getInstance();
-                            oldCalendar.setTime(oldDate);
-                            if (oldCalendar.before(Calendar.getInstance())) {
-                                Calendar newCalendar = Calendar.getInstance();
-                                newCalendar.set(Calendar.MINUTE, oldCalendar.get(Calendar.MINUTE));
-                                newCalendar.set(Calendar.HOUR_OF_DAY, oldCalendar.get(Calendar.HOUR_OF_DAY));
-                                if (newCalendar.before(Calendar.getInstance()))
-                                    newCalendar.add(Calendar.DATE, 1);
+                            temp.alarmDate = newCalendar.getTime();
+                            MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
 
-                                temp.alarmDate = newCalendar.getTime();
-                                MainActivity.alarmsList.get(index).alarmDate = newCalendar.getTime();
-
-                                AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext, alarmManager, notificationManager);
-                            }
+                            AddAlarm.cancelOldAndSetNew(temp, newCalendar, appContext, alarmManager, notificationManager);
                         }
-
-                        MainActivity.alarmsList.get(index).alarmOn = swOnOff.isChecked();
-                        alarmDBList.get(getAdapterPosition()).alarmOn = swOnOff.isChecked();
-                        temp.alarmOn = swOnOff.isChecked();
-
-                        // Firebase
-                        synchronized (MainActivity.FBLOCK) {
-                            MainActivity.alarmRef.child(temp.getAlarmId()).setValue(temp);
-                        }
-
-                        // Local db
-                        AppDatabase db = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
-                                .allowMainThreadQueries()
-                                .fallbackToDestructiveMigration()
-                                .build();
-                        if (swOnOff.isChecked()) {
-                            AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
-                            if (tempAlarmDb == null) {
-                                tempAlarmDb = new AlarmItemDB(temp.getAlarmId(), temp.getAlarmRequestCode(), temp.alarmDate, false);
-                                db.alarmItemDAO().insert(tempAlarmDb);
-                            }
-                        } else {
-                            AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
-                            if (tempAlarmDb != null) {
-                                db.alarmItemDAO().delete(tempAlarmDb);
-                            }
-                        }
-
-                        // Update RecyclerView
-//                        adapter.notifyDataSetChanged();
                     }
-                    else {
 
+                    MainActivity.alarmsList.get(index).alarmOn = checked;
+
+                    // Firebase
+                    temp.alarmOn = checked;
+                    synchronized (MainActivity.FBLOCK) {
+                        MainActivity.alarmRef.child(temp.getAlarmId()).setValue(temp);
                     }
+
+                    // Local db
+                    AppDatabase db = Room.databaseBuilder(appContext, AppDatabase.class, "alarms_reset")
+                            .allowMainThreadQueries()
+                            .fallbackToDestructiveMigration()
+                            .build();
+                    if (checked) {
+                        AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
+                        if (tempAlarmDb == null) {
+                            tempAlarmDb = new AlarmItemDB(temp.getAlarmId(), temp.getAlarmRequestCode(), temp.alarmDate, false);
+                            db.alarmItemDAO().insert(tempAlarmDb);
+                        }
+                    } else {
+                        AlarmItemDB tempAlarmDb = db.alarmItemDAO().getAlarmById(temp.getAlarmId());
+                        if (tempAlarmDb != null) {
+                            db.alarmItemDAO().delete(tempAlarmDb);
+                        }
+                    }
+
+                    switchChanged = true;
                 }
             });
         }

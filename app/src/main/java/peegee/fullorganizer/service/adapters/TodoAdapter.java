@@ -127,29 +127,28 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             cbTodoDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (!onBind) {
-                        boolean checked = cbTodoDone.isChecked();
-                        TodoItemDB item = todoDBList.get(getAdapterPosition());
+                    boolean checked = cbTodoDone.isChecked();
+                    TodoItemDB item = todoDBList.get(getAdapterPosition());
 
-                        //Firebase
-                        int index = AddTodoList.addedItemsList.indexOf(item);
-                        if (index != -1) {
-                            AddTodoList.addedItemsList.get(index).done = checked;
-                        }
-                        else {
-                            index = MainActivity.todoItemsList.indexOf(item);
-                            MainActivity.todoItemsList.get(index).done = checked;
+                    //Firebase
+                    int index = AddTodoList.addedItemsList.indexOf(item);
+                    if (index != -1) {
+                        AddTodoList.addedItemsList.get(index).done = checked;
+                    }
+                    else {
+                        index = MainActivity.todoItemsList.indexOf(item);
+                        MainActivity.todoItemsList.get(index).done = checked;
 
-                            if (item.getItemId() != null) {
-                                item.done = checked;
-                                synchronized (MainActivity.FBLOCK) {
-                                    MainActivity.todoItemRef.child(item.getItemId()).setValue(item);
-                                }
+                        if (item.getItemId() != null) {
+                            item.done = checked;
+                            synchronized (MainActivity.FBLOCK) {
+                                MainActivity.todoItemRef.child(item.getItemId()).setValue(item);
                             }
                         }
-
-                        sortAndNotify();
                     }
+
+                    if (!onBind)
+                        sortAndNotify();
                 }
             });
         }
