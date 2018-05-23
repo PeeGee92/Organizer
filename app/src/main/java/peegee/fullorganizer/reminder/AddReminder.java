@@ -284,9 +284,8 @@ public class AddReminder extends AppCompatActivity {
                 reminderDB.reminderDate = reminderDate;
                 reminderDB.reminderAlarm = cbAlarm.isChecked();
 
-                synchronized (MainActivity.FBLOCK) {
-                    MainActivity.reminderRef.child(reminderDB.getReminderId()).setValue(reminderDB);
-                }
+                MainActivity.reminderRef.child(reminderDB.getReminderId()).setValue(reminderDB);
+
             } else { // New alarm
                 if (etAlarmTime.getText().toString().trim().isEmpty() && cbAlarm.isChecked()) {
                     etAlarmTime.setText("0");
