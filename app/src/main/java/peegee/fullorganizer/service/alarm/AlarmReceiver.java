@@ -16,6 +16,12 @@ import peegee.fullorganizer.firebase_db.AlarmDB;
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
+    /**
+     * onReceive method
+     * <p>
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(final Context context, Intent intent) {
 

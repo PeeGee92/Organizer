@@ -4,7 +4,10 @@ import android.arch.persistence.room.TypeConverter;
 
 import java.util.Date;
 
-public class DateTypeConvertor {
+/**
+ * Type converter class for Room Database
+ */
+public class DateTypeConverter {
 
     @TypeConverter
     public static Date toDate(Long value) {

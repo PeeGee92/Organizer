@@ -15,12 +15,18 @@ import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.NotesDB;
 import peegee.fullorganizer.notes.AddNote;
 
+/**
+ * Recycler view adapter class for notes
+ */
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
     List<NotesDB> notesDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
+    /**
+     * OnClick listener method for recycler view
+     */
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -35,6 +41,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         }
     };
 
+    /**
+     * onAttachedRecyclerView method
+     * <p>
+     * @param recyclerView
+     */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -42,10 +53,22 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         this.recyclerView =recyclerView;
     }
 
+    /**
+     * Non-default constructor
+     * <p>
+     * @param notesDBList the notes list
+     */
     public NotesAdapter(List<NotesDB> notesDBList) {
         this.notesDBList = notesDBList;
     }
 
+    /**
+     * onCreateViewHolder method
+     * <p>
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
@@ -54,6 +77,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
+    /**
+     * onBindViewHolder method
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final NotesAdapter.ViewHolder holder, final int position) {
         if (notesDBList.get(position).noteTitle.isEmpty()) {
@@ -91,6 +119,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         });
     }
 
+    /**
+     * getItemCount method
+     * <p>
+     * @return the adapter list size
+     */
     @Override
     public int getItemCount() {
         if (notesDBList == null)
@@ -99,11 +132,18 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             return notesDBList.size();
     }
 
+    /**
+     * View holder inner class
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle;
         ImageButton btnDelete;
 
+        /**
+         * Constructor
+         * @param itemView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
 

@@ -17,6 +17,9 @@ import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.TodoItemDB;
 import peegee.fullorganizer.todo.AddTodoList;
 
+/**
+ * Recycler view adapter class for to-do items
+ */
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     List<TodoItemDB> todoDBList;
@@ -26,7 +29,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     boolean onBind; // To handle exception
 
-
+    /**
+     * onAttachedRecyclerView method
+     * <p>
+     * @param recyclerView
+     */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -34,11 +41,23 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         this.recyclerView =recyclerView;
     }
 
+    /**
+     * Non-default constructor
+     * <p>
+     * @param todoDBList the to-do list items list
+     */
     public TodoAdapter(List<TodoItemDB> todoDBList){
         this.todoDBList = todoDBList;
         sort();
     }
 
+    /**
+     * onCreateViewHolder method
+     * <p>
+     * @param viewGroup
+     * @param i view type
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.todo_item, viewGroup, false);
@@ -46,6 +65,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
+    /**
+     * onBindViewHolder method
+     * @param viewHolder
+     * @param i position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         viewHolder.cbTodoDone.setText(todoDBList.get(i).todoDescription);
@@ -85,6 +109,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         });
     }
 
+    /**
+     * getItemCount method
+     * <p>
+     * @return the adapter list size
+     */
     @Override
     public int getItemCount() {
         if (todoDBList != null)
@@ -114,11 +143,18 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         }
     };
 
+    /**
+     * View holder inner class
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         CheckBox cbTodoDone;
         ImageButton btnDelete;
 
+        /**
+         * Constructor
+         * @param itemView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
             cbTodoDone = itemView.findViewById(R.id.cbTodoDone);

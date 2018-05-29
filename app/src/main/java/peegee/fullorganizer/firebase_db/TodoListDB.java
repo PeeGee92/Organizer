@@ -1,5 +1,8 @@
 package peegee.fullorganizer.firebase_db;
 
+/**
+ * To-do list database item class for Firebase Database
+ */
 public class TodoListDB {
 
     private String uid;
@@ -7,9 +10,17 @@ public class TodoListDB {
     public String todoListTitle;
 
     // Required for FireBase
+    /**
+     * Default Constructor
+     */
     public TodoListDB() {
     }
 
+    /**
+     * Non-default Constructor
+     * <p>
+     * @param todoListTitle
+     */
     public TodoListDB(String todoListTitle) {
         this.todoListTitle = todoListTitle;
     }

@@ -22,12 +22,24 @@ import peegee.fullorganizer.R;
 import peegee.fullorganizer.service.local_db.AlarmItemDB;
 import peegee.fullorganizer.service.local_db.AppDatabase;
 
+/**
+ * BootService extends IntentService
+ * Called after a reboot to reset alarms
+ */
 class BootService extends IntentService {
 
+    /**
+     * Default constructor
+     */
     public BootService() {
         super("BootService");
     }
 
+    /**
+     * onHandleIntent method
+     * <p>
+     * @param intent
+     */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 

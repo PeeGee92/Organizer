@@ -25,16 +25,10 @@ import peegee.fullorganizer.service.adapters.AlarmAdapter;
 
 
 /**
- * Alarm activity
- * Loaded when the alarm button is pressed from main activity
- * or when notification is clicked
- * <p>
- * MISSING:
- * Play alarm even if the app is closed or minimized
- * Notification
- * Snooze and Stop buttons in notifications
- * Choose the ringtones from the ones on the phone itself
- * Repeated or Just Once alarm
+ * Reminder Activity
+ * The main activity for the reminder function
+ * Launched once the corresponding image button is pressed in Main Activity
+ * or when notification is pressed
  */
 public class AlarmActivity extends AppCompatActivity {
 
@@ -45,6 +39,11 @@ public class AlarmActivity extends AppCompatActivity {
 
     RecyclerView.Adapter adapter;
 
+    /**
+     * onCreate method
+     * <p>
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +81,9 @@ public class AlarmActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * A list comparator to sort alarms list by date
+     */
     public static Comparator<AlarmDB> listComparator = new Comparator<AlarmDB>() {
         @Override
         public int compare(AlarmDB a1, AlarmDB a2) {

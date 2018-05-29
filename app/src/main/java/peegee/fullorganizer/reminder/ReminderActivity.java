@@ -15,6 +15,12 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.service.adapters.RemindersAdapter;
 
+/**
+ * Reminder Activity
+ * The main activity for the reminder function
+ * Launched once the corresponding image button is pressed in Main Activity
+ * or when notification is pressed
+ */
 public class ReminderActivity extends AppCompatActivity {
 
     @InjectView(R.id.rvReminders)
@@ -24,6 +30,11 @@ public class ReminderActivity extends AppCompatActivity {
 
     RecyclerView.Adapter adapter;
 
+    /**
+     * onCreate method
+     * <p>
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

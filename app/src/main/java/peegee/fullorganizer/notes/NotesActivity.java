@@ -15,6 +15,11 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.service.adapters.NotesAdapter;
 
+/**
+ * Notes Activity
+ * The main activity for the notes function
+ * Launched once the corresponding image button is pressed in Main Activity
+ */
 public class NotesActivity extends AppCompatActivity {
 
     @InjectView(R.id.rvNotes)
@@ -24,6 +29,11 @@ public class NotesActivity extends AppCompatActivity {
 
     RecyclerView.Adapter adapter;
 
+    /**
+     * onCreate method
+     * <p>
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

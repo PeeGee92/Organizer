@@ -15,6 +15,11 @@ import peegee.fullorganizer.MainActivity;
 import peegee.fullorganizer.R;
 import peegee.fullorganizer.service.adapters.TodoListAdapter;
 
+/**
+ * To-Do List Activity
+ * The main activity for the to-do list function
+ * Launched once the corresponding image button is pressed in Main Activity
+ */
 public class TodoActivity extends AppCompatActivity {
 
     @InjectView(R.id.rvTodo)
@@ -24,6 +29,11 @@ public class TodoActivity extends AppCompatActivity {
 
     RecyclerView.Adapter adapter;
 
+    /**
+     * onCreate method
+     * <p>
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

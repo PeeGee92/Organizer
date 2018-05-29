@@ -28,7 +28,7 @@ import peegee.fullorganizer.reminder.AddReminder;
 /**
  * RingtonePlayingService extending Service
  * Plays the ringtone service or stops it
- * and shows a notification
+ * and shows notifications and handles them
  */
 public class RingtonePlayingService extends Service {
 
@@ -52,12 +52,26 @@ public class RingtonePlayingService extends Service {
     NotificationCompat.Action deleteAction;
     NotificationCompat.Action dismissAction;
 
+    /**
+     * onBind method
+     * <p>
+     * @param intent
+     * @return
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    /**
+     * onStartCommand method
+     * <p>
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -142,6 +156,9 @@ public class RingtonePlayingService extends Service {
         return START_STICKY;
     }
 
+    /**
+     * onDestroy method
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -149,6 +166,11 @@ public class RingtonePlayingService extends Service {
         notificationManager.cancelAll();
     }
 
+    /**
+     * Method called while alarm is snoozed
+     * Retrieves snooze value from database
+     * and sets new alarm or just dismiss according to the value
+     */
     private void setNewSnoozeAlarm() {
 
         Predicate condition = new Predicate() {
@@ -178,6 +200,12 @@ public class RingtonePlayingService extends Service {
         }
     }
 
+    /**
+     * Method called after alarm is dismissed
+     * Set a new alarm for repeated
+     * or just switch the values in database to off if once
+     * Opens the Alarm Activity it's the corresponding case
+     */
     private void changeAlarmValuesToOff() {
         Predicate condition = new Predicate() {
             public boolean evaluate(Object sample) {
@@ -220,6 +248,9 @@ public class RingtonePlayingService extends Service {
         }
     }
 
+    /**
+     * Initialise the notification for the reminder
+     */
     private void initReminderNotification() {
         setNotificationChannel();
 
@@ -259,6 +290,9 @@ public class RingtonePlayingService extends Service {
                 .setAutoCancel(true);
     }
 
+    /**
+     * Initialise the notification for alarm
+     */
     private void initNotification() {
         setNotificationChannel();
 
@@ -301,10 +335,16 @@ public class RingtonePlayingService extends Service {
                 .setAutoCancel(true);
     }
 
+    /**
+     * Shows notification
+     */
     private void showNotification() {
         notificationManager.notify(alarmRequestCode, notificationBuilder.build());
     }
 
+    /**
+     * Set the channel for the notification
+     */
     private void setNotificationChannel() {
         channelId = "channel_id";
         channelName = "alarm_notification_channel";

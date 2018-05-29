@@ -8,6 +8,9 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+/**
+ * Alarm data access object for Room database
+ */
 @Dao
 public interface AlarmItemDAO {
 

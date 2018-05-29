@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+/**
+ * Alarm item class for Room Database
+ */
 @Entity (tableName = "alarm_items")
 public class AlarmItemDB {
 

@@ -19,6 +19,9 @@ import peegee.fullorganizer.firebase_db.TodoItemDB;
 import peegee.fullorganizer.firebase_db.TodoListDB;
 import peegee.fullorganizer.todo.AddTodoList;
 
+/**
+ * Recycler view adapter class for to-do lists
+ */
 public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
 
     List<TodoListDB> todoListDBList;
@@ -27,6 +30,9 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
+    /**
+     * OnClick listener method for recycler view
+     */
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -42,6 +48,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         }
     };
 
+    /**
+     * onAttachedRecyclerView method
+     * <p>
+     * @param recyclerView
+     */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -49,10 +60,22 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         this.recyclerView =recyclerView;
     }
 
+    /**
+     * Non-default constructor
+     * <p>
+     * @param todoListDBList the to-do lists list
+     */
     public TodoListAdapter(List<TodoListDB> todoListDBList) {
         this.todoListDBList = todoListDBList;
     }
 
+    /**
+     * onCreateViewHolder method
+     * <p>
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_list_item, parent, false);
@@ -61,6 +84,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    /**
+     * onBindViewHolder method
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         TodoListDB temp = todoListDBList.get(position);
@@ -113,6 +141,12 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         });
     }
 
+    /**
+     * Set the progress of the to-do list
+     * <p>
+     * @param viewHolder
+     * @param totalTasks the total number of tasks in the list
+     */
     private void setProgress(ViewHolder viewHolder, float totalTasks) {
         float progress;
 
@@ -135,6 +169,12 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         viewHolder.progressBar.setProgress((int) progress);
     }
 
+    /**
+     * Get the number of the done / not done items in this list
+     * @param itemPosition the item position in the adapter
+     * @param done boolean according to which the done or the not done number is returned
+     * @return the number of done / not done items in the list according to <code>done</code> value
+     */
     private int getByDoneItemsCount(int itemPosition, boolean done) {
         int items = 0;
         final TodoListDB listItem = todoListDBList.get(itemPosition);
@@ -157,17 +197,29 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         return items;
     }
 
+    /**
+     * getItemCount method
+     * <p>
+     * @return the adapter list size
+     */
     @Override
     public int getItemCount() {
         return todoListDBList.size();
     }
 
+    /**
+     * View holder inner class
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle, tvDone, tvNotDone;
         ProgressBar progressBar;
         ImageButton btnDelete;
 
+        /**
+         * Constructor
+         * @param itemView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
 

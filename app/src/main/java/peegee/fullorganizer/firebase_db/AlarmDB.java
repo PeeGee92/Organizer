@@ -2,6 +2,9 @@ package peegee.fullorganizer.firebase_db;
 
 import java.util.Date;
 
+/**
+ * Alarm database item class for Firebase Database
+ */
 public class AlarmDB {
 
     private String uid;
@@ -13,9 +16,20 @@ public class AlarmDB {
     public boolean alarmOn;
 
     // Required for FireBase
+    /**
+     * Default Constructor
+     */
     public AlarmDB() {
     }
 
+    /**
+     * Non-default Constructor
+     * <p>
+     * @param alarmRepeated
+     * @param alarmSnooze
+     * @param alarmDate
+     * @param alarmOn
+     */
     public AlarmDB(boolean alarmRepeated, int alarmSnooze, Date alarmDate, boolean alarmOn) {
         this.alarmRepeated = alarmRepeated;
         this.alarmSnooze = alarmSnooze;

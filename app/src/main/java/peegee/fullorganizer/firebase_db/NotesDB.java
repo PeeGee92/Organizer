@@ -1,5 +1,8 @@
 package peegee.fullorganizer.firebase_db;
 
+/**
+ * Notes database item class for Firebase Database
+ */
 public class NotesDB {
 
     private String noteId;
@@ -8,6 +11,9 @@ public class NotesDB {
     public String noteText;
 
     // Required for FireBase
+    /**
+     * Default Constructor
+     */
     public NotesDB() {
     }
 
@@ -27,6 +33,12 @@ public class NotesDB {
         this.uid = uid;
     }
 
+    /**
+     * Non-default Constructor
+     * <p>
+     * @param noteTitle
+     * @param noteText
+     */
     public NotesDB(String noteTitle, String noteText) {
         this.noteTitle = noteTitle;
         this.noteText = noteText;

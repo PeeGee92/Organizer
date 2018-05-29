@@ -2,6 +2,9 @@ package peegee.fullorganizer.firebase_db;
 
 import java.util.Date;
 
+/**
+ * Reminder database item class for Firebase Database
+ */
 public class ReminderDB {
 
     private String uid;
@@ -17,9 +20,24 @@ public class ReminderDB {
     public String reminderAlarmType;
 
     // Required for FireBase
+    /**
+     * Default Constructor
+     */
     public ReminderDB() {
     }
 
+    /**
+     * Non-default Constructor
+     * <p>
+     * @param reminderTitle
+     * @param reminderLocation
+     * @param reminderDescription
+     * @param reminderDate
+     * @param reminderAlarm
+     * @param reminderAlarmDate
+     * @param reminderAlarmValue
+     * @param reminderAlarmType
+     */
     public ReminderDB(String reminderTitle, String reminderLocation, String reminderDescription, Date reminderDate, boolean reminderAlarm, Date reminderAlarmDate, int reminderAlarmValue, String reminderAlarmType) {
         this.reminderTitle = reminderTitle;
         this.reminderLocation = reminderLocation;

@@ -28,6 +28,9 @@ import peegee.fullorganizer.firebase_db.AlarmDB;
 import peegee.fullorganizer.service.local_db.AlarmItemDB;
 import peegee.fullorganizer.service.local_db.AppDatabase;
 
+/**
+ * Recycler view adapter class for alarms
+ */
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     List<AlarmDB> alarmDBList;
@@ -40,6 +43,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private boolean onBind = false;
     public static boolean switchChanged = false;
 
+    /**
+     * OnClick listener method for recycler view
+     */
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -54,6 +60,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
     };
 
+    /**
+     * onAttachedRecyclerView method
+     * <p>
+     * @param recyclerView
+     */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -61,6 +72,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.recyclerView = recyclerView;
     }
 
+    /**
+     * Non-default constructor
+     * <p>
+     * @param alarmDBList the alarms list
+     * @param appContext the application context
+     * @param alarmManager the alarm manager
+     * @param notificationManager the notification manager
+     */
     public AlarmAdapter(List<AlarmDB> alarmDBList, Context appContext,
                         AlarmManager alarmManager, NotificationManager notificationManager) {
         this.alarmDBList = alarmDBList;
@@ -69,6 +88,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.notificationManager = notificationManager;
     }
 
+    /**
+     * onCreateViewHolder method
+     * <p>
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public AlarmAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.alarm_item, parent, false);
@@ -77,6 +103,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
+    /**
+     * onBindViewHolder method
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final AlarmAdapter.ViewHolder holder, final int position) {
         final AlarmDB temp = alarmDBList.get(position);
@@ -144,17 +175,29 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         });
     }
 
+    /**
+     * getItemCount method
+     * <p>
+     * @return the adapter list size
+     */
     @Override
     public int getItemCount() {
         return alarmDBList.size();
     }
 
+    /**
+     * View holder inner class
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         Switch swOnOff;
         TextView tvTime;
         ImageButton btnDelete;
 
+        /**
+         * Constructor
+         * @param itemView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
 

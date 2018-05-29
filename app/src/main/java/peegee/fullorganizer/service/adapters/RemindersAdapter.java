@@ -16,12 +16,18 @@ import peegee.fullorganizer.R;
 import peegee.fullorganizer.firebase_db.ReminderDB;
 import peegee.fullorganizer.reminder.AddReminder;
 
+/**
+ * Recycler view adapter class for notes
+ */
 public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.ViewHolder> {
 
     List<ReminderDB> remindersDBList;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
 
+    /**
+     * OnClick listener method for recycler view
+     */
     private final View.OnClickListener myOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -36,6 +42,11 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         }
     };
 
+    /**
+     * onAttachedRecyclerView method
+     * <p>
+     * @param recyclerView
+     */
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -43,10 +54,22 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         this.recyclerView =recyclerView;
     }
 
+    /**
+     * Non-default constructor
+     * <p>
+     * @param remindersDBList the reminders list
+     */
     public RemindersAdapter(List<ReminderDB> remindersDBList) {
         this.remindersDBList = remindersDBList;
     }
 
+    /**
+     * onCreateViewHolder method
+     * <p>
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public RemindersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_item, parent, false);
@@ -55,6 +78,11 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         return new ViewHolder(view);
     }
 
+    /**
+     * onBindViewHolder method
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(RemindersAdapter.ViewHolder holder, final int position) {
 
@@ -92,16 +120,28 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
 
     }
 
+    /**
+     * getItemCount method
+     * <p>
+     * @return the adapter list size
+     */
     @Override
     public int getItemCount() {
         return remindersDBList.size();
     }
 
+    /**
+     * View holder inner class
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle, tvDate, tvTime;
         ImageButton btnDelete;
 
+        /**
+         * Constructor
+         * @param itemView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
 
