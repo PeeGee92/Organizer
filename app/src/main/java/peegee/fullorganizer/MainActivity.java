@@ -29,7 +29,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -51,8 +50,6 @@ import peegee.fullorganizer.todo.TodoActivity;
  * Loads the main UI
  */
 public class MainActivity extends AppCompatActivity {
-
-    private static final int RC_SIGN_IN = getRequestCode();
 
     @InjectView(R.id.btnAlarm)
     ImageButton btnAlarm;
@@ -91,9 +88,12 @@ public class MainActivity extends AppCompatActivity {
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
 
+    // Login request code
+    private static int loginRequestCode;
+
     /**
      * onCreate method
-     * <p>
+     * <p></p>
      * @param savedInstanceState
      */
     @Override
@@ -140,18 +140,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Authentication
-        if (firebaseUser == null) {
-            firebaseAuth = FirebaseAuth.getInstance();
-            authenticate();
-        }
-
         // SharedPreferences
         sharedPreferences = getSharedPreferences("REQUEST_CODE", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         requestCode = sharedPreferences.getInt("REQUEST_CODE", 0);
         if (requestCode > (Integer.MAX_VALUE - 1000)) {
             requestCode = 0;
+        }
+
+        // Authentication
+        loginRequestCode = getRequestCode();
+        if (firebaseUser == null) {
+            firebaseAuth = FirebaseAuth.getInstance();
+            authenticate();
         }
 
     }
@@ -433,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
                         .setIsSmartLockEnabled(true)
                         .setAvailableProviders(providers)
                         .build(),
-                RC_SIGN_IN);
+                loginRequestCode);
 
     }
 
@@ -448,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == loginRequestCode) {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in

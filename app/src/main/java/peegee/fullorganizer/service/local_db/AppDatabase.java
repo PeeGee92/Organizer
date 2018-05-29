@@ -7,7 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 /**
  * Room Database
  */
-@Database(entities = {AlarmItemDB.class}, version = 2)
+@Database(entities = {AlarmItemDB.class}, version = 10)
 @TypeConverters({DateTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract AlarmItemDAO alarmItemDAO();
